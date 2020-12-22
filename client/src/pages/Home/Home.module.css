@@ -1,0 +1,16 @@
+.RRT__panel {
+    padding: 1em 0 0 0;
+    border: 0;
+}
+
+.RRT__tab {
+    border: 0;
+}
+
+.RRT__tab--selected {
+    background: transparent!important;
+}
+
+.RRT__tab {
+    background: transparent!important;
+}
