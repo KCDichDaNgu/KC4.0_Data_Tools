@@ -134,7 +134,7 @@ be afraid of it! If you learn it, OAuth2 will save you from a lot of troubles.
 Here is how you authenticate with user login and password credentials using cURL:
 
 ```
-$ curl 'http://127.0.0.1:5000/auth/oauth2/token?grant_type=password&client_id=documentation&username=root&password=q'
+$ curl 'http://127.0.0.1:5000/auth/oauth2/token?grant_type=password&client_id=docs&username=root&password=q'
 {
     "token_type": "Bearer",
     "access_token": "oqvUpO4aKg5KgYK2EUY2HPsbOlAyEZ",
