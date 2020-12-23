@@ -18,13 +18,25 @@ from app.extensions import api, oauth2
 
 from .models import OAuth2Client
 
-
 auth_blueprint = Blueprint('auth', __name__, url_prefix='/auth')  # pylint: disable=invalid-name
 
 
-@auth_blueprint.route('/oauth2/token', methods=['GET', 'POST'])
+@auth_blueprint.route('/oauth2/token', methods=['GET'])
 @oauth2.token_handler
 def access_token(*args, **kwargs):
+    # pylint: disable=unused-argument
+    """
+    This endpoint is for exchanging/refreshing an access token.
+
+    Returns:
+        response (dict): a dictionary or None as the extra credentials for
+        creating the token response.
+    """
+    return None
+
+@auth_blueprint.route('/oauth2/token', methods=['POST'])
+@oauth2.token_handler
+def access_token2():
     # pylint: disable=unused-argument
     """
     This endpoint is for exchanging/refreshing an access token.
