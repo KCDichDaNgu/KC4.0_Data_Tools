@@ -27,3 +27,4 @@ enum34
 psycopg2
 
 blinker
+flask_pymongo
