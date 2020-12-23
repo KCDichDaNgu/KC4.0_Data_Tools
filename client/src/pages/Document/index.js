@@ -22,6 +22,7 @@ const DocumentPage = (props) => {
             key: '1',
             id: 1,
             domain: 'vov.vn',
+            status: 'Draft',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -34,6 +35,7 @@ const DocumentPage = (props) => {
             key: '2',
             id: 2,
             domain: 'vov.vn',
+            status: 'Draft',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -47,6 +49,7 @@ const DocumentPage = (props) => {
             key: '3',
             id: 3,
             domain: 'vnexpress.net',
+            status: 'Approved',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
             text_1_lang: 'The programme of support for arts and crafts design',
@@ -58,6 +61,7 @@ const DocumentPage = (props) => {
             key: '4',
             id: 4,
             domain: 'vtv.vn',
+            status: 'Rejected',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
             text_1_lang:
@@ -70,6 +74,7 @@ const DocumentPage = (props) => {
             key: '5',
             id: 5,
             domain: 'vtv.vn',
+            status: 'Rejected',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
             text_1_lang: 'Có lẽ do hình thái di truyền của hệ thống miễn dịch.',
@@ -82,6 +87,7 @@ const DocumentPage = (props) => {
             key: '6',
             id: 6,
             domain: 'vnexpress.net',
+            status: 'Rejected',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
             text_1_lang:
@@ -95,6 +101,7 @@ const DocumentPage = (props) => {
             key: '7',
             id: 7,
             domain: 'vov.vn',
+            status: 'Approved',
             lang_1: 'vi-VI',
             lang_2: 'pt-PT',
             text_1_lang: 'Tôi gửi kèm cái bật lửa như một món quà chia tay.',
@@ -107,6 +114,7 @@ const DocumentPage = (props) => {
             key: '8',
             id: 8,
             domain: 'vov.vn',
+            status: 'Rejected',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -120,6 +128,7 @@ const DocumentPage = (props) => {
             key: '9',
             id: 9,
             domain: 'vnexpress.net',
+            status: 'Approved',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang: '新皇 登基 之前 别 让 宰相 接触 她',
@@ -132,6 +141,7 @@ const DocumentPage = (props) => {
             key: '10',
             id: 10,
             domain: 'vov.vn',
+            status: 'Draft',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang: '不過科學家仍然不清楚這些藍鯨在哪裡過冬。',
@@ -190,8 +200,13 @@ const DocumentPage = (props) => {
         {
             title: 'Action',
             dataIndex: '',
-            key: 'x',
+            key: 'action',
             render: () => <Button type='primary'>Gióng hàng</Button>,
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
         },
     ];
 
@@ -209,8 +224,8 @@ const DocumentPage = (props) => {
         <Input
             placeholder='Search text...'
             className='search-input-box'
-            value={ value }
-            onChange={ (e) => {
+            value={value}
+            onChange={(e) => {
                 const currValue = e.target.value;
                 setValue(currValue);
                 const filteredData = data.filter((entry) => {
@@ -221,7 +236,7 @@ const DocumentPage = (props) => {
                         return true;
                 });
                 setDataSource(filteredData);
-            } }
+            }}
         />
     );
 
@@ -246,15 +261,27 @@ const DocumentPage = (props) => {
 
     let langList = ['All', 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
 
+    let typeList = ['All', 'Draft', 'Approved', 'Rejected'];
+
     const domainOption = domainList.map((domain) => {
-        return <Option key={ domain }>{ domain }</Option>;
+        return <Option key={domain}>{domain}</Option>;
     });
+
     const lang1Option = langList.map((lang) => {
-        return <Option key={ lang }>{ lang }</Option>;
+        return <Option key={lang}>{lang}</Option>;
     });
+
     const lang2Option = langList.map((lang) => {
-        return <Option key={ lang }>{ lang }</Option>;
+        return <Option key={lang}>{lang}</Option>;
     });
+
+    const statusOption = (
+        <>
+            <Option key='draft'>Draft</Option>
+            <Option key='approved'>Approved</Option>
+            <Option key='rejected'>Rejected</Option>
+        </>
+    );
 
     return (
         <React.Fragment>
@@ -266,56 +293,104 @@ const DocumentPage = (props) => {
                 />
 
                 <Card className='domain-table-card'>
-                    { FilterByNameInput }
-                    <div style={ { float: 'left' } }>
-                        <Select
-                            showSearch
-                            style={ { width: '300px', marginLeft: '30px' } }
-                            defaultValue={ 'Domain' }
-                            onChange={ (value) => handleChange(value, 'domain') }>
-                            { domainOption }
-                        </Select>
+                    <div className='header-controller'>
+                        {FilterByNameInput}
+                        <div style={{ float: 'left' }}>
+                            <div
+                                style={{
+                                    display: 'inline-block',
+                                    marginLeft: '30px',
+                                }}>
+                                <div> Select domain:</div>
+                                <Select
+                                    showSearch
+                                    style={{ width: '300px' }}
+                                    defaultValue={'Domain'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'domain')
+                                    }>
+                                    {domainOption}
+                                </Select>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'inline-block',
+                                    marginLeft: '30px',
+                                }}>
+                                <div>Select lang 1</div>
+                                <Select
+                                    style={{ width: '100px' }}
+                                    defaultValue={'vi-VN'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'lang1')
+                                    }>
+                                    {lang1Option}
+                                </Select>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'inline-block',
+                                    marginLeft: '30px',
+                                }}>
+                                <div>Select lang 2</div>
+                                <Select
+                                    showSearch
+                                    style={{ width: '100px' }}
+                                    defaultValue={'en-US'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'lang2')
+                                    }>
+                                    {lang2Option}
+                                </Select>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'inline-block',
+                                    marginLeft: '30px',
+                                }}>
+                                <div>Select status</div>
+                                <Select
+                                    showSearch
+                                    style={{ minWidth: '100px' }}
+                                    defaultValue={'Draft'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'status')
+                                    }>
+                                    {statusOption}
+                                </Select>
+                            </div>
 
-                        <Select
-                            style={ { width: '100px', marginLeft: '30px' } }
-                            defaultValue={ 'vi-VN' }
-                            onChange={ (value) => handleChange(value, 'lang1') }>
-                            { lang1Option }
-                        </Select>
+                            <Button
+                                showSearchshowSearch
+                                style={{ width: '100px', marginLeft: '30px' }}
+                                type='primary'
+                                onClick={handleFilter}>
+                                Filter
+                            </Button>
+                        </div>
 
-                        <Select
-                            showSearch
-                            style={ { width: '100px', marginLeft: '30px' } }
-                            defaultValue={ 'en-US' }
-                            onChange={ (value) => handleChange(value, 'lang2') }>
-                            { lang2Option }
-                        </Select>
-                        <Button
-                            showSearchshowSearch
-                            style={ { width: '100px', marginLeft: '30px' } }
-                            type='primary'
-                            onClick={ handleFilter }>
-                            Filter
-                        </Button>
-                    </div>
+                        <div style={{ float: 'right' }}>
+                            <Button style={{ marginLeft: '12px' }}>Add</Button>
 
-                    <div style={ { float: 'right' } }>
-                        <Button style={ { marginLeft: '12px' } }>Add</Button>
+                            <Button style={{ marginLeft: '12px' }}>
+                                Approve
+                            </Button>
 
-                        <Button style={ { marginLeft: '12px' } }>Approve</Button>
-
-                        <Button style={ { marginLeft: '12px' } }>Reject</Button>
+                            <Button style={{ marginLeft: '12px' }}>
+                                Reject
+                            </Button>
+                        </div>
                     </div>
 
                     <Table
                         className='table-striped-rows'
-                        rowSelection={ {
+                        rowSelection={{
                             type: 'checkbox',
                             ...rowSelection,
-                        } }
-                        dataSource={ dataSource }
-                        columns={ columns }
-                        pagination={ { pageSize: 5 } }></Table>
+                        }}
+                        dataSource={dataSource}
+                        columns={columns}
+                        pagination={{ pageSize: 5 }}></Table>
                 </Card>
             </SiteLayout>
         </React.Fragment>

@@ -21,7 +21,7 @@ const SentencePage = (props) => {
         {
             key: '1',
             id: 1,
-            type: 'Bad',
+            status: 'Approved',
             domain: 'vov.vn',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
@@ -34,7 +34,7 @@ const SentencePage = (props) => {
         {
             key: '2',
             id: 2,
-            type: 'Good',
+            status: 'Rejected',
             domain: 'vov.vn',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
@@ -48,7 +48,7 @@ const SentencePage = (props) => {
         {
             key: '3',
             id: 3,
-            type: 'Bad',
+            status: 'Approved',
             domain: 'vnexpress.net',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
@@ -60,7 +60,7 @@ const SentencePage = (props) => {
         {
             key: '4',
             id: 4,
-            type: 'Good',
+            status: 'Rejected',
             domain: 'vtv.vn',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
@@ -73,7 +73,7 @@ const SentencePage = (props) => {
         {
             key: '5',
             id: 5,
-            type: 'Bad',
+            status: 'Approved',
             domain: 'vtv.vn',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
@@ -86,7 +86,7 @@ const SentencePage = (props) => {
         {
             key: '6',
             id: 6,
-            type: 'Bad',
+            status: 'Approved',
             domain: 'vnexpress.net',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
@@ -100,7 +100,7 @@ const SentencePage = (props) => {
         {
             key: '7',
             id: 7,
-            type: 'Draft',
+            status: 'Draft',
             domain: 'vov.vn',
             lang_1: 'vi-VI',
             lang_2: 'pt-PT',
@@ -113,7 +113,7 @@ const SentencePage = (props) => {
         {
             key: '8',
             id: 8,
-            type: 'Draft',
+            status: 'Draft',
             domain: 'vov.vn',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -127,7 +127,7 @@ const SentencePage = (props) => {
         {
             key: '9',
             id: 9,
-            type: 'Bad',
+            status: 'Approved',
             domain: 'vnexpress.net',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -140,7 +140,7 @@ const SentencePage = (props) => {
         {
             key: '10',
             id: 10,
-            type: 'Good',
+            status: 'Rejected',
             domain: 'vov.vn',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -197,10 +197,26 @@ const SentencePage = (props) => {
             key: 'score',
             sorter: (a, b) => a.score - b.score,
         },
+
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+        },
+        {
+            title: 'Rating',
+            dataIndex: '',
+            key: 'rating',
+            render: () => (
+                <Select defaultValue='Perfect' style={{ width: '200px' }}>
+                    {ratingOption}
+                </Select>
+            ),
+        },
         {
             title: 'Action',
             dataIndex: '',
-            key: 'x',
+            key: 'action',
             render: () => <Button type='danger'>Reject</Button>,
         },
     ];
@@ -251,18 +267,32 @@ const SentencePage = (props) => {
         setDataSource(filteredData);
     };
 
-    let typeList = ['All', 'Draft', 'Bad', 'Good'];
+    let statusList = ['All', 'Draft', 'Approved', 'Rejected'];
 
     let langList = ['All', 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
 
-    const typeOption = typeList.map((type) => {
+    let ratingList = [
+        'All',
+        'Perfect',
+        'Good',
+        'Understand',
+        'Understand Partially',
+        'Cant Understand',
+    ];
+
+    const statusOption = statusList.map((type) => {
         return <Option key={type}>{type}</Option>;
     });
+
     const lang1Option = langList.map((lang) => {
         return <Option key={lang}>{lang}</Option>;
     });
     const lang2Option = langList.map((lang) => {
         return <Option key={lang}>{lang}</Option>;
+    });
+
+    const ratingOption = ratingList.map((rating) => {
+        return <Option key={rating}>{rating}</Option>;
     });
 
     return (
@@ -275,43 +305,81 @@ const SentencePage = (props) => {
                 />
 
                 <Card className='domain-table-card'>
-                    {FilterByNameInput}
-                    <div style={{ float: 'left' }}>
-                        <Select
-                            showSearch
-                            style={{ width: '200px', marginLeft: '30px' }}
-                            defaultValue={'Type'}
-                            onChange={(value) => handleChange(value, 'type')}>
-                            {typeOption}
-                        </Select>
+                    <div className='header-controller'>
+                        {FilterByNameInput}
+                        <div style={{ float: 'left' }}>
+                            <div style={{ marginLeft: '30px', display: 'inline-block' }}>
+                                <div>Select lang 1</div>
+                                <Select
+                                    style={{
+                                        width: '100px',
+                                    }}
+                                    defaultValue={'vi-VN'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'lang1')
+                                    }>
+                                    {lang1Option}
+                                </Select>
+                            </div>
+                            <div style={{ marginLeft: '30px', display: 'inline-block' }}>
+                                <div>Select language 2</div>
+                                <Select
+                                    showSearch
+                                    style={{
+                                        width: '100px',
+                                    }}
+                                    defaultValue={'en-US'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'lang2')
+                                    }>
+                                    {lang2Option}
+                                </Select>
+                            </div>
+                            <div style={{ marginLeft: '30px', display: 'inline-block' }}>
+                                <div>Select rating</div>{' '}
+                                <Select
+                                    showSearch
+                                    style={{
+                                        width: '200px',
+                                    }}
+                                    defaultValue={'Perfect'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'rating')
+                                    }>
+                                    {ratingOption}
+                                </Select>
+                            </div>
+                            <div style={{ marginLeft: '30px', display: 'inline-block' }}>
+                                <div>Select status</div>
+                                <Select
+                                    showSearch
+                                    style={{
+                                        width: '200px',
+                                    }}
+                                    defaultValue={'Status'}
+                                    onChange={(value) =>
+                                        handleChange(value, 'status')
+                                    }>
+                                    {statusOption}
+                                </Select>
+                            </div>
 
-                        <Select
-                            style={{ width: '100px', marginLeft: '30px' }}
-                            defaultValue={'vi-VN'}
-                            onChange={(value) => handleChange(value, 'lang1')}>
-                            {lang1Option}
-                        </Select>
+                            <Button
+                                showSearchshowSearch
+                                style={{ width: '100px', marginLeft: '30px' }}
+                                type='primary'
+                                onClick={handleFilter}>
+                                Filter
+                            </Button>
+                        </div>
 
-                        <Select
-                            showSearch
-                            style={{ width: '100px', marginLeft: '30px' }}
-                            defaultValue={'en-US'}
-                            onChange={(value) => handleChange(value, 'lang2')}>
-                            {lang2Option}
-                        </Select>
-                        <Button
-                            showSearchshowSearch
-                            style={{ width: '100px', marginLeft: '30px' }}
-                            type='primary'
-                            onClick={handleFilter}>
-                            Filter
-                        </Button>
-                    </div>
+                        <div style={{ float: 'right' }}>
+                            <Button style={{ marginLeft: '12px' }}>Add</Button>
 
-                    <div style={{ float: 'right' }}>
-                        <Button style={{ marginLeft: '12px' }}>Add</Button>
-
-                        <Button style={{ marginLeft: '12px' }}>Approve</Button>
+                            <Button style={{ marginLeft: '12px' }}>
+                                Approve
+                            </Button>
+                        </div>
                     </div>
 
                     <Table
