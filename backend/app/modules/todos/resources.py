@@ -19,10 +19,11 @@ class Todos(Resource):
     Manipulations with todos.
     """
     @api.parameters(PaginationParameters())
-    @api.marshal_with(Todo)
+    @api.response(code=HTTPStatus.CONFLICT)
+    # @api.marshal_with(todo_json)
     def get(self, args):
-        saved_todos = todos_col.find()
-        return saved_todos[0]
+        todos = Todo.objects.exclude('id').all()
+        return jsonify(todos)
 
     @api.parameters(AddTodoParameters())
     @api.response(code=HTTPStatus.FORBIDDEN)
@@ -32,5 +33,6 @@ class Todos(Resource):
         """
         Create a new todo.
         """
-        todos_col.insert_one(args)
+        todo = Todo(complete=args[Todo.Attr.complete],text=args[Todo.Attr.text])
+        todo.save()
         return jsonify({"Success":True})

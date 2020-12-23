@@ -65,6 +65,12 @@ class BaseConfig(object):
     SQLALCHEMY_ECHO = True
     MONGO_URI = 'mongodb://localhost:27017/tool_nhap_lieu'
 
+    # mongodb 
+    MONGODB_DB = 'tool_nhap_lieu'
+    MONGODB_HOST = 'localhost'
+    MONGODB_PORT = 27017
+
+
 
 
 class ProductionConfig(BaseConfig):

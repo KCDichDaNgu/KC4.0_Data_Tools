@@ -34,6 +34,8 @@ oauth2 = OAuth2Provider()
 from flask_pymongo import PyMongo
 mongo = PyMongo()
 
+from flask_mongoengine import MongoEngine
+mongo_db = MongoEngine()
 
 from . import api
 
@@ -46,6 +48,7 @@ def init_app(app):
             logging,
             cross_origin_resource_sharing,
             db,
+            mongo_db,
             login_manager,
             marshmallow,
             api,
