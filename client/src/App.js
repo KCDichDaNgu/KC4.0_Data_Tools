@@ -2,6 +2,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
+import DomainsPage from './pages/Domains';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -11,6 +12,7 @@ import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
 
 import './App.css';
+import 'antd/dist/antd.css';
 import 'react-toastify/dist/ReactToastify.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
@@ -61,6 +63,15 @@ const App = ({ location, initialReduxState }) => {
                                     path="/" 
                                     component={ HomePage } 
                                 />
+
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/domains" 
+                                    component={ DomainsPage } 
+                                />
+
+                                
 
                                 <Route 
                                     location={ location } 

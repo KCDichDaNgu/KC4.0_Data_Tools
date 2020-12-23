@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react';
 import PageTitle from '../../Layout/SiteLayout/AppMain/PageTitle';
 import Tabs from 'react-responsive-tabs';
 
@@ -12,9 +12,7 @@ function getTabs() {
 
 function HomePage(props) {
     return (
-
         <React.Fragment>
-
             <SiteLayout>
 
                 <PageTitle

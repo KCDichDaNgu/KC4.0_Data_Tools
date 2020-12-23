@@ -15,9 +15,9 @@ const Nav = () => {
             to: '/',
         },
         {
-            icon: 'pe-7s-rocket',
-            label: 'History',
-            to: 'log',
+            icon: 'pe-7s-global',
+            label: 'Domains',
+            to: 'domains',
         },
     ])
     
