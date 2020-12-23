@@ -4,6 +4,7 @@ import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import DomainsPage from './pages/Domains';
 import DocumentPage from './pages/Document';
+import SentencePage from './pages/Sentence';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -77,6 +78,12 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/document" 
                                     component={ DocumentPage } 
+                                />
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/sentence" 
+                                    component={ SentencePage } 
                                 />
 
                                 

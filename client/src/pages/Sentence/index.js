@@ -12,15 +12,16 @@ import {
 } from 'antd';
 import SiteLayout from '../../Layout/SiteLayout';
 
-import './Document.module.css';
+import './Sentence.module.css';
 import { set } from 'numeral';
 const moment = require('moment');
 
-const DocumentPage = (props) => {
+const SentencePage = (props) => {
     const [data, setData] = useState([
         {
             key: '1',
             id: 1,
+            type: 'Bad',
             domain: 'vov.vn',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
@@ -33,6 +34,7 @@ const DocumentPage = (props) => {
         {
             key: '2',
             id: 2,
+            type: 'Good',
             domain: 'vov.vn',
             lang_1: 'en-US',
             lang_2: 'vi-VI',
@@ -46,6 +48,7 @@ const DocumentPage = (props) => {
         {
             key: '3',
             id: 3,
+            type: 'Bad',
             domain: 'vnexpress.net',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
@@ -57,6 +60,7 @@ const DocumentPage = (props) => {
         {
             key: '4',
             id: 4,
+            type: 'Good',
             domain: 'vtv.vn',
             lang_1: 'en-US',
             lang_2: 'zh-CN',
@@ -69,6 +73,7 @@ const DocumentPage = (props) => {
         {
             key: '5',
             id: 5,
+            type: 'Bad',
             domain: 'vtv.vn',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
@@ -81,6 +86,7 @@ const DocumentPage = (props) => {
         {
             key: '6',
             id: 6,
+            type: 'Bad',
             domain: 'vnexpress.net',
             lang_1: 'vi-VI',
             lang_2: 'en-US',
@@ -94,6 +100,7 @@ const DocumentPage = (props) => {
         {
             key: '7',
             id: 7,
+            type: 'Draft',
             domain: 'vov.vn',
             lang_1: 'vi-VI',
             lang_2: 'pt-PT',
@@ -106,6 +113,7 @@ const DocumentPage = (props) => {
         {
             key: '8',
             id: 8,
+            type: 'Draft',
             domain: 'vov.vn',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -119,6 +127,7 @@ const DocumentPage = (props) => {
         {
             key: '9',
             id: 9,
+            type: 'Bad',
             domain: 'vnexpress.net',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -131,6 +140,7 @@ const DocumentPage = (props) => {
         {
             key: '10',
             id: 10,
+            type: 'Good',
             domain: 'vov.vn',
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
@@ -191,7 +201,7 @@ const DocumentPage = (props) => {
             title: 'Action',
             dataIndex: '',
             key: 'x',
-            render: () => <Button type='primary'>Gióng hàng</Button>,
+            render: () => <Button type='danger'>Reject</Button>,
         },
     ];
 
@@ -209,8 +219,8 @@ const DocumentPage = (props) => {
         <Input
             placeholder='Search text...'
             className='search-input-box'
-            value={ value }
-            onChange={ (e) => {
+            value={value}
+            onChange={(e) => {
                 const currValue = e.target.value;
                 setValue(currValue);
                 const filteredData = data.filter((entry) => {
@@ -221,7 +231,7 @@ const DocumentPage = (props) => {
                         return true;
                 });
                 setDataSource(filteredData);
-            } }
+            }}
         />
     );
 
@@ -241,85 +251,82 @@ const DocumentPage = (props) => {
         setDataSource(filteredData);
     };
 
-    let domainList = [...new Set(data.map((data) => data.domain))];
-    domainList = ['All', 'No domain'].concat(domainList);
+    let typeList = ['All', 'Draft', 'Bad', 'Good'];
 
     let langList = ['All', 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
 
-    const domainOption = domainList.map((domain) => {
-        return <Option key={ domain }>{ domain }</Option>;
+    const typeOption = typeList.map((type) => {
+        return <Option key={type}>{type}</Option>;
     });
     const lang1Option = langList.map((lang) => {
-        return <Option key={ lang }>{ lang }</Option>;
+        return <Option key={lang}>{lang}</Option>;
     });
     const lang2Option = langList.map((lang) => {
-        return <Option key={ lang }>{ lang }</Option>;
+        return <Option key={lang}>{lang}</Option>;
     });
 
     return (
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading='Document'
+                    heading='Sentence'
                     subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
                 <Card className='domain-table-card'>
-                    { FilterByNameInput }
-                    <div style={ { float: 'left' } }>
+                    {FilterByNameInput}
+                    <div style={{ float: 'left' }}>
                         <Select
                             showSearch
-                            style={ { width: '300px', marginLeft: '30px' } }
-                            defaultValue={ 'Domain' }
-                            onChange={ (value) => handleChange(value, 'domain') }>
-                            { domainOption }
+                            style={{ width: '200px', marginLeft: '30px' }}
+                            defaultValue={'Type'}
+                            onChange={(value) => handleChange(value, 'type')}>
+                            {typeOption}
                         </Select>
 
                         <Select
-                            style={ { width: '100px', marginLeft: '30px' } }
-                            defaultValue={ 'vi-VN' }
-                            onChange={ (value) => handleChange(value, 'lang1') }>
-                            { lang1Option }
+                            style={{ width: '100px', marginLeft: '30px' }}
+                            defaultValue={'vi-VN'}
+                            onChange={(value) => handleChange(value, 'lang1')}>
+                            {lang1Option}
                         </Select>
 
                         <Select
                             showSearch
-                            style={ { width: '100px', marginLeft: '30px' } }
-                            defaultValue={ 'en-US' }
-                            onChange={ (value) => handleChange(value, 'lang2') }>
-                            { lang2Option }
+                            style={{ width: '100px', marginLeft: '30px' }}
+                            defaultValue={'en-US'}
+                            onChange={(value) => handleChange(value, 'lang2')}>
+                            {lang2Option}
                         </Select>
                         <Button
                             showSearchshowSearch
-                            style={ { width: '100px', marginLeft: '30px' } }
+                            style={{ width: '100px', marginLeft: '30px' }}
                             type='primary'
-                            onClick={ handleFilter }>
+                            onClick={handleFilter}>
                             Filter
                         </Button>
                     </div>
 
-                    <div style={ { float: 'right' } }>
-                        <Button style={ { marginLeft: '12px' } }>Add</Button>
+                    <div style={{ float: 'right' }}>
+                        <Button style={{ marginLeft: '12px' }}>Add</Button>
 
-                        <Button style={ { marginLeft: '12px' } }>Approve</Button>
-
-                        <Button style={ { marginLeft: '12px' } }>Reject</Button>
+                        <Button style={{ marginLeft: '12px' }}>Approve</Button>
                     </div>
 
                     <Table
                         className='table-striped-rows'
-                        rowSelection={ {
+                        rowSelection={{
                             type: 'checkbox',
                             ...rowSelection,
-                        } }
-                        dataSource={ dataSource }
-                        columns={ columns }
-                        pagination={ { pageSize: 5 } }></Table>
+                        }}
+                        dataSource={dataSource}
+                        columns={columns}
+                        pagination={{ pageSize: 5 }}></Table>
                 </Card>
             </SiteLayout>
         </React.Fragment>
     );
 };
 
-export default DocumentPage;
+export default SentencePage;

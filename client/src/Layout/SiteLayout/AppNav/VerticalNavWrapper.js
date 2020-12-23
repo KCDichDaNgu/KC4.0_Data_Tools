@@ -24,6 +24,11 @@ const Nav = () => {
             label: 'Document',
             to: 'document',
         },
+        {
+            icon: 'pe-7s-copy-file',
+            label: 'Sentence',
+            to: 'sentence',
+        },
     ])
     
     useEffect(() => {
