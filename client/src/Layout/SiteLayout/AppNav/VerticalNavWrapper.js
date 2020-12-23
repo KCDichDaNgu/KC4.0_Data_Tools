@@ -19,6 +19,11 @@ const Nav = () => {
             label: 'Domains',
             to: 'domains',
         },
+        {
+            icon: 'pe-7s-news-paper',
+            label: 'Document',
+            to: 'document',
+        },
     ])
     
     useEffect(() => {

@@ -3,6 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
 import DomainsPage from './pages/Domains';
+import DocumentPage from './pages/Document';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -69,6 +70,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/domains" 
                                     component={ DomainsPage } 
+                                />
+
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/document" 
+                                    component={ DocumentPage } 
                                 />
 
                                 
