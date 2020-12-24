@@ -9,7 +9,7 @@ class BaseConfig(object):
 
     # POSTGRESQL
     DB_USER = 'postgres'
-    DB_PASSWORD = '27101997'
+    DB_PASSWORD = 'root'
     DB_NAME = 'gene'
     DB_HOST = 'localhost'
     DB_PORT = 5432
