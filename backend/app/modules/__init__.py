@@ -9,7 +9,7 @@ You may control enabled modules by modifying ``ENABLED_MODULES`` config
 variable.
 """
 
-enabled_modules = ['domain','para_sentence']
+enabled_modules = ['domain','para_sentence', 'para_document']
 
 
 def init_app(app, **kwargs):
