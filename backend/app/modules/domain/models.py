@@ -1,18 +1,19 @@
 # from .resources import api
 
 # todo_json = api.model('Todo', {
-    # '_id': fields.String,
-    # 'complete': fields.Boolean,
-    # 'text': fields.String,
+# '_id': fields.String,
+# 'complete': fields.Boolean,
+# 'text': fields.String,
 # })
-
+import time
 from app.extensions import mongo_db as db
+
 
 class Domain(db.Document):
 
     name = db.StringField()
-    user_id  = db.StringField()
-    created_time = db.IntField()
+    user_id = db.StringField()
+    created_time = db.IntField(default=int(time.time()))
 
     class Attr:
         name = 'name'
