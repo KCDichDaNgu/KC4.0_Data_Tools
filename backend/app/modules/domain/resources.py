@@ -6,31 +6,31 @@ from app.extensions import mongo
 from app.extensions.api.parameters import PaginationParameters
 from flask_restplus import Resource
 
-api = Namespace('todos',description="Todos")
+api = Namespace('domain',description="domain")
 
-from .models import Todo
-from .parameters import AddTodoParameters
-
-todos_col = mongo.db.todos
+from .models import Domain
+from .parameters import AddDomainParameters
 
 @api.route('/')
-class Todos(Resource):
+class Domains(Resource):
     """
-    Manipulations with todos.
+    Manipulations with Domains.
     """
     @api.parameters(PaginationParameters())
-    @api.marshal_with(Todo)
+    @api.response(code=HTTPStatus.CONFLICT)
+    # @api.marshal_with(Domain_json)
     def get(self, args):
-        saved_todos = todos_col.find()
-        return saved_todos[0]
+        domains = Domain.objects.exclude('id').all()
+        return jsonify(domains)
 
-    @api.parameters(AddTodoParameters())
+    @api.parameters(AddDomainParameters())
     @api.response(code=HTTPStatus.FORBIDDEN)
     @api.response(code=HTTPStatus.CONFLICT)
-    @api.doc(id='create_todo')
+    @api.doc(id='create_Domain')
     def post(self, args):
         """
-        Create a new todo.
+        Create a new Domain.
         """
-        todos_col.insert_one(args)
+        domain = Domain(name=args[Domain.Attr.name],user_id=args[Domain.Attr.user_id],created_time=args[Domain.Attr.created_time])
+        domain.save()
         return jsonify({"Success":True})
