@@ -1,5 +1,6 @@
 from flask_marshmallow import base_fields, Schema
 from flask_restplus_patched import PostFormParameters, PatchJSONParameters
+from app.extensions.api.parameters import PaginationParameters
 
 
 class AddParaSentenceParameters(PostFormParameters):
@@ -33,3 +34,12 @@ class AddParaSentenceParameters(PostFormParameters):
             'created_time',
             'updated_time',
         )
+
+class ParaSentenceFilterParameter(PaginationParameters):
+    status = base_fields.String()
+    rating = base_fields.String()
+    lang1 = base_fields.String()
+    lang2 = base_fields.String()
+
+
+
