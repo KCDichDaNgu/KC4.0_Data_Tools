@@ -22,8 +22,9 @@ class Domains(Resource):
     @api.response(code=HTTPStatus.CONFLICT)
     # @api.marshal_with(Domain_json)
     def get(self, args):
-        domains = Domain.objects.all()
-        return jsonify(domains)
+        domains = Domain.objects.limit(args['limit']).skip(args['offset'])
+        total = len(Domain.objects.all())
+        return jsonify({'total': total, 'data': domains})
 
     @api.parameters(AddDomainParameters())
     @api.response(code=HTTPStatus.FORBIDDEN)
@@ -36,6 +37,7 @@ class Domains(Resource):
         domain = Domain(name=args[Domain.Attr.name],
                         user_id=args[Domain.Attr.user_id])
         domain.save()
+
         return jsonify(domain)
 
 
@@ -53,17 +55,17 @@ class UpdateDomain(Resource):
     @api.parameters(PaginationParameters())
     @api.response(code=HTTPStatus.CONFLICT)
     def put(self, request, _id, *args, **kwargs):
-        name = _request.form.get('name')
+        name = _request.form.get('name') or _request.get_json().get('name')
         domain = Domain.objects.filter(id=ObjectId(_id))
         domain.update(name=name)
         return jsonify({'Success': True})
 
 
 @api.route('/search')
-class UpdateDomain(Resource):
+class SearchDomain(Resource):
     @api.parameters(PaginationParameters())
     @api.response(code=HTTPStatus.CONFLICT)
     def post(self, args):
         name = _request.json.get('name')
         domains = Domain.objects.filter(name__contains=name).all()
-        return jsonify(domains)
+        return jsonify({'total': len(domains), 'data': domains})

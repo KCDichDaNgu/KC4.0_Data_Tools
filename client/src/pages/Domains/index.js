@@ -24,24 +24,53 @@ const DomainsPage = (props) => {
     const [selectedDomain, setSeletedDomain] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
     const [editingKey, setEditingKey] = useState([]);
+    const [limit, setLimit] = useState(10);
+    const [offset, setOffset] = useState(0);
+    const [total, setTotal] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+
+    let paginationOptions = {
+        showSizeChanger: true,
+        showQuickJumper: true,
+        onShowSizeChange: (_, pageSize) => {
+            handleSetPageSize(pageSize);
+        },
+        onChange: (page, pageSize) => {
+            setOffset((page - 1) * pageSize);
+        },
+        pageSizeOptions: [5, 10, 15, 20, 50, 100],
+        total: total,
+        showTotal: (total, range) => `${range[0]} to ${range[1]} of ${total}`,
+    };
 
     useEffect(() => {
         getDomain();
     }, []);
 
+    useEffect(() => {
+        !isSearching && getDomain();
+    }, [limit, offset]);
+
+    const handleSetPageSize = (pageSize) => {
+        setLimit(pageSize);
+    };
+
     const setData = (result) => {
-        let count = 1;
         result = result.map((item) => ({
             ...item,
             key: item._id.$oid,
-            id: count++,
         }));
         setDataSource(result);
     };
 
     const getDomain = async () => {
-        let result = await domainAPI.get();
-        setData(result);
+        var data = {
+            offset: offset,
+            limit: limit,
+        };
+        let result = await domainAPI.get(data);
+        setTotal(result.total);
+        setData(result.data);
     };
 
     const addDomain = async (domain) => {
@@ -68,11 +97,13 @@ const DomainsPage = (props) => {
     };
 
     const searchDomain = async (domain) => {
+        if (domain !== '' && domain !== null) setIsSearching(true);
         var data = {
             name: domain,
         };
         let result = await domainAPI.search(data);
-        setData(result);
+        setTotal(result.total);
+        setData(result.data);
     };
 
     const deleteDomain = (id) => {
@@ -91,12 +122,6 @@ const DomainsPage = (props) => {
     };
 
     const columns = [
-        {
-            title: 'IDs',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-        },
         {
             title: 'Domain',
             dataIndex: 'name',
@@ -207,7 +232,8 @@ const DomainsPage = (props) => {
                             ...rowSelection,
                         }}
                         dataSource={dataSource}
-                        columns={columns}></Table>
+                        columns={columns}
+                        pagination={paginationOptions}></Table>
                 </Card>
             </SiteLayout>
         </React.Fragment>

@@ -8,9 +8,12 @@ export default {
         customAxios({
             method: 'get',
             url: `${server_endpoint}/api/v1/domain`,
-            params: {},
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
+            },
+            params: {
+                limit: data.limit,
+                offset: data.offset,
             },
         }).then((res) => {
             return res.data;
