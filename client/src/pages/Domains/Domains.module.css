@@ -37,3 +37,8 @@
     justify-content: space-between;
     align-items: baseline;
 }
+
+.domain-input {
+    color: black !important;
+    cursor: text !important;
+}
