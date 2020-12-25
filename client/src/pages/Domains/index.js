@@ -21,8 +21,6 @@ const timeformat = (last_update) => {
 
 const DomainsPage = (props) => {
     const [dataSource, setDataSource] = useState([]);
-    const [data, setData] = useState([]);
-    const [value, setValue] = useState('');
     const [selectedDomain, setSeletedDomain] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
     const [editingKey, setEditingKey] = useState([]);
@@ -31,8 +29,7 @@ const DomainsPage = (props) => {
         getDomain();
     }, []);
 
-    const getDomain = async () => {
-        let result = await domainAPI.get();
+    const setData = (result) => {
         let count = 1;
         result = result.map((item) => ({
             ...item,
@@ -40,6 +37,10 @@ const DomainsPage = (props) => {
             id: count++,
         }));
         setDataSource(result);
+    };
+
+    const getDomain = async () => {
+        let result = await domainAPI.get();
         setData(result);
     };
 
@@ -53,17 +54,29 @@ const DomainsPage = (props) => {
     };
 
     const updateDomain = async (id, domain) => {
+        if (domain == '' || domain == null) {
+            reload();
+            alert("Name can't be null");
+        } else {
+            var data = {
+                name: domain,
+                _id: id,
+            };
+            domainAPI.update(data);
+        }
+        reload();
+    };
+
+    const searchDomain = async (domain) => {
         var data = {
             name: domain,
-            _id: id,
         };
-        domainAPI.update(data);
-        reload();
+        let result = await domainAPI.search(data);
+        setData(result);
     };
 
     const deleteDomain = (id) => {
         id?.forEach((item) => domainAPI.delete(item));
-
         getDomain();
     };
 
@@ -102,11 +115,7 @@ const DomainsPage = (props) => {
                         bordered={isEditable(domain.key)}
                         onPressEnter={(event) =>
                             updateDomain(domain.key, event.target.value)
-                        }
-                        required
-                        validationErrors={{
-                            isDefaultRequiredValue: 'Field is required',
-                        }}></Input>
+                        }></Input>
                 </Tooltip>
             ),
         },
@@ -145,16 +154,7 @@ const DomainsPage = (props) => {
         <Input
             placeholder='Search Domain...'
             className='search-input-box'
-            value={value}
-            onChange={(e) => {
-                console.log(data);
-                const currValue = e.target.value;
-                setValue(currValue);
-                const filteredData = data.filter((entry) =>
-                    entry.name.includes(currValue)
-                );
-                setDataSource(filteredData);
-            }}
+            onPressEnter={(event) => searchDomain(event.target.value)}
         />
     );
 

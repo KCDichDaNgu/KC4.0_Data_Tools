@@ -33,9 +33,11 @@ class Domains(Resource):
         """
         Create a new Domain.
         """
-        domain = Domain(name=args[Domain.Attr.name],user_id=args[Domain.Attr.user_id])
+        domain = Domain(name=args[Domain.Attr.name],
+                        user_id=args[Domain.Attr.user_id])
         domain.save()
         return jsonify(domain)
+
 
 @api.route('/<_id>')
 class DeteleDomain(Resource):
@@ -43,7 +45,8 @@ class DeteleDomain(Resource):
     @api.response(code=HTTPStatus.CONFLICT)
     def delete(self, request, _id, *args, **kwargs):
         Domain.objects.filter(id=ObjectId(_id)).delete()
-        return ''
+        return jsonify({'Success': True})
+
 
 @api.route('/<_id>')
 class UpdateDomain(Resource):
@@ -53,4 +56,14 @@ class UpdateDomain(Resource):
         name = _request.form.get('name')
         domain = Domain.objects.filter(id=ObjectId(_id))
         domain.update(name=name)
-        return ''
+        return jsonify({'Success': True})
+
+
+@api.route('/search')
+class UpdateDomain(Resource):
+    @api.parameters(PaginationParameters())
+    @api.response(code=HTTPStatus.CONFLICT)
+    def post(self, args):
+        name = _request.json.get('name')
+        domains = Domain.objects.filter(name__contains=name).all()
+        return jsonify(domains)
