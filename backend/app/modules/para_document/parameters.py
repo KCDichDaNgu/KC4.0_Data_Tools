@@ -23,6 +23,8 @@ class AddParaDocumentParameters(PostFormParameters):
 
     class Meta(Schema.Meta):
         fields = (
+            'url1',
+            'url2',
             'text1',
             'text2',
             'score',

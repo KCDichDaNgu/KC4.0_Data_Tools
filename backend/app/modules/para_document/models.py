@@ -15,13 +15,15 @@ class ParaDocument(db.Document):
     text2 = db.StringField()
     url1 = db.StringField()
     url2 = db.StringField()
-    lang1 = db.CharField()
-    lang2 = db.CharField()
+    lang1 = db.StringField()
+    lang2 = db.StringField()
     score = db.DictField()
-    creator_id = db.IntField()
+    creator_id = db.StringField()
     status = db.IntField()
     created_time = db.IntField()
     updated_time = db.IntField()
+
+    meta = {'collection': 'para_document'}
 
     class Attr:
         text1 = 'text1'
