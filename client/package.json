@@ -21,6 +21,7 @@
     "jquery": "3.5.1",
     "jw-react-pagination": "1.1.0",
     "moment": "^2.29.1",
+    "next": "^10.0.4",
     "numeral": "2.0.6",
     "pe7-icon": "1.0.4",
     "popper.js": "1.16.1",
