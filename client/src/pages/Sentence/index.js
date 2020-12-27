@@ -16,14 +16,19 @@ import SiteLayout from "../../Layout/SiteLayout";
 
 import "./Sentence.module.css";
 import { set } from "numeral";
+
+import { useTranslation } from 'react-i18next';
+
 const moment = require("moment");
 
 const SentencePage = (props) => {
+  const { t, i18n } = useTranslation(['common']);
+
   const [data, setData] = useState([
     {
       key: "1",
       id: 1,
-      status: "Approved",
+      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "en-US",
       lang_2: "vi-VI",
@@ -36,7 +41,7 @@ const SentencePage = (props) => {
     {
       key: "2",
       id: 2,
-      status: "Rejected",
+      status: t('sentence.approved'),
       domain: "vov.vn",
       lang_1: "en-US",
       lang_2: "vi-VI",
@@ -50,7 +55,7 @@ const SentencePage = (props) => {
     {
       key: "3",
       id: 3,
-      status: "Approved",
+      status: t('sentence.draft'),
       domain: "vnexpress.net",
       lang_1: "en-US",
       lang_2: "zh-CN",
@@ -62,7 +67,7 @@ const SentencePage = (props) => {
     {
       key: "4",
       id: 4,
-      status: "Rejected",
+      status: t('sentence.rejected'),
       domain: "vtv.vn",
       lang_1: "en-US",
       lang_2: "zh-CN",
@@ -74,7 +79,7 @@ const SentencePage = (props) => {
     {
       key: "5",
       id: 5,
-      status: "Approved",
+      status: t('sentence.rejected'),
       domain: "vtv.vn",
       lang_1: "vi-VI",
       lang_2: "en-US",
@@ -87,7 +92,7 @@ const SentencePage = (props) => {
     {
       key: "6",
       id: 6,
-      status: "Approved",
+      status: t('sentence.rejected'),
       domain: "vnexpress.net",
       lang_1: "vi-VI",
       lang_2: "en-US",
@@ -100,7 +105,7 @@ const SentencePage = (props) => {
     {
       key: "7",
       id: 7,
-      status: "Draft",
+      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "vi-VI",
       lang_2: "pt-PT",
@@ -112,7 +117,7 @@ const SentencePage = (props) => {
     {
       key: "8",
       id: 8,
-      status: "Draft",
+      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -126,7 +131,7 @@ const SentencePage = (props) => {
     {
       key: "9",
       id: 9,
-      status: "Approved",
+      status: t('sentence.rejected'),
       domain: "vnexpress.net",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -139,7 +144,7 @@ const SentencePage = (props) => {
     {
       key: "10",
       id: 10,
-      status: "Rejected",
+      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -183,35 +188,35 @@ const SentencePage = (props) => {
     //   sorter: (a, b) => a.id - b.id,
     // },
     {
-      title: "Text 1",
+      title: `${ t('sentence.text') } 1`,
       dataIndex: "text1",
       key: "text1",
     },
     {
-      title: "Text 2",
+      title: `${ t('sentence.text') } 2`,
       dataIndex: "text2",
       key: "text2",
     },
     {
-      title: "Last Update",
+      title: t('sentence.lastUpdate'),
       dataIndex: "updated_time",
       key: "updated_time",
       render: (last_update) => timeformat(last_update),
     },
     {
-      title: "Score",
+      title: t('sentence.score'),
       dataIndex: "score[bert]",
       key: "score[bert]",
       sorter: (a, b) => a.score - b.score,
     },
 
     {
-      title: "Status",
+      title: t('sentence.status'),
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Rating",
+      title: t('sentence.rating'),
       dataIndex: "rating",
       key: "rating",
       // render: () => (
@@ -221,13 +226,17 @@ const SentencePage = (props) => {
       // ),
     },
     {
-      title: "Action",
+      title: t('sentence.action'),
       dataIndex: "",
       key: "action",
       render: () => 
       <div>
-        <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>Reject</Button>
-        <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>Approve</Button>
+        <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
+          { t('sentence.reject') }
+        </Button>
+        <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
+          { t('sentence.approve') }
+        </Button>
     </div>,
     },
   ];
@@ -244,7 +253,7 @@ const SentencePage = (props) => {
 
   const FilterByNameInput = (
     <Input
-      placeholder="Search text..."
+      placeholder={ t('sentence.searchBox') }
       className="search-input-box"
       value={value}
       onChange={(e) => {
@@ -338,8 +347,8 @@ const SentencePage = (props) => {
     <React.Fragment>
       <SiteLayout>
         <PageTitle
-          heading="Sentence"
-          subheading="Create new content..."
+          heading={ t('sentence.title') }
+          // subheading="Create new content..."
           icon="pe-7s-home icon-gradient bg-happy-itmeo"
         />
 
@@ -374,7 +383,7 @@ const SentencePage = (props) => {
                 </Select>
               </div>
               <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                <span style={{ marginRight: "10px" }}>Rating:</span>
+                <span style={{ marginRight: "10px" }}>{ t('sentence.rating') }:</span>
                 <Select
                   showSearch
                   style={{
@@ -389,7 +398,7 @@ const SentencePage = (props) => {
                 </Select>
               </div>
               <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                <span style={{ marginRight: "10px" }}>Status:</span>
+                <span style={{ marginRight: "10px" }}>{ t('sentence.status') }:</span>
                 <Select
                   showSearch
                   style={{
@@ -406,9 +415,8 @@ const SentencePage = (props) => {
                 showSearchshowSearch
                 style={{ width: "100px", marginLeft: "30px", background: '#384AD7', borderColor: '#384AD7'}}
                 type="primary"
-                onClick={handleFilter}
-              >
-                Filter
+                onClick={handleFilter}>
+                { t('sentence.filter') }
               </Button>
             </div>
 

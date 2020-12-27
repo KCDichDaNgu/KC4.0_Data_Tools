@@ -13,6 +13,8 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
 
+import { withTranslation, Trans } from 'react-i18next';
+
 import './App.css';
 import 'antd/dist/antd.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,7 +35,7 @@ const App = ({ location, initialReduxState }) => {
 
     return (
         <React.Fragment>
-
+            
             <div id="overlay">
                 <div className="cv-spinner">
                     <span className="spinner"></span>
@@ -105,4 +107,4 @@ const App = ({ location, initialReduxState }) => {
     )
 };
 
-export default App;
+export default withTranslation('common')(App);
