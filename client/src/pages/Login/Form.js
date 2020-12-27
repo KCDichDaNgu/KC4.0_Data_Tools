@@ -12,7 +12,10 @@ import {
     CardTitle,
 } from 'reactstrap';
 
+import { useTranslation } from 'react-i18next';
+
 const LoginForm = (props) => {
+    const { t, i18n } = useTranslation(['common']);
 
     let [ data, setData ] = useState({username: "", password: ""});
     let [ errors, setErrors ] = useState({});
@@ -27,10 +30,10 @@ const LoginForm = (props) => {
 
         switch (name) {
             case 'username': 
-                _errors.username = value.length == 0 ? 'This field is required!' : '';
+                _errors.username = value.length == 0 ? t('Input.requiredField') : '';
                 break;
             default: 
-                _errors.password = value.length == 0 ? 'This field is required!' : ''
+                _errors.password = value.length == 0 ? t('Input.requiredField') : ''
                 break;
         }
         
@@ -79,7 +82,7 @@ const LoginForm = (props) => {
                                 className="Form-control"
                                 id="username"
                                 name="username"
-                                placeholder='Username here ...'
+                                placeholder={ t('login.usernameHint') }
                                 value={ data.username }
                                 onChange={ handleChange }
                                 invalid={ !!errors.username }
@@ -95,7 +98,7 @@ const LoginForm = (props) => {
                                 className="Form-control"
                                 id="password"
                                 name="password"
-                                placeholder='Password here ...'
+                                placeholder={ t('login.passwordHint') }
                                 value={ data.password }
                                 onChange={ handleChange }
                                 invalid={ !!errors.password }
@@ -136,7 +139,7 @@ const LoginForm = (props) => {
                                 type="submit"
                                 className="btn btn-primary btn-lg" 
                                 style={{ fontWeight: 600 }}>
-                                Login
+                                { t('login.title') }
                             </button>
                         </div>
                     </div>

@@ -1,0 +1,69 @@
+{
+	"Common": {
+		"mainPages": "Main Pages"
+	},
+	"Homepage": "Homepage",
+	"Language": {
+		"en": "English",
+		"vi": "Vietnamese"
+	},
+	"Input": {
+		"requiredField": "This field is required!"
+	},
+	"loadingMessage": "Please wait while we load this page :)",
+	"document": {
+		"title": "Document",
+		"createNewContent": "Create new document",
+		"draft": "Draft",
+		"approved": "Approved",
+		"rejected": "Rejected",
+		"searchBox": "Search text...",
+		"lastUpdate": "Last Update",
+		"score": "Score",
+		"action": "Action",
+		"status": "Status",
+		"selectDomain": "Select domain",
+		"filter": "Filter",
+		"selectStatus": "Select status",
+		"add": "Add",
+		"approve": "Approve",
+		"reject": "Reject",
+		"all": "All",
+		"noDomain": "No Domain",
+		"senAlign": "Sentence Align",
+		"text": "Text"
+	},
+	"domain": {
+		"addDomain": "Add domain",
+		"editDomain": "Edit domain",
+		"deleteDomain": "Delete domain",
+		"title": "Domain",
+		"searchBox": "Search domain...",
+		"inputAdd": "Type in and press Enter to add domain...",
+		"lastUpdate": "Last Update",
+		"crawledDocuments": "Crawled documents",
+		"crawl": "Crawl",
+		"nameNotNull": "Name can't be null"
+	},
+	"home": {
+		"title": "Home"
+	},
+	"login": {
+		"title": "Login",
+		"usernameHint": "Username here...",
+		"passwordHint": "Password here..."
+	},
+	"sentence": {
+		"title": "Sentence",
+		"searchBox": "Search text...",
+		"lastUpdate": "Last Update",
+		"score": "Score",
+		"action": "Action",
+		"status": "Status",
+		"rating": "Rating",
+		"text": "Text",
+		"filter": "Filter",
+		"reject": "Reject",
+		"approve": "Approve"
+	}
+}

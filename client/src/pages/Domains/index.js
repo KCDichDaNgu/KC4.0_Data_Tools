@@ -12,6 +12,9 @@ import {
 import SiteLayout from '../../Layout/SiteLayout';
 import domainAPI from '../../api/domain';
 import './Domains.module.css';
+
+import { useTranslation } from 'react-i18next';
+
 const moment = require('moment');
 
 const timeformat = (last_update) => {
@@ -20,6 +23,8 @@ const timeformat = (last_update) => {
 };
 
 const DomainsPage = (props) => {
+    const { t, i18n } = useTranslation(['common']);
+
     const [dataSource, setDataSource] = useState([]);
     const [selectedDomain, setSeletedDomain] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
@@ -85,7 +90,7 @@ const DomainsPage = (props) => {
     const updateDomain = async (id, domain) => {
         if (domain == '' || domain == null) {
             reload();
-            alert("Name can't be null");
+            alert(t('domain.nameNotNull'));
         } else {
             var data = {
                 name: domain,
@@ -123,14 +128,14 @@ const DomainsPage = (props) => {
 
     const columns = [
         {
-            title: 'Domain',
+            title: t('domain.title'),
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             render: (name, domain) => (
                 <Tooltip
                     trigger={['focus']}
-                    title={'Type in your new domain, press Enter to save.'}
+                    title={ t('domain.inputAdd') }
                     placement='topLeft'
                     visible={isEditable(domain.key)}>
                     <Input
@@ -145,23 +150,23 @@ const DomainsPage = (props) => {
             ),
         },
         {
-            title: 'Last Update',
+            title: t('domain.lastUpdate'),
             dataIndex: 'created_time',
             key: 'created_time',
             render: (created_time) => timeformat(created_time),
             sorter: (a, b) => a.created_time - b.created_time,
         },
         {
-            title: 'Document crawled',
+            title: t('domain.crawledDocuments'),
             dataIndex: 'crawled',
             key: 'crawled',
             sorter: (a, b) => a.crawled - b.crawled,
         },
         {
-            title: 'Crawl',
+            title: t('domain.crawl'),
             dataIndex: '',
             key: 'x',
-            render: () => <Button type='primary'>Crawl</Button>,
+            render: () => <Button type='primary'>{ t('domain.crawl') }</Button>,
         },
     ];
 
@@ -177,7 +182,7 @@ const DomainsPage = (props) => {
 
     const FilterByNameInput = (
         <Input
-            placeholder='Search Domain...'
+            placeholder={ t('domain.searchBox') }
             className='search-input-box'
             onPressEnter={(event) => searchDomain(event.target.value)}
         />
@@ -187,29 +192,29 @@ const DomainsPage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading='Domains'
-                    subheading='Create new content...'
+                    heading={ t('domain.title' )}
+                    // subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
                 <Card className='domain-table-card'>
                     <div style={{ float: 'right' }}>
                         <Button onClick={() => handleAddButtonClick()}>
-                            Add domain
+                            { t('domain.addDomain') }
                         </Button>
 
                         <Button onClick={() => setEditingKey(selectedDomain)}>
-                            Edit domain
+                            { t('domain.editDomain') }
                         </Button>
 
                         <Button onClick={() => deleteDomain(selectedDomain)}>
-                            Delete domain
+                            { t('domain.deleteDomain') }
                         </Button>
 
                         {isAdding && (
                             <div>
                                 <Input
-                                    placeholder='Type in and press Enter to add domain...'
+                                    placeholder={ t('domain.inputAdd') }
                                     onKeyPress={(event) => {
                                         if (event.key === 'Enter') {
                                             addDomain(event.target.value);
