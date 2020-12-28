@@ -25,7 +25,6 @@ class ParaSentences(Resource):
             ParaSentence.Attr.lang1,
             ParaSentence.Attr.lang2,
             ParaSentence.Attr.rating,
-            ParaSentence.Attr.status
         ]
         for attr in attr_filter:
             if attr in args:
@@ -48,7 +47,6 @@ class ParaSentences(Resource):
             editor_id=args[ParaSentence.Attr.editor_id],
             para_document_id=args[ParaSentence.Attr.para_document_id],
             origin_para_document_id=args[ParaSentence.Attr.origin_para_document_id],
-            status=args[ParaSentence.Attr.status],
             created_time=args[ParaSentence.Attr.created_time],
             updated_time=args[ParaSentence.Attr.updated_time])
 
@@ -76,16 +74,16 @@ class ListRating(Resource):
         list_rating = ParaSentence.objects.distinct('rating')
         return jsonify({"ratings" : list_rating})
 
-@api.route('/list_status')
-class ListStatus(Resource):
-    """
-    Manipulations with ParaSentences
-    """
-    @api.parameters(PaginationParameters())
-    @api.response(code=HTTPStatus.CONFLICT)
-    def get(self, args):
-        list_status = ParaSentence.objects.distinct('status')
-        return jsonify({"statuses" : list_status})
+# @api.route('/list_status')
+# class ListStatus(Resource):
+#     """
+#     Manipulations with ParaSentences
+#     """
+#     @api.parameters(PaginationParameters())
+#     @api.response(code=HTTPStatus.CONFLICT)
+#     def get(self, args):
+#         list_status = ParaSentence.objects.distinct('status')
+#         return jsonify({"statuses" : list_status})
 
 @api.route('/list_option_field')
 class ListOptionField(Resource):
@@ -98,11 +96,9 @@ class ListOptionField(Resource):
         list_lang1 = ParaSentence.objects.distinct('lang1')
         list_lang2 = ParaSentence.objects.distinct('lang2')
         list_rating = ParaSentence.objects.distinct('rating')
-        list_status = ParaSentence.objects.distinct('status')
         
         return jsonify({
             "lang1": list_lang1,
             "lang2" : list_lang2,
-            "rating" : list_rating,
-            "status": list_status
+            "rating" : list_rating
         })

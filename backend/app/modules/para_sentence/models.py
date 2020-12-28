@@ -19,7 +19,6 @@ class ParaSentence(db.Document):
     score = db.DictField()
     editor_id = db.StringField()
     origin_para_document_id = db.StringField()
-    status = db.StringField()
     created_time = db.IntField()
     updated_time = db.IntField()
 
@@ -34,6 +33,5 @@ class ParaSentence(db.Document):
         score = 'score'
         editor_id = 'editor_id'
         origin_para_document_id = 'origin_para_document_id'
-        status = 'status'
         created_time = 'created_time'
         updated_time = 'updated_time'

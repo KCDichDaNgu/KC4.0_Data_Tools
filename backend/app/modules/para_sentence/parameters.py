@@ -17,8 +17,6 @@ class AddParaSentenceParameters(PostFormParameters):
         description="Example: 1", required=False)
     origin_para_document_id = base_fields.Integer(
         description="Example: 1", required=False)
-    status = base_fields.Integer(
-        description="Example: 1", required=False)
     created_time = base_fields.Integer(default=1608743995, required=True)
     updated_time = base_fields.Integer(default=1608743995, required=False)
 
@@ -30,13 +28,11 @@ class AddParaSentenceParameters(PostFormParameters):
             'editor_id',
             'para_document_id',
             'origin_para_document_id',
-            'status',
             'created_time',
             'updated_time',
         )
 
 class ParaSentenceFilterParameter(PaginationParameters):
-    status = base_fields.String()
     rating = base_fields.String()
     lang1 = base_fields.String()
     lang2 = base_fields.String()

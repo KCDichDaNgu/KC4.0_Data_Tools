@@ -64,6 +64,9 @@
 		"text": "Text",
 		"filter": "Filter",
 		"reject": "Reject",
-		"approve": "Approve"
+		"approve": "Approve",
+		"unRated": "Unrated",
+		"notGood": "Not Good",
+		"Good": "Good"
 	}
 }
