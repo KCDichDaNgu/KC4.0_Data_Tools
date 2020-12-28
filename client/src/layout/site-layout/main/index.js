@@ -7,9 +7,9 @@ import {
 import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
-import AppHeader from '../AppHeader';
-import AppSidebar from '../AppSidebar';
-import AppFooter from '../AppFooter';
+import AppHeader from '../header';
+import AppSidebar from '../sidebar';
+import AppFooter from '../footer';
 
 const AppMain = ( props ) => {
     

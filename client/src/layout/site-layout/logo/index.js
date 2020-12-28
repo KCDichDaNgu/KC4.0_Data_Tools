@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 
 import Hamburger from 'react-hamburgers';
 
-import AppMobileMenu from '../AppMobileMenu';
+import AppMobileMenu from '../mobile-menu';
 
 import {
     setEnableClosedSidebar,

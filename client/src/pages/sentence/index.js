@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import PageTitle from "../../Layout/SiteLayout/AppMain/PageTitle";
+import PageTitle from "../../layout/site-layout/main/PageTitle";
 import paraSentenceAPI from "../../api/paraSentence";
 
 import {
@@ -12,7 +12,7 @@ import {
   Menu,
   Select,
 } from "antd";
-import SiteLayout from "../../Layout/SiteLayout";
+import SiteLayout from "../../layout/site-layout";
 
 import "./Sentence.module.css";
 import { set } from "numeral";

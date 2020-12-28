@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
-import PageTitle from '../../Layout/SiteLayout/AppMain/PageTitle';
+import PageTitle from '../../layout/site-layout/main/PageTitle';
 import Tabs from 'react-responsive-tabs';
 
-import SiteLayout from '../../Layout/SiteLayout';
+import SiteLayout from '../../layout/site-layout';
 
-import './Home.module.css';
+import './home.module.css';
 
 import { useTranslation } from 'react-i18next';
 
