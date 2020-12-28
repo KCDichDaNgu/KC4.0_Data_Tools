@@ -10,8 +10,9 @@ collection = db.para_sentence
 with open('o1_5.txt', encoding='utf-16') as f:
     lines = [line.rstrip() for line in f]
 
-statusList = ['Draft', 'Approved', 'Rejected']
-ratingList = ['Perfect', "Good", "Partially Understand", 'Understand', 'Bad']
+# statusList = ['Draft', 'Approved', 'Rejected']
+# ratingList = ['Perfect', "Good", "Partially Understand", 'Understand', 'Bad']
+ratingList = ['unRated', 'notGood', 'Good']
 
 
 def insertSentence():
@@ -23,7 +24,6 @@ def insertSentence():
             "text2": split_line[2],
             "lang1": 'vi',
             "lang2": 'khm',
-            "status": random.choice(statusList),
             "rating": random.choice(ratingList),
             "editor_id": 1,
             "origin_para_document_id": 1,

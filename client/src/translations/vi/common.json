@@ -66,6 +66,9 @@
 		"rejected": "Từ chối",
 		"filter": "Lọc",
 		"reject": "Từ chối",
-		"approve": "Tán thành"
+		"approve": "Tán thành",
+		"unRated": "Chưa đánh giá",
+		"notGood": "Không tốt",
+		"Good": "Tốt"
 	}
 }

@@ -28,7 +28,6 @@ const SentencePage = (props) => {
     {
       key: "1",
       id: 1,
-      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "en-US",
       lang_2: "vi-VI",
@@ -41,7 +40,6 @@ const SentencePage = (props) => {
     {
       key: "2",
       id: 2,
-      status: t('sentence.approved'),
       domain: "vov.vn",
       lang_1: "en-US",
       lang_2: "vi-VI",
@@ -55,7 +53,6 @@ const SentencePage = (props) => {
     {
       key: "3",
       id: 3,
-      status: t('sentence.draft'),
       domain: "vnexpress.net",
       lang_1: "en-US",
       lang_2: "zh-CN",
@@ -67,7 +64,6 @@ const SentencePage = (props) => {
     {
       key: "4",
       id: 4,
-      status: t('sentence.rejected'),
       domain: "vtv.vn",
       lang_1: "en-US",
       lang_2: "zh-CN",
@@ -79,7 +75,6 @@ const SentencePage = (props) => {
     {
       key: "5",
       id: 5,
-      status: t('sentence.rejected'),
       domain: "vtv.vn",
       lang_1: "vi-VI",
       lang_2: "en-US",
@@ -92,7 +87,6 @@ const SentencePage = (props) => {
     {
       key: "6",
       id: 6,
-      status: t('sentence.rejected'),
       domain: "vnexpress.net",
       lang_1: "vi-VI",
       lang_2: "en-US",
@@ -105,7 +99,6 @@ const SentencePage = (props) => {
     {
       key: "7",
       id: 7,
-      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "vi-VI",
       lang_2: "pt-PT",
@@ -117,7 +110,6 @@ const SentencePage = (props) => {
     {
       key: "8",
       id: 8,
-      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -131,7 +123,6 @@ const SentencePage = (props) => {
     {
       key: "9",
       id: 9,
-      status: t('sentence.rejected'),
       domain: "vnexpress.net",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -144,7 +135,6 @@ const SentencePage = (props) => {
     {
       key: "10",
       id: 10,
-      status: t('sentence.rejected'),
       domain: "vov.vn",
       lang_1: "zh-CN",
       lang_2: "vi-VI",
@@ -209,21 +199,13 @@ const SentencePage = (props) => {
       key: "score[bert]",
       sorter: (a, b) => a.score - b.score,
     },
-
-    {
-      title: t('sentence.status'),
-      dataIndex: "status",
-      key: "status",
-    },
     {
       title: t('sentence.rating'),
       dataIndex: "rating",
       key: "rating",
-      // render: () => (
-      //     <Select defaultValue='Perfect' style={{ width: '200px' }}>
-      //         {ratingOption}
-      //     </Select>
-      // ),
+      render: (rating) => (
+        t(`sentence.${ rating }`)
+      ),
     },
     {
       title: t('sentence.action'),
@@ -299,26 +281,9 @@ const SentencePage = (props) => {
       .then((res) => setDataSource(res.data.data));
   };
 
-  // let statusList = ['All', 'Draft', 'Approved', 'Rejected'];
-  const [statusList, setStatusList] = useState([]);
   const [langList1, setLangList1] = useState([]);
   const [langList2, setLangList2] = useState([]);
   const [ratingList, setRatingList] = useState([]);
-
-  // let langList = ['All', 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
-
-  // let ratingList = [
-  //     'All',
-  //     'Perfect',
-  //     'Good',
-  //     'Understand',
-  //     'Understand Partially',
-  //     'Cant Understand',
-  // ];
-
-  const statusOption = statusList.map((type) => {
-    return <Option key={type}>{type}</Option>;
-  });
 
   const lang1Option = langList1.map((lang) => {
     return <Option key={lang}>{lang}</Option>;
@@ -328,7 +293,7 @@ const SentencePage = (props) => {
   });
 
   const ratingOption = ratingList.map((rating) => {
-    return <Option key={rating}>{rating}</Option>;
+    return <Option key={rating}>{ t(`sentence.${rating}`) }</Option>;
   });
 
   useEffect(() => {
@@ -336,7 +301,6 @@ const SentencePage = (props) => {
       setDataSource(res.data.data);
     });
     paraSentenceAPI.getOptions().then((res) => {
-      setStatusList(res.data.status);
       setLangList1(res.data.lang1);
       setLangList2(res.data.lang2);
       setRatingList(res.data.rating);
@@ -348,7 +312,6 @@ const SentencePage = (props) => {
       <SiteLayout>
         <PageTitle
           heading={ t('sentence.title') }
-          // subheading="Create new content..."
           icon="pe-7s-home icon-gradient bg-happy-itmeo"
         />
 
@@ -395,19 +358,6 @@ const SentencePage = (props) => {
                   onChange={(value) => handleChange(value, "rating")}
                 >
                   {ratingOption}
-                </Select>
-              </div>
-              <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                <span style={{ marginRight: "10px" }}>{ t('sentence.status') }:</span>
-                <Select
-                  showSearch
-                  style={{
-                    width: "150px",
-                  }}
-                  defaultValue={statusOption.lenth === 0 ? "" : statusOption[0]}
-                  onChange={(value) => handleChange(value, "status")}
-                >
-                  {statusOption}
                 </Select>
               </div>
 
