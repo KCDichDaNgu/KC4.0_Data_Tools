@@ -25,7 +25,7 @@ const toBase64 = (str) => {
 const convertParamsToUrl = (params) => {
   let param = "";
   for (var key in params) {
-    if (params[key] !== "") {
+    if (params[key] !== "" && params[key] !== undefined) {
       if (param === "") param += "?";
       else param += "&";
       param += `${key}=${params[key]}`;

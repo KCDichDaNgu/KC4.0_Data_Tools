@@ -151,12 +151,14 @@ const SentencePage = (props) => {
   const [value, setValue] = useState("");
   const [selectedDomain, setSeletedDomain] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
+  const [paginationParams, setPaginationParams] = useState({});
   const [requestParams, setRequestParams] = useState({
     domain: "",
     lang1: "",
     lang2: "",
     sort_by: "",
-    sort_order: ""
+    sort_order: "",
+    page: ""
   });
 
   const timeformat = (last_update) => {
@@ -195,6 +197,7 @@ const SentencePage = (props) => {
       key: "updated_time",
       render: (updated_time) => timeformat(updated_time),
       sorter: (a, b, sortOrder) => {},
+      sortDirections: ['ascend', 'descend', 'ascend']
     },
     {
       title: t('sentence.score'),
@@ -202,6 +205,7 @@ const SentencePage = (props) => {
       key: "score.senAlign",
       render: (score) => Number(score['senAlign']).toFixed(4),
       sorter: (a, b, sortOrder) => {},
+      sortDirections: ['ascend', 'descend', 'ascend']
     },
     {
       title: t('sentence.rating'),
@@ -262,9 +266,17 @@ const SentencePage = (props) => {
   };
 
   const handleFilter = () => {
-    paraSentenceAPI
-      .getSentences(requestParams)
-      .then((res) => setDataSource(res.data.data));
+    let params = {
+      ...requestParams,
+      page: 1
+    }; // reset page to 1
+
+    setRequestParams(params);
+
+    paraSentenceAPI.getSentences(params).then((res) => {
+      setDataSource(res.data.data)
+      setPaginationParams(res.data.pagination);
+    });
   };
 
   const [langList1, setLangList1] = useState([]);
@@ -285,6 +297,7 @@ const SentencePage = (props) => {
   useEffect(() => {
     paraSentenceAPI.getSentences({}).then((res) => {
       setDataSource(res.data.data);
+      setPaginationParams(res.data.pagination);
     });
     paraSentenceAPI.getOptions().then((res) => {
       setLangList1(res.data.lang1);
@@ -296,15 +309,16 @@ const SentencePage = (props) => {
   const handleTableChange = (pagination, filters, sorter) => {
     let params = {
       ...requestParams,
-      page: pagination['current'],
       sort_by: sorter['columnKey'],
-      sort_order: sorter['order']
+      sort_order: sorter['order'],
+      page: pagination['current']
     }
 
     setRequestParams(params);
 
     paraSentenceAPI.getSentences(params).then((res) => {
       setDataSource(res.data.data);
+      setPaginationParams(res.data.pagination);
     });
   }
 
@@ -388,7 +402,11 @@ const SentencePage = (props) => {
             dataSource={dataSource}
             columns={columns}
             onChange={handleTableChange}
-            pagination={{ pageSize: 5 }}
+            pagination={{ 
+              pageSize: paginationParams.page_size,
+              total: paginationParams.total_items,
+              current: paginationParams.current_page
+            }}
           ></Table>
         </Card>
       </SiteLayout>

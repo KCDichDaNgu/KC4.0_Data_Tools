@@ -41,7 +41,18 @@ class ParaSentences(Resource):
                 sort_mark = '-'
             para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')
 
-        return jsonify({"data":para_sentences})
+        # pagination
+        para_sentences = para_sentences.paginate(page=args['page'], per_page=args['page_size'])
+        
+        return jsonify({
+            "data": para_sentences.items,
+            "pagination": {
+                "current_page": para_sentences.page,
+                "total_pages": para_sentences.pages,
+                "page_size": para_sentences.per_page,
+                "total_items": para_sentences.total
+            }
+        })
 
     @api.parameters(AddParaSentenceParameters())
     @api.response(code=HTTPStatus.FORBIDDEN)

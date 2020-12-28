@@ -25,3 +25,13 @@ class PaginationParameters(Parameters):
         missing=0,
         validate=validate.Range(min=0)
     )
+    page = base_fields.Integer(
+        description="page number",
+        missing=1,
+        validate=validate.Range(min=1)
+    )
+    page_size = base_fields.Integer(
+        description="number of items per page",
+        missing=5,
+        validate=validate.Range(min=1)
+    )
