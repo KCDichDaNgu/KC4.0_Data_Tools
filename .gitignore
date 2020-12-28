@@ -59,3 +59,4 @@ example.db
 .idea/
 clients/*/swagger.json
 clients/*/dist
+backend/run.sh

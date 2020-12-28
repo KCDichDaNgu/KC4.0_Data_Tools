@@ -5,19 +5,32 @@ import MetisMenu from 'react-metismenu';
 import { isAdmin } from '../../../utils/auth';
 import { clonedStore } from '../../../store';
 
+import { useTranslation } from 'react-i18next';
+
 const Nav = () => {
+    const { t, i18n } = useTranslation(['common']);
 
     let [ isClient, setIsClient ] = useState(false)
     let [ mainNav, setMainNav ] = useState([
         {
             icon: 'pe-7s-home',
-            label: 'Home',
+            label: t('home.title'),
             to: '/',
         },
         {
-            icon: 'pe-7s-rocket',
-            label: 'History',
-            to: 'log',
+            icon: 'pe-7s-global',
+            label: t('domain.title'),
+            to: 'domains',
+        },
+        {
+            icon: 'pe-7s-news-paper',
+            label: t('document.title'),
+            to: 'document',
+        },
+        {
+            icon: 'pe-7s-copy-file',
+            label: t('sentence.title'),
+            to: 'sentence',
         },
     ])
     
@@ -59,7 +72,7 @@ const Nav = () => {
 
     return (
         <Fragment>
-            <h5 className="app-sidebar__heading">Main pages</h5>
+            <h5 className="app-sidebar__heading">{ t('Common.mainPages') }</h5>
             <MetisMenu 
                 content={ mainNav } 
                 activeLinkFromLocation

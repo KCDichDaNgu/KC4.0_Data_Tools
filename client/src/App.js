@@ -2,6 +2,9 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import LoginPage from './pages/Login';
 import HomePage from './pages/Home';
+import DomainsPage from './pages/Domains';
+import DocumentPage from './pages/Document';
+import SentencePage from './pages/Sentence';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -10,7 +13,10 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
 
+import { withTranslation, Trans } from 'react-i18next';
+
 import './App.css';
+import 'antd/dist/antd.css';
 import 'react-toastify/dist/ReactToastify.css';
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 
@@ -29,7 +35,7 @@ const App = ({ location, initialReduxState }) => {
 
     return (
         <React.Fragment>
-
+            
             <div id="overlay">
                 <div className="cv-spinner">
                     <span className="spinner"></span>
@@ -62,6 +68,28 @@ const App = ({ location, initialReduxState }) => {
                                     component={ HomePage } 
                                 />
 
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/domains" 
+                                    component={ DomainsPage } 
+                                />
+
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/document" 
+                                    component={ DocumentPage } 
+                                />
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/sentence" 
+                                    component={ SentencePage } 
+                                />
+
+                                
+
                                 <Route 
                                     location={ location } 
                                     exact 
@@ -79,4 +107,4 @@ const App = ({ location, initialReduxState }) => {
     )
 };
 
-export default App;
+export default withTranslation('common')(App);

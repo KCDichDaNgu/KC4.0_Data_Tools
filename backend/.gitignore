@@ -57,3 +57,4 @@ example.db
 .idea/
 clients/*/swagger.json
 clients/*/dist
+.env/

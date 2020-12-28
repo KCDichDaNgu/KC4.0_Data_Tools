@@ -1,0 +1,71 @@
+{
+	"Common": {
+		"mainPages": "Các trang chính"
+	},
+	"Homepage": "Trang chủ",
+	"Language": {
+		"en": "Tiếng Anh",
+		"vi": "Tiếng Việt"
+	},
+	"Input": {
+		"requiredField": "Trường này bắt buộc phải nhập!"
+	},
+	"loadingMessage": "Xin vui lòng chờ đến khi trang này được tải xong :)",
+	"document": {
+		"title": "Văn bản",
+		"draft": "Nháp",
+		"approved": "Tán thành",
+		"rejected": "Từ chối",
+		"searchBox": "Tìm kiếm văn bản...",
+		"lastUpdate": "Cập nhật lần cuối",
+		"score": "Điểm",
+		"action": "Hành động",
+		"status": "Trạng thái",
+		"selectDomain": "Lựa chọn tên miền",
+		"filter": "Lọc",
+		"selectStatus": "Lựa chọn trạng thái",
+		"add": "Thêm",
+		"approve": "Tán thành",
+		"reject": "Từ chối",
+		"all": "Tất cả",
+		"noDomain": "Không",
+		"senAlign": "Gióng hàng",
+		"text": "Văn bản"
+	},
+	"domain": {
+		"addDomain": "Thêm",
+		"editDomain": "Sửa",
+		"deleteDomain": "Xóa",
+		"title": "Tên miền",
+		"searchBox": "Tìm kiếm tên miền...",
+		"inputAdd": "Nhập và nhấn Enter để thêm tên miền...",
+		"lastUpdate": "Cập nhật lần cuối",
+		"crawledDocuments": "Văn bản đã thu thập",
+		"crawl": "Thu nhập",
+		"nameNotNull": "Tên không thể để trống"
+	},
+	"home": {
+		"title": "Trang chủ"
+	},
+	"login": {
+		"title": "Đăng nhập",
+		"usernameHint": "Nhập tên tài khoản...",
+		"passwordHint": "Nhập mật khẩu..."
+	},
+	"sentence": {
+		"title": "Sentence",
+		"searchBox": "Tìm kiếm câu...",
+		"lastUpdate": "Cập nhật lần cuối",
+		"score": "Điểm",
+		"action": "Hành động",
+		"status": "Trạng thái",
+		"rating": "Đánh giá",
+		"text": "Văn bản",
+		"draft": "Nháp",
+		"approved": "Tán thành",
+		"rejected": "Từ chối",
+		"filter": "Lọc",
+		"reject": "Từ chối",
+		"approve": "Tán thành"
+	}
+}

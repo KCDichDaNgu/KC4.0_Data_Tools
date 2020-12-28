@@ -9,12 +9,15 @@ import { Row } from 'reactstrap';
 import { useHistory } from "react-router-dom";
 import { isAuthenticatedUser } from '../../utils/auth';
 
+import { useTranslation } from 'react-i18next';
+
 const LoginPage = (props) => {
+    const { t, i18n } = useTranslation(['common']);
 
     let history = useHistory();
     
     useEffect(() => {
-        document.title = 'Login';
+        document.title = t('login.title');
     });
 
     const submit = credentials => { 

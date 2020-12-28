@@ -9,7 +9,7 @@ class BaseConfig(object):
 
     # POSTGRESQL
     DB_USER = 'postgres'
-    DB_PASSWORD = '27101997'
+    DB_PASSWORD = 'root'
     DB_NAME = 'gene'
     DB_HOST = 'localhost'
     DB_PORT = 5432
@@ -64,6 +64,12 @@ class BaseConfig(object):
     CSRF_ENABLED = True
     SQLALCHEMY_ECHO = True
     MONGO_URI = 'mongodb://localhost:27017/tool_nhap_lieu'
+
+    # mongodb 
+    MONGODB_DB = 'tool_nhap_lieu'
+    MONGODB_HOST = 'localhost'
+    MONGODB_PORT = 27017
+
 
 
 
