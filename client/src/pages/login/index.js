@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { connect } from "react-redux";
 
-import LoginForm from "./Form";
+import LoginForm from "./form";
 
 import { userLogin } from "../../store/user/action";
 import { Row } from 'reactstrap';

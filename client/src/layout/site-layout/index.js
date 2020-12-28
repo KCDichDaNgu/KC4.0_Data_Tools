@@ -1,5 +1,5 @@
 import React from 'react';
-import AppMain from './AppMain';
+import AppMain from './main';
 import ResizeDetector from 'react-resize-detector';
 import cx from 'classnames';
 import { connect } from "react-redux";

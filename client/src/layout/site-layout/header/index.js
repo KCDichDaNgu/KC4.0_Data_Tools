@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
-import HeaderLogo from '../AppLogo';
+import HeaderLogo from '../logo';
 import PropTypes from 'prop-types';
 
 import { Link } from "react-router-dom";

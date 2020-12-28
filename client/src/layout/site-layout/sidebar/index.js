@@ -2,11 +2,11 @@ import React, {Component, Fragment} from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 
-import Nav from '../AppNav/VerticalNavWrapper';
+import Nav from '../nav/VerticalNavWrapper';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import HeaderLogo from '../AppLogo';
+import HeaderLogo from '../logo';
 
 import {
     setEnableMobileMenu
