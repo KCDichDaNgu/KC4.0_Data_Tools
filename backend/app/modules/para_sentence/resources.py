@@ -31,6 +31,16 @@ class ParaSentences(Resource):
                 spec[attr] = args[attr]
 
         para_sentences = ParaSentence.objects.filter(__raw__=spec).exclude('id').all()
+
+        # sort
+        if 'sort_by' in args:
+            sort_by = args['sort_by']
+            sort_mark = ''
+            
+            if args['sort_order'] == 'descend':
+                sort_mark = '-'
+            para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')
+
         return jsonify({"data":para_sentences})
 
     @api.parameters(AddParaSentenceParameters())
