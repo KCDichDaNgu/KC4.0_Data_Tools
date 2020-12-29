@@ -151,10 +151,14 @@ const SentencePage = (props) => {
   const [value, setValue] = useState("");
   const [selectedDomain, setSeletedDomain] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
-  const [filterOptions, setFilterOptions] = useState({
+  const [paginationParams, setPaginationParams] = useState({});
+  const [requestParams, setRequestParams] = useState({
     domain: "",
     lang1: "",
     lang2: "",
+    sort_by: "",
+    sort_order: "",
+    page: ""
   });
 
   const timeformat = (last_update) => {
@@ -191,13 +195,17 @@ const SentencePage = (props) => {
       title: t('sentence.lastUpdate'),
       dataIndex: "updated_time",
       key: "updated_time",
-      render: (last_update) => timeformat(last_update),
+      render: (updated_time) => timeformat(updated_time),
+      sorter: (a, b, sortOrder) => {},
+      sortDirections: ['ascend', 'descend', 'ascend']
     },
     {
       title: t('sentence.score'),
-      dataIndex: "score[bert]",
-      key: "score[bert]",
-      sorter: (a, b) => a.score - b.score,
+      dataIndex: "score",
+      key: "score.senAlign",
+      render: (score) => Number(score['senAlign']).toFixed(4),
+      sorter: (a, b, sortOrder) => {},
+      sortDirections: ['ascend', 'descend', 'ascend']
     },
     {
       title: t('sentence.rating'),
@@ -254,31 +262,21 @@ const SentencePage = (props) => {
   );
 
   const handleChange = (value, key) => {
-    setFilterOptions({ ...filterOptions, [key]: value });
-    console.log(filterOptions);
+    setRequestParams({ ...requestParams, [key]: value });
   };
 
   const handleFilter = () => {
-    // const filteredData = data.filter((item) => {
-    //     for (var key in filterOptions) {
-    //         if (item[key] === undefined || item[key] != filterOptions[key])
-    //             return false;
-    //     }
-    //     return true;
-    // });
+    let params = {
+      ...requestParams,
+      page: 1
+    }; // reset page to 1
 
-    let filterParam = "";
-    for (var key in filterOptions) {
-      if (filterOptions[key] !== "") {
-        if (filterParam === "") filterParam += "?";
-        else filterParam += "&";
-        filterParam += `${key}=${filterOptions[key]}`;
-      }
-    }
+    setRequestParams(params);
 
-    paraSentenceAPI
-      .filter(filterParam)
-      .then((res) => setDataSource(res.data.data));
+    paraSentenceAPI.getSentences(params).then((res) => {
+      setDataSource(res.data.data)
+      setPaginationParams(res.data.pagination);
+    });
   };
 
   const [langList1, setLangList1] = useState([]);
@@ -297,8 +295,9 @@ const SentencePage = (props) => {
   });
 
   useEffect(() => {
-    paraSentenceAPI.getSentences().then((res) => {
+    paraSentenceAPI.getSentences({}).then((res) => {
       setDataSource(res.data.data);
+      setPaginationParams(res.data.pagination);
     });
     paraSentenceAPI.getOptions().then((res) => {
       setLangList1(res.data.lang1);
@@ -306,6 +305,22 @@ const SentencePage = (props) => {
       setRatingList(res.data.rating);
     });
   }, []);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    let params = {
+      ...requestParams,
+      sort_by: sorter['columnKey'],
+      sort_order: sorter['order'],
+      page: pagination['current']
+    }
+
+    setRequestParams(params);
+
+    paraSentenceAPI.getSentences(params).then((res) => {
+      setDataSource(res.data.data);
+      setPaginationParams(res.data.pagination);
+    });
+  }
 
   return (
     <React.Fragment>
@@ -386,7 +401,12 @@ const SentencePage = (props) => {
             }}
             dataSource={dataSource}
             columns={columns}
-            pagination={{ pageSize: 5 }}
+            onChange={handleTableChange}
+            pagination={{ 
+              pageSize: paginationParams.page_size,
+              total: paginationParams.total_items,
+              current: paginationParams.current_page
+            }}
           ></Table>
         </Card>
       </SiteLayout>

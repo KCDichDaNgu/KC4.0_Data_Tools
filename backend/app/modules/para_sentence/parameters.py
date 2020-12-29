@@ -37,5 +37,7 @@ class ParaSentenceFilterParameter(PaginationParameters):
     lang1 = base_fields.String()
     lang2 = base_fields.String()
 
-
-
+    sort_by = base_fields.String()
+    sort_order = base_fields.String(
+        missing='ascend'
+    )

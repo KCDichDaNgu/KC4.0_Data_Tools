@@ -22,6 +22,18 @@ const toBase64 = (str) => {
   return window.btoa(str);
 };
 
+const convertParamsToUrl = (params) => {
+  let param = "";
+  for (var key in params) {
+    if (params[key] !== "" && params[key] !== undefined) {
+      if (param === "") param += "?";
+      else param += "&";
+      param += `${key}=${params[key]}`;
+    }
+  }
+  return param;
+}
+
 export default {
   getOptions: () =>
     axios({
@@ -29,16 +41,10 @@ export default {
       url: `${server_endpoint}/api/v1/${module_api}/list_option_field`,
     }),
 
-  getSentences: () =>
+  getSentences: (params) => 
     axios({
       method: "get",
-      url: `${server_endpoint}/api/v1/${module_api}/`,
-    }),
-
-  filter: (filterParam) =>
-    axios({
-      method: "get",
-      url: `${server_endpoint}/api/v1/${module_api}/${filterParam}`,
+      url: `${server_endpoint}/api/v1/${module_api}/${convertParamsToUrl(params)}`,
     }),
 
   revokeToken: (token) =>
