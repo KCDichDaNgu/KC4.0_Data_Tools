@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+        </script>
+
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+        </script>
+
+    </head>
+
+    <body>
+        {% if user %}
+            <style>pre{white-space:wrap}</style>
+
+            <div>Logged in as <strong>{{user}}</strong> (<a href="{{ url_for('.logout') }}">Log Out</a>)</div>
+
+            {% for client in clients %}
+                <pre>
+
+                    <strong>Client Info</strong>
+
+                    {%- for key in client.client_info %}
+                        <strong>{{ key }}: </strong>{{ client.client_info[key] }}
+                    {%- endfor %}
+
+                    <strong>Client Metadata</strong>
+
+                    {%- for key in client.client_metadata %}
+                        <strong>{{ key }}: </strong>{{ client.client_metadata[key] }}
+                    {%- endfor %}
+
+                </pre>
+                <hr>
+            {% endfor %}
+
+            <br><a href="{{ url_for('.create_client') }}">Create Client</a>
+
+            {% else %}
+                <form action="" method="post">
+                    <input type="text" name="username" placeholder="username">
+                    <button type="submit">Login / Signup</button>
+                </form>
+        {% endif %}
+    </body>
+</html>
