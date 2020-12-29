@@ -1,0 +1,10 @@
+flask-cors
+flask_seeder
+passlib
+python-decouple
+flask_script
+flask_migrate
+python-dotenv
+flask-bcrypt
+authlib==0.14.3
+flask-mongoengine
