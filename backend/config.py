@@ -70,7 +70,7 @@ class BaseConfig(object):
     MONGODB_HOST = 'localhost'
     MONGODB_PORT = 27017
 
-
+    IMPORT_FROM_FILE_DIR = "data/import_from_file/"
 
 
 class ProductionConfig(BaseConfig):

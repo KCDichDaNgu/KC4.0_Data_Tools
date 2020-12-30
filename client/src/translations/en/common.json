@@ -39,7 +39,7 @@
 		"deleteDomain": "Delete domain",
 		"title": "Domain",
 		"searchBox": "Search domain...",
-		"inputAdd": "Type in and press Enter to add domain...",
+		"inputAdd": "Type in and press Enter to edit domain...",
 		"lastUpdate": "Last Update",
 		"crawledDocuments": "Crawled documents",
 		"crawl": "Crawl",
@@ -67,6 +67,11 @@
 		"approve": "Approve",
 		"unRated": "Unrated",
 		"notGood": "Not Good",
-		"Good": "Good"
+		"Good": "Good",
+		"uploadFile": "Upload File",
+		"uploadSuccess": "file uploaded successfully",
+		"uploadFailed": "file upload failed",
+		"imported": "Imported",
+		"pairParaSentences": "pair of para-sentences"
 	}
 }

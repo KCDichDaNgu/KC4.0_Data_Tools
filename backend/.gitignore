@@ -58,3 +58,4 @@ example.db
 clients/*/swagger.json
 clients/*/dist
 .env/
+data/import_from_file

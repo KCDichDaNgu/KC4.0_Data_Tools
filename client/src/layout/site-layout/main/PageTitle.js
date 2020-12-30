@@ -10,7 +10,8 @@ class PageTitle extends Component {
             enablePageTitleSubheading,
             heading,
             icon,
-            subheading
+            subheading,
+            customComponent
         } = this.props;
 
         return (
@@ -32,6 +33,7 @@ class PageTitle extends Component {
                     </div>
                     <div className="page-title-actions">
                         {/* <TitleComponent2/> */}
+                        { customComponent }
                     </div>
                 </div>
             </div>

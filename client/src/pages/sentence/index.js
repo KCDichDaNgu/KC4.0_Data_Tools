@@ -6,12 +6,13 @@ import {
   Input,
   Table,
   Button,
-  Popconfirm,
   Card,
-  Dropdown,
-  Menu,
   Select,
+  Upload,
+  message,
+  Spin
 } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
 
 import "./Sentence.module.css";
@@ -20,6 +21,8 @@ import { set } from "numeral";
 import { useTranslation } from 'react-i18next';
 
 const moment = require("moment");
+
+const { TextArea } = Input;
 
 const SentencePage = (props) => {
   const { t, i18n } = useTranslation(['common']);
@@ -160,6 +163,7 @@ const SentencePage = (props) => {
     sort_order: "",
     page: ""
   });
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const timeformat = (last_update) => {
     var a = new Date(last_update * 1000);
@@ -185,17 +189,25 @@ const SentencePage = (props) => {
       title: `${ t('sentence.text') } 1`,
       dataIndex: "text1",
       key: "text1",
+      render: (text) => (
+        <TextArea rows={4} value={text} />
+      )
     },
     {
       title: `${ t('sentence.text') } 2`,
       dataIndex: "text2",
       key: "text2",
+      render: (text) => (
+        <TextArea rows={4} value={text} />
+      )
     },
     {
       title: t('sentence.lastUpdate'),
       dataIndex: "updated_time",
       key: "updated_time",
-      render: (updated_time) => timeformat(updated_time),
+      render: (updated_time) => (
+        timeformat(updated_time)
+      ),
       sorter: (a, b, sortOrder) => {},
       sortDirections: ['ascend', 'descend', 'ascend']
     },
@@ -212,23 +224,31 @@ const SentencePage = (props) => {
       dataIndex: "rating",
       key: "rating",
       render: (rating) => (
-        t(`sentence.${ rating }`)
+        <Select
+          style={{
+            width: "150px",
+          }}
+          value={ rating }
+          // onChange={(value) => handleChange(value, "rating")}
+          >
+          {ratingOption}
+        </Select>
       ),
     },
-    {
-      title: t('sentence.action'),
-      dataIndex: "",
-      key: "action",
-      render: () => 
-      <div>
-        <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
-          { t('sentence.reject') }
-        </Button>
-        <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
-          { t('sentence.approve') }
-        </Button>
-    </div>,
-    },
+    // {
+    //   title: t('sentence.action'),
+    //   dataIndex: "",
+    //   key: "action",
+    //   render: () => 
+    //     <div>
+    //       <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
+    //         { t('sentence.reject') }
+    //       </Button>
+    //       <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
+    //         { t('sentence.approve') }
+    //       </Button>
+    //   </div>,
+    // },
   ];
 
   const rowSelection = {
@@ -294,6 +314,40 @@ const SentencePage = (props) => {
     return <Option key={rating}>{ t(`sentence.${rating}`) }</Option>;
   });
 
+  const uploadFile = {
+    name: 'file',
+    action: paraSentenceAPI.importFromFileUrl(),
+    showUploadList: false,
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        setUploadingFile(true);
+      }
+
+      if (info.file.status === 'done') {
+        setUploadingFile(false);
+
+        let nSuccess = info.file.response.n_success;
+        let nData = info.file.response.n_data;
+
+        message.success(`${ t('sentence.imported') } ${ nSuccess }/${ nData }\
+           ${ t('sentence.pairParaSentences') }`);
+
+        // reload new results
+        paraSentenceAPI.getSentences({}).then((res) => {
+          setDataSource(res.data.data);
+          setPaginationParams(res.data.pagination);
+        });
+      } else if (info.file.status === 'error') {
+        setUploadingFile(false);
+
+        message.error(`${ info.file.name } ${ t('sentence.uploadFailed') }`);
+      }
+    },
+  };
+
   useEffect(() => {
     paraSentenceAPI.getSentences({}).then((res) => {
       setDataSource(res.data.data);
@@ -328,6 +382,22 @@ const SentencePage = (props) => {
         <PageTitle
           heading={ t('sentence.title') }
           icon="pe-7s-home icon-gradient bg-happy-itmeo"
+          customComponent={ 
+            (
+              <div>
+                { 
+                  uploadingFile ? (
+                    <Spin />
+                  ) : ''
+                }
+                <Upload {...uploadFile}>
+                  <Button icon={<UploadOutlined />}>
+                    { t('sentence.uploadFile') }
+                  </Button>
+                </Upload>
+              </div>
+            )
+          }
         />
 
         <Card className="domain-table-card">
