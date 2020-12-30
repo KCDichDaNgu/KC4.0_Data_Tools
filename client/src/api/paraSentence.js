@@ -58,4 +58,8 @@ export default {
     }).then((res) => {
       return res.data;
     }),
+
+  importFromFileUrl: () => {
+    return `${server_endpoint}/api/v1/${module_api}/import_from_file`
+  } 
 };

@@ -161,3 +161,7 @@
     opacity: .5;
     cursor: pointer;
 }
+
+.btn-upload-file {
+    margin-left: 30px;
+}

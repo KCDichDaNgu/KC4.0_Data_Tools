@@ -67,6 +67,11 @@
 		"approve": "Approve",
 		"unRated": "Unrated",
 		"notGood": "Not Good",
-		"Good": "Good"
+		"Good": "Good",
+		"uploadFile": "Upload File",
+		"uploadSuccess": "file uploaded successfully",
+		"uploadFailed": "file upload failed",
+		"imported": "Imported",
+		"pairParaSentences": "pair of para-sentences"
 	}
 }

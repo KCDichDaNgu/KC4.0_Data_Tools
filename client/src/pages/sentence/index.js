@@ -6,12 +6,13 @@ import {
   Input,
   Table,
   Button,
-  Popconfirm,
   Card,
-  Dropdown,
-  Menu,
   Select,
+  Upload,
+  message,
+  Spin
 } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
 
 import "./Sentence.module.css";
@@ -160,6 +161,7 @@ const SentencePage = (props) => {
     sort_order: "",
     page: ""
   });
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const timeformat = (last_update) => {
     var a = new Date(last_update * 1000);
@@ -294,6 +296,40 @@ const SentencePage = (props) => {
     return <Option key={rating}>{ t(`sentence.${rating}`) }</Option>;
   });
 
+  const uploadFile = {
+    name: 'file',
+    action: paraSentenceAPI.importFromFileUrl(),
+    showUploadList: false,
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        setUploadingFile(true);
+      }
+
+      if (info.file.status === 'done') {
+        setUploadingFile(false);
+
+        let nSuccess = info.file.response.n_success;
+        let nData = info.file.response.n_data;
+
+        message.success(`${ t('sentence.imported') } ${ nSuccess }/${ nData }\
+           ${ t('sentence.pairParaSentences') }`);
+
+        // reload new results
+        paraSentenceAPI.getSentences({}).then((res) => {
+          setDataSource(res.data.data);
+          setPaginationParams(res.data.pagination);
+        });
+      } else if (info.file.status === 'error') {
+        setUploadingFile(false);
+
+        message.error(`${ info.file.name } ${ t('sentence.uploadFailed') }`);
+      }
+    },
+  };
+
   useEffect(() => {
     paraSentenceAPI.getSentences({}).then((res) => {
       setDataSource(res.data.data);
@@ -328,6 +364,22 @@ const SentencePage = (props) => {
         <PageTitle
           heading={ t('sentence.title') }
           icon="pe-7s-home icon-gradient bg-happy-itmeo"
+          customComponent={ 
+            (
+              <div>
+                { 
+                  uploadingFile ? (
+                    <Spin />
+                  ) : ''
+                }
+                <Upload {...uploadFile}>
+                  <Button icon={<UploadOutlined />}>
+                    { t('sentence.uploadFile') }
+                  </Button>
+                </Upload>
+              </div>
+            )
+          }
         />
 
         <Card className="domain-table-card">

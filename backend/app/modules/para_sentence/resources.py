@@ -9,6 +9,12 @@ from app.extensions.api.parameters import PaginationParameters
 from .parameters import ParaSentenceFilterParameter
 from flask_restplus import Resource
 
+from config import BaseConfig
+from .utils import import_parasentences_from_file
+
+import time
+import os
+
 api = Namespace('para_sentence', description="para_sentence")
 
 
@@ -122,4 +128,31 @@ class ListOptionField(Resource):
             "lang1": list_lang1,
             "lang2" : list_lang2,
             "rating" : list_rating
+        })
+
+@api.route('/import_from_file')
+class ImportFromFile(Resource):
+
+    @api.response(code=HTTPStatus.FORBIDDEN)
+    @api.response(code=HTTPStatus.CONFLICT)
+    def post(self):
+        """
+        Create new ParaSentences from files
+        """
+        file = request.files['file']
+        file_content = file.read()
+
+        if not os.path.isdir(BaseConfig.IMPORT_FROM_FILE_DIR):
+            os.makedirs(BaseConfig.IMPORT_FROM_FILE_DIR)
+
+        filepath = f'{BaseConfig.IMPORT_FROM_FILE_DIR}/{time.time()}'
+        
+        with open(filepath, 'wb') as fp: # save uploaded file
+            fp.write(file_content)
+
+        n_success, n_data = import_parasentences_from_file(filepath)
+       
+        return jsonify({
+            "n_success": n_success,
+            "n_data": n_data
         })

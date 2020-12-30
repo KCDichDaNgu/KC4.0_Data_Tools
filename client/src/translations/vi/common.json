@@ -69,6 +69,11 @@
 		"approve": "Tán thành",
 		"unRated": "Chưa đánh giá",
 		"notGood": "Không tốt",
-		"Good": "Tốt"
+		"Good": "Tốt",
+		"uploadFile": "Tải lên",
+		"uploadSuccess": "đã được tải lên thành công",
+		"uploadFailed": "đã xảy ra lỗi khi tải lên",
+		"imported": "Đã thêm vào",
+		"pairParaSentences": "cặp para-sentences"
 	}
 }
