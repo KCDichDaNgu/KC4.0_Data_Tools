@@ -1,5 +1,5 @@
 from .user import User 
-from .user_content import UserContent
+from .domain import Domain
 from .oauth2_client import OAuth2Client 
-from .oauth2_auth_code import OAuth2AuthorizationCode 
+from .oauth2_code import OAuth2Code 
 from .oauth2_token import OAuth2Token 

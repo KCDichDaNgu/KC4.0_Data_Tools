@@ -1,27 +1,50 @@
-from authlib.integrations.sqla_oauth2 import (
-    OAuth2ClientMixin,
-    OAuth2AuthorizationCodeMixin,
-    OAuth2TokenMixin,
-)
-
 from ..db import db 
-import time
+from datetime import datetime, timedelta
 
-class OAuth2Token(db.Model, OAuth2TokenMixin):
-    __tablename__ = 'oauth2_token'
+TOKEN_EXPIRATION = 30 * 24 * 60 * 60  # 30 days in seconds
+REFRESH_EXPIRATION = 30  # days
+EPOCH = datetime.fromtimestamp(0)
 
-    id = db.Column(db.Integer, primary_key=True)
+TOKEN_TYPES = {
+    'Bearer': 'Bearer',
+}
 
-    user_id = db.Column(
-        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')
-    )
+class OAuth2Token(db.Document):
+    client = db.ReferenceField('OAuth2Client', required=True)
+    user = db.ReferenceField('User')
 
-    user = db.relationship('User')
+    # currently only bearer is supported
+    token_type = db.StringField(choices=list(TOKEN_TYPES), default='Bearer')
 
-    def is_refresh_token_active(self):
+    access_token = db.StringField(unique=True)
+    refresh_token = db.StringField(unique=True, sparse=True)
+    created_at = db.DateTimeField(default=datetime.utcnow, required=True)
+    expires_in = db.IntField(required=True, default=TOKEN_EXPIRATION)
+    scope = db.StringField(default='')
+    revoked = db.BooleanField(default=False)
 
-        if self.revoked: return False
+    meta = {
+        'collection': 'oauth2_token'
+    }
 
-        expires_at = self.issued_at + self.expires_in * 2
+    def __str__(self):
+        return '<OAuth2Token({0.client.name})>'.format(self)
 
-        return expires_at >= time.time()
+    def get_scope(self):
+        return self.scope
+
+    def get_expires_in(self):
+        return self.expires_in
+
+    def get_expires_at(self):
+        return (self.created_at - EPOCH).total_seconds() + self.expires_in
+
+    def get_client_id(self):
+        return str(self.client.id)
+
+    def is_refresh_token_valid(self):
+        if self.revoked:
+            return False
+        expired_at = datetime.fromtimestamp(self.get_expires_at())
+        expired_at += timedelta(days=REFRESH_EXPIRATION)
+        return expired_at > datetime.utcnow()
