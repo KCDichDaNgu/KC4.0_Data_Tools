@@ -60,3 +60,4 @@ example.db
 clients/*/swagger.json
 clients/*/dist
 backend/run.sh
+/.env

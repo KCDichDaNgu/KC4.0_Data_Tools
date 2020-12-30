@@ -16,41 +16,28 @@ class ClientSeeder(Seeder):
 
     def run(self):
 
-        admin = User.query.filter_by(role='admin').first()
+        admin = User.objects(role__in='admin').first()
 
-        OAuth2Client.query.delete()
+        OAuth2Client.objects.delete()
 
+        client_name = 'auth'
         client_id = '12345678'
         client_id_issued_at = int(time.time())
 
-        client = OAuth2Client(
-            client_id=client_id,
-            client_id_issued_at=client_id_issued_at,
-            user_id=admin.id,
-        )
-
-        client_metadata = {
-            "client_name": 'auth',
-            "client_uri": 'http://example.com',
-            "grant_types": [
+        client = OAuth2Client.objects.create(
+            name=client_name,
+            owner=admin,
+            grant_types=[
                 'password',
-                'refresh_token'
+                'refresh_token',
+                # 'authorization_code'
             ],
-            "redirect_uris": [
+            scope='profile',
+            response_types=response_types,
+            redirect_uris=[
                 'http://example.com'
             ],
-            "scope": 'profile',
-            "token_endpoint_auth_method": 'client_secret_basic'
-        }
-
-        client.set_client_metadata(client_metadata)
-
-        if client_metadata['token_endpoint_auth_method'] == 'none':
-            client.client_secret = ''
-        else:
-            client.client_secret = '12345678'
-
-        self.db.session.add(client)
-        self.db.session.commit()
+            secret='12345678'
+        )
 
         print('Fake client added!')

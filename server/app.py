@@ -18,7 +18,7 @@ from flask_navigation import Navigation
 from speaklater import is_lazy_string
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from database.db import db
+from database import db
 from oauth2 import config_oauth
 
 import argparse
@@ -124,13 +124,13 @@ def register_extensions(app):
     
     from seeds import seeder
     import storages
-
+    
+    db.init_app(app)
     storages.init_app(app)
-    seeder.init_app(app, db)
+    seeder.init_app(app, db.db)
     cache.init_app(app)
     csrf.init_app(app)
     nav.init_app(app)
-    db.init_app(app)
     
     return app
 
