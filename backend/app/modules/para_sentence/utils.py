@@ -1,5 +1,6 @@
 import pandas as pd
 import time
+import hashlib
 from .models import ParaSentence
 
 def import_parasentences_from_file(excel_file):
@@ -25,6 +26,8 @@ def import_parasentences_from_file(excel_file):
             elif rating in ParaSentence.RATE_MAPPING_VI2STANDARD:
                 rating = ParaSentence.RATE_MAPPING_VI2STANDARD[rating]
 
+            hash = hash_para_sentence(text1, text2, lang1, lang2)
+
             para_sentence = ParaSentence(
                 text1=text1,
                 text2=text2,
@@ -35,6 +38,7 @@ def import_parasentences_from_file(excel_file):
                 origin_para_document_id=str(origin_para_document_id),
                 para_document_id=str(para_document_id),
                 score={"senAlign": score},
+                hash=hash,
                 created_time=time.time(),
                 updated_time=time.time())
 
@@ -45,3 +49,14 @@ def import_parasentences_from_file(excel_file):
             continue
 
     return count, n_rows
+
+def hashtext(text):
+    hasher = hashlib.md5()
+    buf = text.encode('utf8')
+    hasher.update(buf)
+    return hasher.hexdigest()
+
+def hash_para_sentence(text1, text2, lang1, lang2):
+    text = f"{text1}\n{text2}\n{lang1}\n{lang2}"
+    hash = hashtext(text)
+    return hash

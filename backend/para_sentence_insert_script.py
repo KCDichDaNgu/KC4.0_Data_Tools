@@ -1,6 +1,7 @@
 from app.modules.para_sentence.models import ParaSentence
 from pymongo import MongoClient
 import random
+from app.modules.para_sentence.utils import hash_para_sentence
 
 mongo_db = MongoClient()
 
@@ -19,9 +20,14 @@ def insertSentence():
     count = 0
     for line in lines:
         split_line = line.split('\t')
+        score, text1, text2 = split_line[:3]
+        lang1 = 'vi'
+        lang2 = 'khm'
+        hash = hash_para_sentence(text1, text2, lang1, lang2)
+
         sentence = {
-            "text1": split_line[1],
-            "text2": split_line[2],
+            "text1": text1,
+            "text2": text2,
             "lang1": 'vi',
             "lang2": 'khm',
             "rating": random.choice(ratingList),
@@ -29,8 +35,9 @@ def insertSentence():
             "origin_para_document_id": 1,
             "para_document_id": 2,
             "score": {
-                "senAlign": split_line[0]
+                "senAlign": score
             },
+            "hash": hash,
             "updated_time": random.randint(1606847896,1608835096)
         }
         print('Create ', count, ' sentences')
