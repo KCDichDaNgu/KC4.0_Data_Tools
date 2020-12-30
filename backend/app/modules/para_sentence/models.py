@@ -8,6 +8,15 @@
 
 from app.extensions import mongo_db as db
 
+class EditedParaSentence(db.EmbeddedDocument):
+    text1 = db.StringField()
+    text2 = db.StringField()
+    rating = db.StringField()
+
+    class Attr:
+        text1 = 'text1'
+        text2 = 'text2'
+        rating = 'rating'
 
 class ParaSentence(db.Document):
 
@@ -23,6 +32,7 @@ class ParaSentence(db.Document):
     created_time = db.IntField()
     updated_time = db.IntField()
     hash = db.StringField()
+    edited = db.EmbeddedDocumentField(EditedParaSentence)
 
     meta = {'collection': 'para_sentence'}
 
@@ -49,12 +59,13 @@ class ParaSentence(db.Document):
         origin_para_document_id = 'origin_para_document_id'
         created_time = 'created_time'
         updated_time = 'updated_time'
+        edited = 'edited'
     
 
     def save(self):
         similar_parasentences = ParaSentence.objects.filter(hash=self.hash)
 
-        # if len(similar_parasentences) == 0:
-        return super(ParaSentence, self).save()
-        # else:
-        #     raise Exception('ParaSentence exists!')
+        if len(similar_parasentences) == 0:
+            return super(ParaSentence, self).save()
+        else:
+            raise Exception('ParaSentence exists!')

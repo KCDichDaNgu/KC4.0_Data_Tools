@@ -74,7 +74,9 @@
 		"uploadSuccess": "đã được tải lên thành công",
 		"uploadFailed": "đã xảy ra lỗi khi tải lên",
 		"imported": "Đã thêm vào",
-		"pairParaSentences": "cặp câu"
+		"pairParaSentences": "cặp câu",
+		"editedSuccess": "Đã chỉnh sửa thành công",
+		"editedFail": "Chỉnh sửa lỗi"
 	}
 }
 

@@ -47,6 +47,13 @@ export default {
       url: `${server_endpoint}/api/v1/${module_api}/${convertParamsToUrl(params)}`,
     }),
 
+  updateParaSentence: (id, params) => 
+    axios({
+      method: "put",
+      url: `${server_endpoint}/api/v1/${module_api}/${id}`,
+      data: params
+    }),
+
   revokeToken: (token) =>
     axios({
       method: "post",
