@@ -54,7 +54,7 @@ class ParaSentence(db.Document):
     def save(self):
         similar_parasentences = ParaSentence.objects.filter(hash=self.hash)
 
-        if len(similar_parasentences) == 0:
-            return super(ParaSentence, self).save()
-        else:
-            raise Exception('ParaSentence exists!')
+        # if len(similar_parasentences) == 0:
+        return super(ParaSentence, self).save()
+        # else:
+        #     raise Exception('ParaSentence exists!')

@@ -38,7 +38,7 @@
 		"deleteDomain": "Xóa",
 		"title": "Tên miền",
 		"searchBox": "Tìm kiếm tên miền...",
-		"inputAdd": "Nhập và nhấn Enter để thêm tên miền...",
+		"inputAdd": "Nhập và nhấn Enter để sửa tên miền...",
 		"lastUpdate": "Cập nhật lần cuối",
 		"crawledDocuments": "Văn bản đã thu thập",
 		"crawl": "Thu nhập",
@@ -53,7 +53,7 @@
 		"passwordHint": "Nhập mật khẩu..."
 	},
 	"sentence": {
-		"title": "Sentence",
+		"title": "Cặp câu",
 		"searchBox": "Tìm kiếm câu...",
 		"lastUpdate": "Cập nhật lần cuối",
 		"score": "Điểm",
@@ -74,6 +74,7 @@
 		"uploadSuccess": "đã được tải lên thành công",
 		"uploadFailed": "đã xảy ra lỗi khi tải lên",
 		"imported": "Đã thêm vào",
-		"pairParaSentences": "cặp para-sentences"
+		"pairParaSentences": "cặp câu"
 	}
 }
+

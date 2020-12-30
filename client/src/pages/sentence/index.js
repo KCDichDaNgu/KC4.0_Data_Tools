@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next';
 
 const moment = require("moment");
 
+const { TextArea } = Input;
+
 const SentencePage = (props) => {
   const { t, i18n } = useTranslation(['common']);
 
@@ -187,17 +189,25 @@ const SentencePage = (props) => {
       title: `${ t('sentence.text') } 1`,
       dataIndex: "text1",
       key: "text1",
+      render: (text) => (
+        <TextArea rows={4} value={text} />
+      )
     },
     {
       title: `${ t('sentence.text') } 2`,
       dataIndex: "text2",
       key: "text2",
+      render: (text) => (
+        <TextArea rows={4} value={text} />
+      )
     },
     {
       title: t('sentence.lastUpdate'),
       dataIndex: "updated_time",
       key: "updated_time",
-      render: (updated_time) => timeformat(updated_time),
+      render: (updated_time) => (
+        timeformat(updated_time)
+      ),
       sorter: (a, b, sortOrder) => {},
       sortDirections: ['ascend', 'descend', 'ascend']
     },
@@ -214,23 +224,31 @@ const SentencePage = (props) => {
       dataIndex: "rating",
       key: "rating",
       render: (rating) => (
-        t(`sentence.${ rating }`)
+        <Select
+          style={{
+            width: "150px",
+          }}
+          value={ rating }
+          // onChange={(value) => handleChange(value, "rating")}
+          >
+          {ratingOption}
+        </Select>
       ),
     },
-    {
-      title: t('sentence.action'),
-      dataIndex: "",
-      key: "action",
-      render: () => 
-      <div>
-        <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
-          { t('sentence.reject') }
-        </Button>
-        <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
-          { t('sentence.approve') }
-        </Button>
-    </div>,
-    },
+    // {
+    //   title: t('sentence.action'),
+    //   dataIndex: "",
+    //   key: "action",
+    //   render: () => 
+    //     <div>
+    //       <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
+    //         { t('sentence.reject') }
+    //       </Button>
+    //       <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
+    //         { t('sentence.approve') }
+    //       </Button>
+    //   </div>,
+    // },
   ];
 
   const rowSelection = {
