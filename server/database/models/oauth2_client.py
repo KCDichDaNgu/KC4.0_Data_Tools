@@ -51,7 +51,9 @@ class OAuth2Client(ClientMixin, db.Datetimed, db.Document):
     def get_allowed_scope(self, scope):
         if not scope:
             return ''
+
         allowed = set(scope_to_list(self.scope))
+
         return list_to_scope([s for s in scope.split() if s in allowed])
 
     def check_redirect_uri(self, redirect_uri):
@@ -63,6 +65,7 @@ class OAuth2Client(ClientMixin, db.Datetimed, db.Document):
     def check_token_endpoint_auth_method(self, method):
         if not self.has_client_secret():
             return method == 'none'
+            
         return method in ('client_secret_post', 'client_secret_basic')
 
     def check_response_type(self, response_type):

@@ -26,6 +26,9 @@ class Defaults(object):
     MONGODB_HOST = 'mongodb://localhost:27017/data-tool'
     MONGODB_CONNECT = False  # Lazy connexion for Fork-safe usage
 
+    MONGODB_DB = 'data-tool'
+    MONGODB_PORT = 27017
+
     # Elasticsearch configuration
     ELASTICSEARCH_URL = 'localhost:9200'
     ELASTICSEARCH_INDEX_BASENAME = 'data-tool'
