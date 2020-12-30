@@ -10,64 +10,66 @@ from authlib.integrations.sqla_oauth2 import (
     create_bearer_token_validator,
 )
 
-from authlib.oauth2.rfc6749 import grants
+from authlib.oauth2.rfc6749 import grants, ClientMixin
 from authlib.oauth2.rfc7636 import CodeChallenge
+from authlib.oauth2.rfc6750 import BearerTokenValidator
+from authlib.oauth2.rfc7009 import RevocationEndpoint
 
 from database.models import (
     User, 
     OAuth2Client, 
-    OAuth2AuthorizationCode, 
+    OAuth2Code, 
     OAuth2Token 
 ) 
 
+
 from database.db import db
 
+GRANT_EXPIRATION = 100  # 100 seconds
+
+authorization = AuthorizationServer()
+
+require_oauth = ResourceProtector()
+
 class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
+
     TOKEN_ENDPOINT_AUTH_METHODS = [
         'client_secret_basic',
-        'client_secret_post',
-        'none',
+        'client_secret_post'
     ]
 
     def save_authorization_code(self, code, request):
         code_challenge = request.data.get('code_challenge')
         code_challenge_method = request.data.get('code_challenge_method')
-        
-        auth_code = OAuth2AuthorizationCode(
+
+        expires = datetime.utcnow() + timedelta(seconds=GRANT_EXPIRATION)
+
+        auth_code = OAuth2Code.objects.create(
             code=code,
-            client_id=request.client.client_id,
+            client=ObjectId(request.client.client_id),
             redirect_uri=request.redirect_uri,
             scope=request.scope,
-            user_id=request.user.id,
+            user=ObjectId(request.user.id),
             code_challenge=code_challenge,
             code_challenge_method=code_challenge_method,
+            expires=expires,
         )
-
-        db.session.add(auth_code)
-        db.session.commit()
-
         return auth_code
 
     def query_authorization_code(self, code, client):
-
-        auth_code = OAuth2AuthorizationCode \
-            .query \
-            .filter_by(
-                code=code, 
-                client_id=client.client_id
-            ) \
-            .first()
+        auth_code = OAuth2Code.objects(
+            code=code, 
+            client=client
+        ).first()
 
         if auth_code and not auth_code.is_expired():
             return auth_code
 
     def delete_authorization_code(self, authorization_code):
-
-        db.session.delete(authorization_code)
-        db.session.commit()
+        authorization_code.delete()
 
     def authenticate_user(self, authorization_code):
-        return User.query.get(authorization_code.user_id)
+        return authorization_code.user
 
 
 class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
@@ -86,46 +88,95 @@ class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
 class RefreshTokenGrant(grants.RefreshTokenGrant):
 
     def authenticate_refresh_token(self, refresh_token):
-        token = OAuth2Token.query.filter_by(refresh_token=refresh_token).first()
+        item = OAuth2Token.objects(refresh_token=refresh_token).first()
 
-        if token and token.is_refresh_token_active():
-            return token
+        if item and item.is_refresh_token_valid():
+            return item
 
     def authenticate_user(self, credential):
-        return User.query.get(credential.user_id)
+        return credential.user
 
     def revoke_old_credential(self, credential):
         credential.revoked = True
-
-        db.session.add(credential)
-        db.session.commit()
+        credential.save()
 
 
-query_client = create_query_client_func(db.session, OAuth2Client)
+class RevokeToken(RevocationEndpoint):
 
-save_token = create_save_token_func(db.session, OAuth2Token)
+    def query_token(self, token, token_type_hint, client):
+        qs = OAuth2Token.objects(client=client)
 
-authorization = AuthorizationServer(
-    query_client=query_client,
-    save_token=save_token,
-)
+        if token_type_hint == 'access_token':
+            return qs.filter(access_token=token).first()
+        elif token_type_hint == 'refresh_token':
+            return qs.filter(refresh_token=token).first()
+        else:
+            qs = qs(db.Q(access_token=token) | db.Q(refresh_token=token))
+            return qs.first()
 
-require_oauth = ResourceProtector()
+    def revoke_token(self, token):
+        token.revoked = True
+        token.save()
+
+class BearerToken(BearerTokenValidator):
+
+    def authenticate_token(self, token_string):
+        return OAuth2Token.objects(access_token=token_string).first()
+
+    def request_invalid(self, request):
+        return False
+
+    def token_revoked(self, token):
+        return token.revoked
+
+
+
+def query_client(client_id):
+    '''Fetch client by ID'''
+    return OAuth2Client.objects(id=ObjectId(client_id)).first()
+
+
+def save_token(token, request):
+    scope = token.pop('scope', '')
+
+    if request.grant_type == 'refresh_token':
+        credential = request.credential
+        credential.update(scope=scope, **token)
+    else:
+        client = request.client
+        user = request.user or client.owner
+        OAuth2Token.objects.create(
+            client=client,
+            user=user.id,
+            scope=scope,
+            **token
+        )
+
+
+def check_credentials():
+    try:
+        with require_oauth.acquire() as token:
+            login_user(token.user)
+        return True
+    except (Unauthorized, AuthlibFlaskException):
+        return False
 
 def config_oauth(app):
-    authorization.init_app(app)
+
+    authorization.init_app(
+        app, 
+        query_client=query_client, 
+        save_token=save_token
+    )
 
     # support all grants
-    authorization.register_grant(grants.ImplicitGrant)
-    authorization.register_grant(grants.ClientCredentialsGrant)
     authorization.register_grant(AuthorizationCodeGrant, [CodeChallenge(required=True)])
     authorization.register_grant(PasswordGrant)
     authorization.register_grant(RefreshTokenGrant)
+    authorization.register_grant(grants.ClientCredentialsGrant)
 
-    # support revocation
-    revocation_cls = create_revocation_endpoint(db.session, OAuth2Token)
-    authorization.register_endpoint(revocation_cls)
+    # support revocation endpoint
+    authorization.register_endpoint(RevokeToken)
 
-    # protect resource
-    bearer_cls = create_bearer_token_validator(db.session, OAuth2Token)
-    require_oauth.register_token_validator(bearer_cls())
+    require_oauth.register_token_validator(BearerToken())
+    

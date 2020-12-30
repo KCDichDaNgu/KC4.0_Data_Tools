@@ -1,160 +1,264 @@
+import bson
+import datetime
+import logging
 import os
-from flask import Flask, jsonify
+import importlib
+import types
+
+from os.path import abspath, join, dirname, isfile, exists
+
+from flask import (
+    Flask, abort, g, send_from_directory, json, Blueprint as BaseBlueprint,
+    make_response
+)
+from flask_caching import Cache
+
+from flask_wtf.csrf import CSRFProtect
+from flask_navigation import Navigation
+from speaklater import is_lazy_string
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 from database.db import db
 from oauth2 import config_oauth
-
-from api.client.views import client_bp
-from api.auth.views import auth_bp
-from api.ml_model.views import ml_model_bp
-from api.content.views import content_bp
-from api.admin.content.views import content_bp as admin_content_bp
 
 import argparse
 
 import json
-import torch
 from decouple import config
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask_seeder import FlaskSeeder
 from flask_cors import CORS
 
-os.environ['AUTHLIB_INSECURE_TRANSPORT'] = 'true'
+import entrypoints
 
-migrate = None
+APP_NAME = __name__.split('.')[0]
+ROOT_DIR = abspath(join(dirname(__file__)))
 
+log = logging.getLogger(__name__)
+
+cache = Cache()
+csrf = CSRFProtect()
+nav = Navigation()
+
+class Blueprint(BaseBlueprint):
+    '''A blueprint allowing to decorate class too'''
+    def route(self, rule, **options):
+        def wrapper(func_or_cls):
+            endpoint = str(options.pop('endpoint', func_or_cls.__name__))
+            if isinstance(func_or_cls, types.FunctionType):
+                self.add_url_rule(rule, endpoint, func_or_cls, **options)
+            else:
+                self.add_url_rule(rule,
+                                  view_func=func_or_cls.as_view(endpoint),
+                                  **options)
+            return func_or_cls
+        return wrapper
+
+class CustomFlaskJsonEncoder(json.JSONEncoder):
+    '''
+    A JSONEncoder subclass to encode unsupported types:
+        - ObjectId
+        - datetime
+        - lazy strings
+    Handle special serialize() method and _data attribute.
+    Ensure an app context is always present.
+    '''
+    def default(self, obj):
+        if is_lazy_string(obj):
+            return str(obj)
+        elif isinstance(obj, bson.objectid.ObjectId):
+            return str(obj)
+        elif isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        elif hasattr(obj, 'to_dict'):
+            return obj.to_dict()
+        elif hasattr(obj, 'serialize'):
+            return obj.serialize()
+        # Serialize Raw data for Document and EmbeddedDocument.
+        elif hasattr(obj, '_data'):
+            return obj._data
+        # Serialize raw data from Elasticsearch DSL AttrList
+        elif hasattr(obj, '_l_'):
+            return obj._l_
+        return super(CustomFlaskJsonEncoder, self).default(obj)
+
+def send_static(directory, filename, cache_timeout):
+    out = send_from_directory(
+        directory, 
+        filename, 
+        cache_timeout=cache_timeout
+    )
+
+    response = make_response(out)
+
+    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+
+    return response
+
+# These loggers are very verbose
+# We need to put them in WARNING level
+# even if the main level is INFO or DEBUG
+VERBOSE_LOGGERS = 'elasticsearch', 'requests'
+
+
+def init_logging(app):
+    logging.captureWarnings(True)  # Display warnings
+
+    debug = app.debug or app.config.get('TESTING')
+
+    log_level = logging.DEBUG if debug else logging.WARNING
+
+    app.logger.setLevel(log_level)
+
+    for name in entrypoints.get_roots():  # Entrypoints loggers
+        logging.getLogger(name).setLevel(log_level)
+
+    for logger in VERBOSE_LOGGERS:
+        logging.getLogger(logger).setLevel(logging.WARNING)
+
+    return app
+
+def register_extensions(app):
+    
+    from seeds import seeder
+    import storages
+
+    storages.init_app(app)
+    seeder.init_app(app, db)
+    cache.init_app(app)
+    csrf.init_app(app)
+    nav.init_app(app)
+    db.init_app(app)
+    
+    return app
+
+class CustomFlaskApp(Flask):
+    debug_log_format = '[%(levelname)s][%(name)s:%(lineno)d] %(message)s'
+
+    # Keep track of static dirs given as register_blueprint argument
+    static_prefixes = {}
+
+    def send_static_file(self, filename):
+        '''
+        Override default static handling:
+        - raises 404 if not debug
+        - handle static aliases
+        '''
+        if not self.debug:
+            self.logger.error('Static files are only served in debug')
+            abort(404)
+
+        cache_timeout = self.get_send_file_max_age(filename)
+
+        # Default behavior
+        if isfile(join(self.static_folder, filename)):
+            return send_static(
+                self.static_folder, 
+                filename,
+                cache_timeout=cache_timeout
+            )
+
+        # Handle aliases
+        for prefix, directory in self.config.get('STATIC_DIRS', tuple()):
+            if filename.startswith(prefix):
+                real_filename = filename[len(prefix):]
+
+                if real_filename.startswith('/'):
+                    real_filename = real_filename[1:]
+
+                if isfile(join(directory, real_filename)):
+                    return send_static(
+                        directory, 
+                        real_filename,
+                        cache_timeout=cache_timeout
+                    )
+
+        abort(404)
+
+    def handle_http_exception(self, e):
+        # Make exception/HTTPError available for context processors
+        if 'error' not in g:
+            g.error = e
+
+        return super(CustomFlaskApp, self).handle_http_exception(e)
+
+    def register_blueprint(self, blueprint, **kwargs):
+        if blueprint.has_static_folder and 'url_prefix' in kwargs:
+            self.static_prefixes[blueprint.name] = kwargs['url_prefix']
+
+        return super(CustomFlaskApp, self).register_blueprint(blueprint, **kwargs)
 
 def create_app(
-    device='cpu',
-    model_path='gpt2',
-    SECRET_KEY='secret',
-    OAUTH2_REFRESH_TOKEN_GENERATOR=True,
-    SQLALCHEMY_TRACK_MODIFICATIONS=False
+    config='settings.Defaults', 
+    override=None,
+    init_logging=init_logging,
 ):
-    app = Flask(
-        __name__,
+
+    '''Factory for a minimal application'''
+    app = CustomFlaskApp(
+        APP_NAME, 
         static_url_path='',
         static_folder='public'
     )
 
+    app.config.from_object(config)
+
+    settings = os.environ.get('UDATA_SETTINGS', join(os.getcwd(), 'udata.cfg'))
+
+    if exists(settings):
+        app.settings_file = settings  # Keep track of loaded settings for diagnostic
+        app.config.from_pyfile(settings)
+
+    if override:
+        app.config.from_object(override)
+
+    # Loads defaults from plugins
+    for pkg in entrypoints.get_roots(app):
+        if pkg == 'udata':
+            continue  # Defaults are already loaded
+        module = '{}.settings'.format(pkg)
+        try:
+            settings = importlib.import_module(module)
+        except ImportError:
+            continue
+        for key, default in settings.__dict__.items():
+            if key.startswith('__'):
+                continue
+            app.config.setdefault(key, default)
+
+    app.json_encoder = CustomFlaskJsonEncoder
+
+    app.debug = app.config['DEBUG'] and not app.config['TESTING']
+
+    app.wsgi_app = ProxyFix(app.wsgi_app)
+
+    init_logging(app)
+
+    register_extensions(app)
+
+    config_oauth(app)
+
     CORS(app)
-
-    # load default configuration
-    app.config.from_object('config')
-
-    # load environment configuration
-    if 'WEBSITE_CONF' in os.environ:
-        app.config.from_envvar('WEBSITE_CONF')
-
-    if torch.cuda.is_available() and device != 'cpu':
-        app.config['device'] = device
-    else:
-        app.config['device'] = 'cpu'
-
-    app.config['SECRET_KEY'] = SECRET_KEY
-    app.config['OAUTH2_REFRESH_TOKEN_GENERATOR'] = OAUTH2_REFRESH_TOKEN_GENERATOR
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}:{}/{}'.format(
-        config('DB_USER'),
-        config('DB_PASSWORD'),
-        config('DB_HOST'),
-        config('DB_PORT'),
-        config('DB_NAME'),
-    )
-
-    setup_app(app)
 
     return app
 
 
 def setup_app(app):
     # Create tables if they do not exist already
-    @app.before_first_request
-    def create_tables():
-        db.create_all()
-
-    db.init_app(app)
-
-    seeder = FlaskSeeder()
-    seeder.init_app(app, db)
-
-    config_oauth(app)
-
-    migrate = Migrate(app, db)
-
-    app.register_blueprint(client_bp, url_prefix='/client')
-    app.register_blueprint(auth_bp, url_prefix='/api')
-    app.register_blueprint(ml_model_bp, url_prefix='/api')
-    app.register_blueprint(content_bp, url_prefix='/api')
-    app.register_blueprint(admin_content_bp, url_prefix='/api/admin/content')
-
-    @app.route('/<path:filename>')  
+    # @app.before_first_request
+    # def create_tables():
+    #     db.create_all()
     
-    def send_file(filename):  
-        return send_from_directory(app.static_folder, filename)
 
+    # migrate = Migrate(app, db)
 
-# parser = argparse.ArgumentParser()
+    from api import auth
 
-# parser.add_argument(
-#     '--model_path',
-#     type=str,
-#     default='gpt2',
-#     help='Name of folder that contains checkpoint of text generation model'
-# )
+    auth.init_app(app)
 
-# parser.add_argument(
-#     '--device',
-#     type=str,
-#     default='cpu',
-#     help='cpu or cuda...'
-# )
-
-# parser.add_argument(
-#     '--debug',
-#     type=bool,
-#     default=False,
-#     help='Debug type'
-# )
-
-# parser.add_argument(
-#     '--port',
-#     type=str,
-#     default='6011',
-#     help='Port server'
-# )
-
-# args = parser.parse_args()
-
-# model_path = args.model_path
-
-# debug = args.debug
-
-# device = args.device
-model_path = 'gpt2'
-device = 'cpu'
-
-app = create_app(
-    model_path=model_path,
-    device=device,
-    SECRET_KEY='secret',
-    OAUTH2_REFRESH_TOKEN_GENERATOR=True,
-    SQLALCHEMY_TRACK_MODIFICATIONS=False
-)
-
-
-def success_handle(code, error_message,  status, mimetype='application/json'):
-    # return Response(json.dumps({"code": code, "message": error_message, "status": status}), mimetype=mimetype)
-    return jsonify(code=code, message=error_message, status=status)
-
-
-@app.route('/api', methods=['GET'])
-def homepage():
-    print('ahihihihi', flush=True)
-    return success_handle(1, "OK", "OK")
-
+app = create_app()
 
 if __name__ == '__main__':
 
