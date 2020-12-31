@@ -59,7 +59,7 @@ const SentencePage = (props) => {
         return (
             <TextArea
                 key={paraSentence['_id']['$oid']}
-                rows={4}
+                autoSize={true}
                 defaultValue={lastUpdated}
                 onKeyPress={(event) => {
                     if (event.key === 'Enter') {
