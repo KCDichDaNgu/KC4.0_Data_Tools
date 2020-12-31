@@ -347,26 +347,6 @@ const SentencePage = (props) => {
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                                { t('sentence.by_lang_1') }
-                            </div>
-
-                            <Select
-                                style={{
-                                    width: '100%',
-                                }}
-                                defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
-                                onChange={(value) => handleChange(value, "lang1")}
-                            >
-                                {lang1Option}
-                            </Select>
-                        </Col>
-
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                            <div style={{ 
-                                marginBottom: "10px",
-                                fontSize: '20px',
-                                fontWeight: 500
-                            }}>
                                 { t('sentence.by_rating') }
                             </div>
 
@@ -381,6 +361,26 @@ const SentencePage = (props) => {
                                 onChange={(value) => handleChange(value, "rating")}
                             >
                                 {ratingOption}
+                            </Select>
+                        </Col>
+
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                            <div style={{ 
+                                marginBottom: "10px",
+                                fontSize: '20px',
+                                fontWeight: 500
+                            }}>
+                                { t('sentence.by_lang_1') }
+                            </div>
+
+                            <Select
+                                style={{
+                                    width: '100%',
+                                }}
+                                defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
+                                onChange={(value) => handleChange(value, "lang1")}
+                            >
+                                {lang1Option}
                             </Select>
                         </Col>
 
