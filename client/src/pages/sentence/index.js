@@ -6,19 +6,18 @@ import {
     Input,
     Table,
     Button,
-    Card,
     Select,
     Upload,
     message,
     Spin,
     Tooltip,
-    Radio
+    Radio,
+    Card
 } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
 
-import "./Sentence.module.css";
-import { set } from "numeral";
+import "./Sentence.module.scss";
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
@@ -148,26 +147,6 @@ const SentencePage = (props) => {
         },
     };
 
-    const FilterByNameInput = (
-        <Input
-            placeholder={t('sentence.searchBox')}
-            className="search-input-box"
-            value={value}
-            onChange={(e) => {
-                const currValue = e.target.value;
-                setValue(currValue);
-                const filteredData = dataSource.filter((entry) => {
-                    if (
-                        entry.text1.includes(currValue) ||
-                        entry.text2.includes(currValue)
-                    )
-                        return true;
-                });
-                setDataSource(filteredData);
-            }}
-        />
-    );
-
     const handleChange = (value, key) => {
         setRequestParams({ ...requestParams, [key]: value });
     };
@@ -209,9 +188,8 @@ const SentencePage = (props) => {
             authorization: 'authorization-text',
         },
         onChange(info) {
-            if (info.file.status !== 'uploading') {
-                setUploadingFile(true);
-            }
+
+            if (info.file.status !== 'uploading') setUploadingFile(true);
 
             if (info.file.status === 'done') {
                 setUploadingFile(false);
@@ -226,6 +204,7 @@ const SentencePage = (props) => {
                     setDataSource(res.data.data);
                     setPaginationParams(res.data.pagination);
                 });
+
             } else if (info.file.status === 'error') {
                 setUploadingFile(false);
 
@@ -300,63 +279,84 @@ const SentencePage = (props) => {
                     }
                 />
 
-                <Card className="domain-table-card">
-                    <div className="header-controller">
+                <Card title={ t('sentence.filter') } style={{ marginBottom: '40px' }}>
 
-                        {FilterByNameInput}
+                    <label></label>
+                    <Input
+                        placeholder={t('sentence.searchBox')}
+                        className="search-input-box"
+                        value={value}
+                        onChange={(e) => {
+                            const currValue = e.target.value;
+                            setValue(currValue);
+                            const filteredData = dataSource.filter((entry) => {
+                                if (
+                                    entry.text1.includes(currValue) ||
+                                    entry.text2.includes(currValue)
+                                )
+                                    return true;
+                            });
+                            setDataSource(filteredData);
+                        }}
+                    />
 
-                        <div style={{ float: "left" }}>
-
-                            <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                                <span style={{ marginRight: "10px" }}>Lang 1:</span>
-                                <Select
-                                    style={{
-                                        width: "100px",
-                                    }}
-                                    defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
-                                    onChange={(value) => handleChange(value, "lang1")}
-                                >
-                                    {lang1Option}
-                                </Select>
-                            </div>
-                            <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                                <span style={{ marginRight: "10px" }}>Lang 2:</span>
-                                <Select
-                                    showSearch
-                                    style={{
-                                        width: "100px",
-                                    }}
-                                    defaultValue={lang2Option.length === 0 ? "" : lang2Option[0]}
-                                    onChange={(value) => handleChange(value, "lang2")}
-                                >
-                                    {lang2Option}
-                                </Select>
-                            </div>
-                            <div style={{ marginLeft: "30px", display: "inline-block" }}>
-                                <span style={{ marginRight: "10px" }}>{t('sentence.rating')}:</span>
-                                <Select
-                                    showSearch
-                                    style={{
-                                        width: "150px",
-                                    }}
-                                    defaultValue={
-                                        ratingOption.length === 0 ? "" : ratingOption[0]
-                                    }
-                                    onChange={(value) => handleChange(value, "rating")}
-                                >
-                                    {ratingOption}
-                                </Select>
-                            </div>
-
-                            <Button
-                                showsearchshowsearch="true"
-                                style={{ width: "100px", marginLeft: "30px", background: '#384AD7', borderColor: '#384AD7' }}
-                                type="primary"
-                                onClick={handleFilter}>
-                                {t('sentence.filter')}
-                            </Button>
-                        </div>
+                    <div style={{ marginLeft: "30px", display: "inline-block" }}>
+                        <span style={{ marginRight: "10px" }}>Lang 1:</span>
+                        <Select
+                            style={{
+                                width: "100px",
+                            }}
+                            defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
+                            onChange={(value) => handleChange(value, "lang1")}
+                        >
+                            {lang1Option}
+                        </Select>
                     </div>
+                    <div style={{ marginLeft: "30px", display: "inline-block" }}>
+                        <span style={{ marginRight: "10px" }}>Lang 2:</span>
+                        <Select
+                            showSearch
+                            style={{
+                                width: "100px",
+                            }}
+                            defaultValue={lang2Option.length === 0 ? "" : lang2Option[0]}
+                            onChange={(value) => handleChange(value, "lang2")}
+                        >
+                            {lang2Option}
+                        </Select>
+                    </div>
+                    <div style={{ marginLeft: "30px", display: "inline-block" }}>
+                        <span style={{ marginRight: "10px" }}>{t('sentence.rating')}:</span>
+                        <Select
+                            showSearch
+                            style={{
+                                width: "150px",
+                            }}
+                            defaultValue={
+                                ratingOption.length === 0 ? "" : ratingOption[0]
+                            }
+                            onChange={(value) => handleChange(value, "rating")}
+                        >
+                            {ratingOption}
+                        </Select>
+                    </div>
+
+                    <Button
+                        showsearchshowsearch="true"
+                        style={{ 
+                            width: "100px", 
+                            marginLeft: "30px", 
+                            background: '#384AD7', 
+                            borderColor: '#384AD7',
+                            float: 'right'
+                        }}
+                        type="primary"
+                        onClick={handleFilter}>
+                        {t('sentence.search')}
+                    </Button>
+                </Card>
+
+                <Card className='card-body-padding-0'>
                     <Table
                         className="table-striped-rows"
                         // rowSelection={{
