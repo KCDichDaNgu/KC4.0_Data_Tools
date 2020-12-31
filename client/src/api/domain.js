@@ -7,7 +7,7 @@ export default {
     get: (data) =>
         customAxios({
             method: 'get',
-            url: `${server_endpoint}/api/v1/domain`,
+            url: `${server_endpoint}/api/v1/domain/`,
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
