@@ -10,7 +10,8 @@ import {
   Select,
   Upload,
   message,
-  Spin
+  Spin,
+  Tooltip
 } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
@@ -19,6 +20,7 @@ import "./Sentence.module.css";
 import { set } from "numeral";
 
 import { useTranslation } from 'react-i18next';
+import paraSentence from "../../api/paraSentence";
 
 const moment = require("moment");
 
@@ -30,6 +32,7 @@ const SentencePage = (props) => {
   const { t } = useTranslation(['common']);
   
   const [dataSource, setDataSource] = useState([]);
+  const [data, setData] = useState([]);
 
   const [value, setValue] = useState("");
   const [selectedDomain, setSeletedDomain] = useState([]);
@@ -58,28 +61,64 @@ const SentencePage = (props) => {
     return time;
   };
 
+  const renderText = (key, paraSentence, index) => {
+    let lastUpdated = paraSentence[key];
+
+    if (paraSentence.hasOwnProperty('edited') 
+      && paraSentence['edited'].hasOwnProperty(key)
+      && paraSentence['edited'][key] !== undefined) {
+      lastUpdated = paraSentence['edited'][key];
+    }
+
+    return (
+      <TextArea 
+        key={ paraSentence['_id']['$oid'] }
+        rows={4} 
+        defaultValue={ lastUpdated } 
+        onKeyPress={(event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            updateParaSentence(paraSentence, key, event.target.value);
+          }
+        }} />
+    );
+  }
+
+  const renderRating = (rating, paraSentence, index) => {
+    let lastUpdated = paraSentence['rating'];
+
+    if (paraSentence.hasOwnProperty('edited') 
+      && paraSentence['edited'].hasOwnProperty('rating')
+      && paraSentence['edited']['rating'] !== undefined) {
+      lastUpdated = paraSentence['edited']['rating'];
+    }
+
+    return (
+      <Select
+        style={{
+          width: "150px",
+        }}
+        key={ paraSentence['_id']['$oid'] }
+        defaultValue={ lastUpdated }
+        onChange={(value) => updateParaSentence(paraSentence, "rating", value)}
+        >
+        {ratingOption}
+      </Select>
+    );
+  }
+
   const columns = [
-    // {
-    //   title: "IDs",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   sorter: (a, b) => a.id - b.id,
-    // },
     {
       title: `${ t('sentence.text') } 1`,
       dataIndex: "text1",
       key: "text1",
-      render: (text) => (
-        <TextArea rows={4} value={text} />
-      )
+      render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
     },
     {
       title: `${ t('sentence.text') } 2`,
       dataIndex: "text2",
       key: "text2",
-      render: (text) => (
-        <TextArea rows={4} value={text} />
-      )
+      render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
     },
     {
       title: t('sentence.lastUpdate'),
@@ -103,32 +142,8 @@ const SentencePage = (props) => {
       title: t('sentence.rating'),
       dataIndex: "rating",
       key: "rating",
-      render: (rating) => (
-        <Select
-          style={{
-            width: "150px",
-          }}
-          value={ rating }
-          // onChange={(value) => handleChange(value, "rating")}
-          >
-          {ratingOption}
-        </Select>
-      ),
-    },
-    // {
-    //   title: t('sentence.action'),
-    //   dataIndex: "",
-    //   key: "action",
-    //   render: () => 
-    //     <div>
-    //       <Button type="primary" style={{background:'#F22D4E',borderColor:'#F22D4E' }}>
-    //         { t('sentence.reject') }
-    //       </Button>
-    //       <Button type="primary" style={{ marginLeft: "4px",background:'#2CA189',borderColor:'#2CA189' }}>
-    //         { t('sentence.approve') }
-    //       </Button>
-    //   </div>,
-    // },
+      render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
+    }
   ];
 
   const rowSelection = {
@@ -178,6 +193,13 @@ const SentencePage = (props) => {
       setPaginationParams(res.data.pagination);
     });
   };
+
+  // const components = {
+  //   body: {
+  //     row: EditableRow,
+  //     cell: EditableCell,
+  //   },
+  // };
 
   const [langList1, setLangList1] = useState([]);
   const [langList2, setLangList2] = useState([]);
@@ -253,6 +275,19 @@ const SentencePage = (props) => {
     paraSentenceAPI.getSentences(params).then((res) => {
       setDataSource(res.data.data);
       setPaginationParams(res.data.pagination);
+    });
+  }
+
+  const updateParaSentence = (paraSentence, key, value) => {
+    let filterParams = {};
+    filterParams[key] = value;
+
+    paraSentenceAPI.updateParaSentence(paraSentence['_id']['$oid'], filterParams).then((res) => {
+      if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+        message.success(t('sentence.editedSuccess'));
+      } else {
+        message.error(t('sentence.editedFail'));
+      }
     });
   }
 
@@ -337,10 +372,11 @@ const SentencePage = (props) => {
           </div>
           <Table
             className="table-striped-rows"
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
+            // rowSelection={{
+            //   type: "checkbox",
+            //   ...rowSelection,
+            // }}
+            rowKey="key"
             dataSource={dataSource}
             columns={columns}
             onChange={handleTableChange}
@@ -348,8 +384,8 @@ const SentencePage = (props) => {
               pageSize: paginationParams.page_size,
               total: paginationParams.total_items,
               current: paginationParams.current_page
-            }}
-          ></Table>
+            }}>
+          </Table>
         </Card>
       </SiteLayout>
     </React.Fragment>

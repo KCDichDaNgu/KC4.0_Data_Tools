@@ -8,9 +8,10 @@ from app.extensions import mongo
 from app.extensions.api.parameters import PaginationParameters
 from .parameters import ParaSentenceFilterParameter
 from flask_restplus import Resource
+from bson.objectid import ObjectId
 
 from config import BaseConfig
-from .utils import import_parasentences_from_file
+from .utils import import_parasentences_from_file, hash_para_sentence
 
 import time
 import os
@@ -36,7 +37,7 @@ class ParaSentences(Resource):
             if attr in args:
                 spec[attr] = args[attr]
 
-        para_sentences = ParaSentence.objects.filter(__raw__=spec).exclude('id').all()
+        para_sentences = ParaSentence.objects.filter(__raw__=spec).all()
 
         # sort
         if 'sort_by' in args:
@@ -79,6 +80,7 @@ class ParaSentences(Resource):
 
         para_sentence.save()
         return jsonify(para_sentence)
+
 @api.route('/list_lang')
 class ListLang(Resource):
     """
@@ -156,3 +158,52 @@ class ImportFromFile(Resource):
             "n_success": n_success,
             "n_data": n_data
         })
+
+@api.route('/<_id>')
+class ParaSentenceAPI(Resource):
+
+    @api.response(code=HTTPStatus.FORBIDDEN)
+    @api.response(code=HTTPStatus.CONFLICT)
+    @api.doc(id='update_para_sentence')
+    def put(self, _id, *args, **kwargs):
+        try:
+            para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
+        except:
+            return jsonify({
+                'code': BaseConfig.STATUS_CODE['failure'], 
+                'message': 'notFound', 
+            })
+
+        try:
+            hashes = {
+                'text1': para_sentence.text1,
+                'text2': para_sentence.text2,
+                'lang1': para_sentence.lang1,
+                'lang2': para_sentence.lang2,
+            }
+            filter_params = {}
+            hash_changed = False
+
+            for key, value in request.json.items():
+                if key == '_id': continue
+                filter_params[key] = value
+                if key in hashes.keys():
+                    hashes[key] = value
+                    hash_changed = True
+            
+            if hash_changed:
+                hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
+                para_sentence.update(edited=filter_params, hash=hash)
+            else:
+                para_sentence.update(edited=filter_params)
+
+            return jsonify({
+                'code': BaseConfig.STATUS_CODE['success'], 
+                'message': 'updatedSuccess', 
+            })
+        except:
+            return jsonify({
+                'code': BaseConfig.STATUS_CODE['failure'], 
+                'message': 'errorUpdate', 
+            })
+            

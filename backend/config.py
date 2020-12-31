@@ -70,6 +70,11 @@ class BaseConfig(object):
     MONGODB_HOST = 'localhost'
     MONGODB_PORT = 27017
 
+    STATUS_CODE = {
+        'failure': 0,
+        'success': 1
+    }
+
     IMPORT_FROM_FILE_DIR = "data/import_from_file/"
 
 

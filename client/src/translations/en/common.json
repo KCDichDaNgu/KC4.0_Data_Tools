@@ -72,6 +72,8 @@
 		"uploadSuccess": "file uploaded successfully",
 		"uploadFailed": "file upload failed",
 		"imported": "Imported",
-		"pairParaSentences": "pair of para-sentences"
+		"pairParaSentences": "pair of para-sentences",
+		"editedSuccess": "Edited successfully",
+		"editedFail": "Edited failure"
 	}
 }
