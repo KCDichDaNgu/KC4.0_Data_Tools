@@ -289,7 +289,14 @@ const SentencePage = (props) => {
                                 justifyContent: 'space-between',
                                 alignItems: 'center'
                             }}>
-                            <div>{ t('sentence.filter') }</div>
+                            <div 
+                                style={{ 
+                                    fontSize: '25px',
+                                    fontWeight: 600
+                                }}>
+                                    { t('sentence.filter') }
+                            </div>
+
                             <Button
                                 showsearchshowsearch="true"
                                 style={{ 
