@@ -8,6 +8,7 @@ import {
     Card,
     Dropdown,
     Tooltip,
+    message
 } from 'antd';
 import SiteLayout from '../../layout/site-layout';
 import domainAPI from '../../api/domain';
@@ -97,6 +98,7 @@ const DomainsPage = (props) => {
                 _id: id,
             };
             domainAPI.update(data);
+            message.success(t('updateSuccess'))
         }
         reload();
     };
@@ -136,16 +138,14 @@ const DomainsPage = (props) => {
                 <Tooltip
                     trigger={['focus']}
                     title={ t('domain.inputAdd') }
-                    placement='topLeft'
-                    visible={isEditable(domain.key)}>
+                    placement='topLeft'>
                     <Input
                         className='domain-input'
                         defaultValue={name}
-                        disabled={!isEditable(domain.key)}
-                        bordered={isEditable(domain.key)}
                         onPressEnter={(event) =>
                             updateDomain(domain.key, event.target.value)
-                        }></Input>
+                        }>    
+                    </Input>
                 </Tooltip>
             ),
         },
@@ -203,9 +203,9 @@ const DomainsPage = (props) => {
                             { t('domain.addDomain') }
                         </Button>
 
-                        <Button onClick={() => setEditingKey(selectedDomain)}>
+                        {/* <Button onClick={() => setEditingKey(selectedDomain)}>
                             { t('domain.editDomain') }
-                        </Button>
+                        </Button> */}
 
                         <Button onClick={() => deleteDomain(selectedDomain)}>
                             { t('domain.deleteDomain') }
@@ -214,6 +214,7 @@ const DomainsPage = (props) => {
                         {isAdding && (
                             <div>
                                 <Input
+                                    style={{ margin: '10px 0' }}
                                     placeholder={ t('domain.inputAdd') }
                                     onKeyPress={(event) => {
                                         if (event.key === 'Enter') {
