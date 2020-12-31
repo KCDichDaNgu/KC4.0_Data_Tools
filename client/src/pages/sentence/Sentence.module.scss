@@ -28,6 +28,16 @@
     margin-bottom: 20px !important;
 }
 
-.domain-table-card {
+.para-sentence-table-card {
     position: relative;
+}
+
+.card-body-padding-0 {
+    .ant-card-body {
+        padding: 0
+    }
+
+    .ant-table-pagination.ant-pagination {
+        margin: 20px;
+    }
 }

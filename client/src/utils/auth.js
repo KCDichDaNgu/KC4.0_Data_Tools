@@ -27,7 +27,7 @@ const isAuthenticatedUser = () => {
         expireDate = auth_info.expireDate;
     }
     
-    return true
+    return access_token != null && !isTokenExpiration(expireDate)
 }
 
 const isAdmin = () => {
@@ -36,7 +36,7 @@ const isAdmin = () => {
 
     if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.role === 'admin';
 
-    return true
+    return false
 }
 
 export { 
