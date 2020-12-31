@@ -85,7 +85,7 @@ const SentencePage = (props) => {
             <Radio.Group
                 key={paraSentence['_id']['$oid']} 
                 defaultValue={lastUpdated}
-                onChange={value => updateParaSentence(paraSentence, "rating", value)}>
+                onChange={event => updateParaSentence(paraSentence, "rating", event.target.value)}>
                 {
                     ratingList.map((rating) => {
                         if (rating == 'unRated') {
