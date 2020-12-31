@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { isAuthenticatedUser, isAdmin } from '../utils/auth';
 
-const AuthRoute = ({ component: Component, ...rest }) => {
+const AdminRoute = ({ component: Component, ...rest }) => {
 
     return <Route
         { ...rest }
@@ -12,4 +12,4 @@ const AuthRoute = ({ component: Component, ...rest }) => {
     />
 };
 
-export default AuthRoute;
+export default AdminRoute;

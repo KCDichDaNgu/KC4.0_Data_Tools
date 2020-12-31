@@ -21,10 +21,7 @@ import "./Sentence.module.css";
 import { set } from "numeral";
 
 import { useTranslation } from 'react-i18next';
-import paraSentence from "../../api/paraSentence";
 import { formatDate } from '../../utils/date';
-
-const moment = require("moment");
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -59,14 +56,17 @@ const SentencePage = (props) => {
         return (
             <TextArea
                 key={paraSentence['_id']['$oid']}
-                autoSize={true}
+                autoSize
+                showCount
                 defaultValue={lastUpdated}
-                onKeyPress={(event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        updateParaSentence(paraSentence, key, event.target.value);
-                    }
-                }} />
+                onPressEnter={event => {
+                    event.preventDefault();
+                    updateParaSentence(paraSentence, key, event.target.value);
+                }}
+                onResize={({ width, height }) => {
+                    return height + 10;
+                }} 
+            />
         );
     }
 
@@ -239,6 +239,7 @@ const SentencePage = (props) => {
             setDataSource(res.data.data);
             setPaginationParams(res.data.pagination);
         });
+
         paraSentenceAPI.getOptions().then((res) => {
             setLangList1(res.data.lang1);
             setLangList2(res.data.lang2);
