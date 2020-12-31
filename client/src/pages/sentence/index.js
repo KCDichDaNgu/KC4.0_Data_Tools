@@ -34,6 +34,7 @@ const SentencePage = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
     const [requestParams, setRequestParams] = useState({
         domain: "",
         lang1: "",
@@ -89,10 +90,11 @@ const SentencePage = (props) => {
                 {
                     ratingList.map((rating) => {
                         if (rating == 'unRated') {
-
-                            return (
-                                <Radio.Button key={rating} value={rating}>?</Radio.Button>
-                            );
+                            if (lastUpdated == 'unRated') {
+                                return (
+                                    <Radio.Button key={rating} value={rating}>?</Radio.Button>
+                                );
+                            }
                         } else {
                             return (
                                 <Radio.Button key={rating} value={rating}>{t(`sentence.${rating}`)}</Radio.Button>
@@ -237,6 +239,7 @@ const SentencePage = (props) => {
         }
 
         setRequestParams(params);
+        setSortedInfo(sorter)
 
         paraSentenceAPI.getSentences(params).then((res) => {
             setDataSource(res.data.data);
@@ -245,12 +248,26 @@ const SentencePage = (props) => {
     }
 
     const updateParaSentence = (paraSentence, key, value) => {
+
         let filterParams = {};
+
         filterParams[key] = value;
 
         paraSentenceAPI.updateParaSentence(paraSentence['_id']['$oid'], filterParams).then((res) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
                 message.success(t('sentence.editedSuccess'));
+
+                let params = {
+                    ...requestParams,
+                    sort_by: sortedInfo['columnKey'],
+                    sort_order: sortedInfo['order'],
+                    page: paginationParams.current_page
+                }
+
+                paraSentenceAPI.getSentences(params).then((res) => {
+                    setDataSource(res.data.data);
+                    setPaginationParams(res.data.pagination);
+                });
             } else {
                 message.error(t('sentence.editedFail'));
             }
@@ -294,7 +311,7 @@ const SentencePage = (props) => {
                                     fontSize: '25px',
                                     fontWeight: 600
                                 }}>
-                                    { t('sentence.filter') }
+                                { t('sentence.filter') }
                             </div>
 
                             <Button
@@ -308,7 +325,7 @@ const SentencePage = (props) => {
                                 }}
                                 type="primary"
                                 onClick={handleFilter}>
-                                {t('sentence.search')}
+                                { t('sentence.search') }
                             </Button> 
                         </div>
                     } 
@@ -316,11 +333,12 @@ const SentencePage = (props) => {
 
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                         <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                            <div style={{ 
-                                marginBottom: "10px",
-                                fontSize: '20px',
-                                fontWeight: 500
-                            }}>
+                            <div 
+                                style={{ 
+                                    marginBottom: "10px",
+                                    fontSize: '20px',
+                                    fontWeight: 500
+                                }}>
                                 { t('sentence.by_text') }
                             </div>
                             <Input
