@@ -183,6 +183,7 @@ class ParaSentenceAPI(Resource):
             }
             filter_params = {}
             hash_changed = False
+            text_changed = False
 
             for key, value in request.json.items():
                 if key == '_id': continue
@@ -190,6 +191,11 @@ class ParaSentenceAPI(Resource):
                 if key in hashes.keys():
                     hashes[key] = value
                     hash_changed = True
+                if key in ['text1', 'text2']:
+                    text_changed = True
+
+            if text_changed:
+                filter_params['rating'] = ParaSentence.RATING_GOOD
             
             if hash_changed:
                 hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
@@ -199,11 +205,11 @@ class ParaSentenceAPI(Resource):
 
             return jsonify({
                 'code': BaseConfig.STATUS_CODE['success'], 
-                'message': 'updatedSuccess', 
+                'message': 'updatedSuccess'
             })
         except:
             return jsonify({
                 'code': BaseConfig.STATUS_CODE['failure'], 
-                'message': 'errorUpdate', 
+                'message': 'errorUpdate'
             })
             

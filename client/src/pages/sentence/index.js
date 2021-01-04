@@ -23,6 +23,7 @@ import "./Sentence.module.scss";
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
+import paraSentence from "../../api/paraSentence";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -85,7 +86,7 @@ const SentencePage = (props) => {
         return (
             <Radio.Group
                 key={paraSentence['_id']['$oid']} 
-                defaultValue={lastUpdated}
+                value={lastUpdated}
                 onChange={event => updateParaSentence(paraSentence, "rating", event.target.value)}>
                 {
                     ratingList.map((rating) => {

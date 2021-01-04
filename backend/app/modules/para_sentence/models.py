@@ -36,15 +36,18 @@ class ParaSentence(db.Document):
 
     meta = {'collection': 'para_sentence'}
 
+    RATING_GOOD = 'Good'
+    RATING_NOTGOOD = 'notGood'
+    RATING_UNRATED = 'unRated'
     RATE_MAPPING_VI2STANDARD = {
-        'Chưa đánh giá': 'unRated',
-        'Chưa tốt': 'notGood',
-        'Tốt': 'Good'
+        'Chưa đánh giá': RATING_UNRATED,
+        'Chưa tốt': RATING_NOTGOOD,
+        'Tốt': RATING_GOOD
     }
     RATE_MAPPING_EN2STANDARD = {
-        'Unrated': 'unRated',
-        'Not Good': 'notGood',
-        'Good': 'Good'
+        'Unrated': RATING_UNRATED,
+        'Not Good': RATING_NOTGOOD,
+        'Good': RATING_GOOD
     }
 
     class Attr:
