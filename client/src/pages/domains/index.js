@@ -128,6 +128,10 @@ const DomainsPage = (props) => {
         return editingKey.length == 0 ? false : key == editingKey[0];
     };
 
+    const crawlDomain = () => {
+        return '';
+    }
+
     const columns = [
         {
             title: t('domain.title'),
@@ -166,7 +170,13 @@ const DomainsPage = (props) => {
             title: t('domain.crawl'),
             dataIndex: '',
             key: 'x',
-            render: () => <Button type='primary'>{ t('domain.crawl') }</Button>,
+            render: () => (
+                <Button 
+                    type='primary' 
+                    onClick={crawlDomain}>
+                    { t('domain.crawl') }
+                </Button>
+            ),
         },
     ];
 
