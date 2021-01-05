@@ -257,17 +257,17 @@ const SentencePage = (props) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
                 message.success(t('sentence.editedSuccess'));
 
-                let params = {
-                    ...requestParams,
-                    sort_by: sortedInfo['columnKey'],
-                    sort_order: sortedInfo['order'],
-                    page: paginationParams.current_page
-                }
+                // let params = {
+                //     ...requestParams,
+                //     sort_by: sortedInfo['columnKey'],
+                //     sort_order: sortedInfo['order'],
+                //     page: paginationParams.current_page
+                // }
 
-                paraSentenceAPI.getSentences(params).then((res) => {
-                    setDataSource(res.data.data);
-                    setPaginationParams(res.data.pagination);
-                });
+                // paraSentenceAPI.getSentences(params).then((res) => {
+                //     setDataSource(res.data.data);
+                //     setPaginationParams(res.data.pagination);
+                // });
             } else {
                 message.error(t('sentence.editedFail'));
             }
