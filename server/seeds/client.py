@@ -1,23 +1,22 @@
 from database.models.oauth2_client import OAuth2Client
-from flask_seeder import Seeder
+
 from database.models.user import User 
 import time
 
 def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
 
-class ClientSeeder(Seeder):
+class ClientSeeder():
 
-    def __init__(self, db=None):
+    def __init__(self):
         
-        super().__init__(db=db)
+        pass
 
-        self.priority = 2
-
-    def run(self):
-
-        admin = User.objects(role__in='admin').first()
-
+    @classmethod
+    def run(cls):
+        
+        admin = User.objects(roles__all=['admin']).first()
+        
         OAuth2Client.objects.delete()
 
         client_name = 'auth'
@@ -33,7 +32,7 @@ class ClientSeeder(Seeder):
                 # 'authorization_code'
             ],
             scope='profile',
-            response_types=response_types,
+            response_types=['code'],
             redirect_uris=[
                 'http://example.com'
             ],

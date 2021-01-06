@@ -30,7 +30,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_cors import CORS
 
-import entrypoints
+# import entrypoints
 
 APP_NAME = __name__.split('.')[0]
 ROOT_DIR = abspath(join(dirname(__file__)))
@@ -112,8 +112,8 @@ def init_logging(app):
 
     app.logger.setLevel(log_level)
 
-    for name in entrypoints.get_roots():  # Entrypoints loggers
-        logging.getLogger(name).setLevel(log_level)
+    # for name in entrypoints.get_roots():  # Entrypoints loggers
+    #     logging.getLogger(name).setLevel(log_level)
 
     for logger in VERBOSE_LOGGERS:
         logging.getLogger(logger).setLevel(logging.WARNING)
@@ -122,12 +122,10 @@ def init_logging(app):
 
 def register_extensions(app):
     
-    from seeds import seeder
     import storages
     
     db.init_app(app)
     storages.init_app(app)
-    seeder.init_app(app, db.db)
     cache.init_app(app)
     csrf.init_app(app)
     nav.init_app(app)
@@ -215,18 +213,18 @@ def create_app(
         app.config.from_object(override)
 
     # Loads defaults from plugins
-    for pkg in entrypoints.get_roots(app):
-        if pkg == 'udata':
-            continue  # Defaults are already loaded
-        module = '{}.settings'.format(pkg)
-        try:
-            settings = importlib.import_module(module)
-        except ImportError:
-            continue
-        for key, default in settings.__dict__.items():
-            if key.startswith('__'):
-                continue
-            app.config.setdefault(key, default)
+    # for pkg in entrypoints.get_roots(app):
+    #     if pkg == 'udata':
+    #         continue  # Defaults are already loaded
+    #     module = '{}.settings'.format(pkg)
+    #     try:
+    #         settings = importlib.import_module(module)
+    #     except ImportError:
+    #         continue
+    #     for key, default in settings.__dict__.items():
+    #         if key.startswith('__'):
+    #             continue
+    #         app.config.setdefault(key, default)
 
     app.json_encoder = CustomFlaskJsonEncoder
 
@@ -247,11 +245,6 @@ def create_app(
 
 def setup_app(app):
     # Create tables if they do not exist already
-    # @app.before_first_request
-    # def create_tables():
-    #     db.create_all()
-    
-
     # migrate = Migrate(app, db)
 
     from api import auth
