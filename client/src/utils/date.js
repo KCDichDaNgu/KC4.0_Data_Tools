@@ -5,7 +5,7 @@ const formatDate = (last_update) => {
     let month = a.getMonth();
     let date = a.getDate();
     
-    let time = date + "/" + month + "/" + year;
+    let time = date + "/" + (month + 1) + "/" + year;
 
     return time;
 };
