@@ -132,7 +132,7 @@ class User(UserMixin, db.Document):
     def serialize(self):
         
         return {
-           'id': self.id,
+           'id': str(self.id),
            'roles': self.roles,
            'username': self.username,
            'fullname': self.fullname

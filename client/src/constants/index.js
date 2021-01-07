@@ -1,5 +1,10 @@
 import sideBar6 from '../../public/images/sidebar/city1.jpg';
 
+export const STATUS_CODES = {
+    failure: 0,
+    success: 1
+}
+
 export const defaultThemeOption = {
     backgroundColor: 'bg-royal sidebar-text-light',
     headerBackgroundColor: 'bg-strong-bliss header-text-light',

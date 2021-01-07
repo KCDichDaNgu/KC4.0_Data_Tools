@@ -4,62 +4,48 @@ import qs from 'querystring';
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
 
 export default {
-    get: (data) =>
-        customAxios({
-            method: 'get',
-            url: `${server_endpoint}/api/v1/domain/`,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            params: {
-                limit: data.limit,
-                offset: data.offset,
-            },
-        }).then((res) => {
-            return res.data;
-        }),
 
     create: (data) =>
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/v1/domain/`,
+            url: `${server_endpoint}/api/domain/`,
             data: data,
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
             },
-        }).then((res) => {
+        }).then(res => {
             return res.data;
         }),
 
     update: (data) =>
         customAxios({
             method: 'put',
-            url: `${server_endpoint}/api/v1/domain/${data._id}`,
+            url: `${server_endpoint}/api/domain/${data.id}`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then((res) => {
+        }).then(res => {
             return res.data;
         }),
 
     delete: (id) =>
         customAxios({
             method: 'delete',
-            url: `${server_endpoint}/api/v1/domain/${id}`,
-        }).then((res) => {
+            url: `${server_endpoint}/api/domain/${id}`,
+        }).then(res => {
             return res.data;
         }),
 
     search: (data) =>
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/v1/domain/search`,
+            url: `${server_endpoint}/api/domain/search`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
             },
-        }).then((res) => {
+        }).then(res => {
             return res.data;
         }),
 };

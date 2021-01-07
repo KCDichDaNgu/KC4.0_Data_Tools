@@ -20,7 +20,7 @@ const Nav = () => {
         {
             icon: 'pe-7s-global',
             label: t('domain.title'),
-            to: 'domains',
+            to: 'domain',
         },
         {
             icon: 'pe-7s-news-paper',
