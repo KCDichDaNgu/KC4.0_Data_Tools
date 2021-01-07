@@ -252,9 +252,11 @@ def setup_app(app):
 
     from api.auth.views import auth_bp
     from api.domain.views import domain_bp
+    from api.para_sentence.views import para_sentence_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(domain_bp, url_prefix='/api/domain')
+    app.register_blueprint(para_sentence_bp, url_prefix='/api/para_sentence') 
 
 def has_no_empty_params(rule):
 
@@ -280,6 +282,6 @@ if __name__ == '__main__':
 
     app.run(
         host='0.0.0.0',
-        port=6011
-        # debug=debug
+        port=6011,
+        debug=True
     )

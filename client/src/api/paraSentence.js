@@ -36,23 +36,26 @@ const convertParamsToUrl = (params) => {
 
 export default {
 	getOptions: () =>
-		axios({
-			method: "get",
-			url: `${server_endpoint}/api/v1/${module_api}/list_option_field`,
+		customAxios({
+			method: 'get',
+			url: `${server_endpoint}/api/${module_api}/list_option_field`,
 		}),
 
-	getSentences: (params) =>
-		axios({
-			method: "get",
-			url: `${server_endpoint}/api/v1/${module_api}/${convertParamsToUrl(params)}`,
-		}),
+	getSentences: (data) =>
+        customAxios({
+            method: 'get',
+            url: `${server_endpoint}/api/${module_api}/${convertParamsToUrl(data)}`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }),
 
 	updateParaSentence: (id, params) =>
-		axios({
-			method: "put",
-			url: `${server_endpoint}/api/v1/${module_api}/${id}`,
-			data: params
-		}),
+		customAxios({
+            method: 'put',
+            url: `${server_endpoint}/api/${module_api}/${id}`,
+            data: params
+        }),
 
 	revokeToken: (token) =>
 		axios({
@@ -67,6 +70,22 @@ export default {
 		}),
 
 	importFromFileUrl: () => {
-		return `${server_endpoint}/api/v1/${module_api}/import_from_file`
-	}
+		return `${server_endpoint}/api/${module_api}/import_from_file`
+	},
+
+	importFromFile: (onProgress, onSuccess, onError, file) => {
+		const formData = new FormData();
+		formData.append('file', file);
+
+		return customAxios({
+            method: 'post',
+			url: `${server_endpoint}/api/${module_api}/import_from_file`,
+			data: formData,
+            headers: {
+				'content-type': 'multipart/form-data'
+			},
+			onUploadProgress: onProgress,
+        }).then(res => onSuccess(res)).catch(res => onError(res));
+	},
+        
 };

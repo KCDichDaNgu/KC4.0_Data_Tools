@@ -189,7 +189,9 @@ const SentencePage = (props) => {
 
     const uploadFile = {
         name: 'file',
-        action: paraSentenceAPI.importFromFileUrl(),
+        customRequest: ({onProgress, onSuccess, onError, file}) => {
+            paraSentenceAPI.importFromFile(onProgress, onSuccess, onError, file)
+        },
         showUploadList: false,
         headers: {
             authorization: 'authorization-text',
@@ -201,8 +203,8 @@ const SentencePage = (props) => {
             if (info.file.status === 'done') {
                 setUploadingFile(false);
 
-                let nSuccess = info.file.response.n_success;
-                let nData = info.file.response.n_data;
+                let nSuccess = info.file.response.data.n_success;
+                let nData = info.file.response.data.n_data;
 
                 message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
 
@@ -234,6 +236,7 @@ const SentencePage = (props) => {
     }, []);
 
     const handleTableChange = (pagination, filters, sorter) => {
+        console.log(filters);
         let params = {
             ...requestParams,
             sort_by: sorter['columnKey'],
