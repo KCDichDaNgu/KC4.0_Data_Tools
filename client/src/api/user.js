@@ -30,7 +30,7 @@ export default {
             scope: 'profile'
         }),
         headers: {
-            Authorization: `Basic ${toUnicode(toBase64('5ff5ee6b7e8bfcf970470075:12345678'))}`,
+            Authorization: `Basic ${toUnicode(toBase64('12345678:12345678'))}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     }).
@@ -52,7 +52,7 @@ export default {
         url: `${server_endpoint}/api/auth/oauth2/revoke`,
         data: `token=${token}`,
         headers: {
-            Authorization: `Basic ${toUnicode(toBase64('5ff5ee6b7e8bfcf970470075:12345678'))}`
+            Authorization: `Basic ${toUnicode(toBase64('12345678:12345678'))}`
         }
     }).
     then (res => { return res.data; }),
