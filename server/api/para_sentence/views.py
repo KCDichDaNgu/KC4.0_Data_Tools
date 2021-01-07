@@ -9,6 +9,7 @@ from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
 from .utils import import_parasentences_from_file, hash_para_sentence
+import re
 
 para_sentence_bp = Blueprint(__name__, 'para_sentence')    
 
@@ -19,6 +20,9 @@ def get():
     args = request.args
     
     spec = {}
+    query = {
+        '$and': []
+    }
     attr_filter = [
         ParaSentence.Attr.lang1,
         ParaSentence.Attr.lang2,
@@ -27,8 +31,35 @@ def get():
     for attr in attr_filter:
         if attr in args:
             spec[attr] = args[attr]
+            query['$and'].append({attr: args[attr]}) 
 
-    para_sentences = ParaSentence.objects.filter(__raw__=spec).all()
+    # query string contains
+    append_or = False
+    if 'text1' in args:
+        pattern = re.compile(f".*{args['text1']}.*", re.IGNORECASE)
+        query['$and'].append({
+            '$or': [
+                {'text1': {'$regex': pattern}}
+            ]
+        })
+        append_or = True
+    if 'text2' in args:
+        pattern = re.compile(f".*{args['text2']}.*", re.IGNORECASE)
+        if append_or:
+            query['$and'][-1]['$or'].append(
+                {'text2': {'$regex': pattern}}
+            )
+        else:
+            query['$and'].append({
+                '$or': [
+                    {'text2': {'$regex': pattern}}
+                ]
+            })
+
+    if len(query['$and']) == 0:
+        del query['$and']
+
+    para_sentences = ParaSentence.objects.filter(__raw__=query).all()
 
     # sort
     if 'sort_by' in args:
@@ -134,6 +165,13 @@ def update(_id):
             'lang1': para_sentence.lang1,
             'lang2': para_sentence.lang2,
         }
+
+        original = {
+            'text1': para_sentence.text1,
+            'text2': para_sentence.text2,
+            'rating': para_sentence.rating,
+        }
+
         filter_params = {}
         hash_changed = False
         text_changed = False
@@ -149,12 +187,12 @@ def update(_id):
 
         if text_changed:
             filter_params['rating'] = ParaSentence.RATING_GOOD
-        
+
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            para_sentence.update(edited=filter_params, hash=hash)
+            para_sentence.update(original=original, hash=hash, **filter_params)
         else:
-            para_sentence.update(edited=filter_params)
+            para_sentence.update(original=original, **filter_params)
 
         return jsonify({
             'code': STATUS_CODES['success'], 

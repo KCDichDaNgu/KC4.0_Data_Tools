@@ -1,7 +1,7 @@
 from database.db import db
 
 
-class EditedParaSentence(db.EmbeddedDocument):
+class OriginalParaSentence(db.EmbeddedDocument):
     text1 = db.StringField()
     text2 = db.StringField()
     rating = db.StringField()
@@ -25,7 +25,7 @@ class ParaSentence(db.Document):
     created_time = db.IntField()
     updated_time = db.IntField()
     hash = db.StringField()
-    edited = db.EmbeddedDocumentField(EditedParaSentence)
+    original = db.EmbeddedDocumentField(OriginalParaSentence)
 
     meta = {'collection': 'para_sentence'}
 
@@ -55,7 +55,7 @@ class ParaSentence(db.Document):
         origin_para_document_id = 'origin_para_document_id'
         created_time = 'created_time'
         updated_time = 'updated_time'
-        edited = 'edited'
+        original = 'original'
     
 
     def save(self):
