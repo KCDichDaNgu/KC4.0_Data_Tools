@@ -47,7 +47,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
 
         auth_code = OAuth2Code.objects.create(
             code=code,
-            client=ObjectId(request.client.client_id),
+            client_id=request.client.client_id,
             redirect_uri=request.redirect_uri,
             scope=request.scope,
             user=ObjectId(request.user.id),
@@ -60,7 +60,7 @@ class AuthorizationCodeGrant(grants.AuthorizationCodeGrant):
     def query_authorization_code(self, code, client):
         auth_code = OAuth2Code.objects(
             code=code, 
-            client=client
+            client_id=client_id
         ).first()
 
         if auth_code and not auth_code.is_expired():
@@ -105,7 +105,7 @@ class RefreshTokenGrant(grants.RefreshTokenGrant):
 class RevokeToken(RevocationEndpoint):
 
     def query_token(self, token, token_type_hint, client):
-        qs = OAuth2Token.objects(client=client)
+        qs = OAuth2Token.objects(client_id=client.client_id)
 
         if token_type_hint == 'access_token':
             return qs.filter(access_token=token).first()
@@ -134,7 +134,7 @@ class BearerToken(BearerTokenValidator):
 
 def query_client(client_id):
     '''Fetch client by ID'''
-    return OAuth2Client.objects(id=ObjectId(client_id)).first()
+    return OAuth2Client.objects(client_id=client_id).first()
 
 
 def save_token(token, request):
@@ -147,7 +147,7 @@ def save_token(token, request):
         client = request.client
         user = request.user or client.owner
         OAuth2Token.objects.create(
-            client=client,
+            client_id=client.client_id,
             user=user.id,
             scope=scope,
             **token

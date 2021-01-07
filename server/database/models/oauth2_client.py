@@ -7,6 +7,7 @@ from authlib.oauth2.rfc6749.util import scope_to_list, list_to_scope
 
 class OAuth2Client(ClientMixin, db.Datetimed, db.Document):
     secret = db.StringField(default=lambda: gen_salt(50))
+    client_id = db.StringField(required=True)
 
     name = db.StringField(required=True)
     description = db.StringField()
@@ -32,11 +33,7 @@ class OAuth2Client(ClientMixin, db.Datetimed, db.Document):
     }
 
     def get_client_id(self):
-        return str(self.id)
-
-    @property
-    def client_id(self):
-        return self.get_client_id()
+        return str(self.client_id)
 
     @property
     def client_secret(self):
