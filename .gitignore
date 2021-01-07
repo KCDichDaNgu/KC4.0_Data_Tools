@@ -61,3 +61,4 @@ clients/*/swagger.json
 clients/*/dist
 backend/run.sh
 /.env
+server/data/import_from_file

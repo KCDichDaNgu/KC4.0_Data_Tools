@@ -54,6 +54,7 @@
 		"passwordHint": "Password here..."
 	},
 	"sentence": {
+		"all": "All",
 		"title": "Sentence",
 		"searchBox": "Search text...",
 		"lastUpdate": "Last Update",
