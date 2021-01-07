@@ -29,26 +29,6 @@ def create():
         message='success'
     )
 
-@domain_bp.route('/', methods=['GET'])
-@require_oauth()
-def index():
-
-    result = Domain.objects.paginate(
-        page=int(request.args.get('pagination__page') or 1), 
-        per_page=int(request.args.get('pagination__perPage') or 5)
-    )
-
-    return jsonify(
-        code=STATUS_CODES['success'],
-        data={
-            'total': result.total,
-            'page': result.page,
-            'perPage': result.per_page,
-            'items': [i.serialize for i in result.items]
-        },
-        message='success'
-    )
-
 
 @domain_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
