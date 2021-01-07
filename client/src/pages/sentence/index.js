@@ -50,11 +50,11 @@ const SentencePage = (props) => {
 
         let lastUpdated = paraSentence[key];
 
-        if (paraSentence.hasOwnProperty('edited')
-            && paraSentence['edited'].hasOwnProperty(key)
-            && paraSentence['edited'][key] !== undefined) {
-            lastUpdated = paraSentence['edited'][key];
-        }
+        // if (paraSentence.hasOwnProperty('edited')
+        //     && paraSentence['edited'].hasOwnProperty(key)
+        //     && paraSentence['edited'][key] !== undefined) {
+        //     lastUpdated = paraSentence['edited'][key];
+        // }
 
         return (
             <TextArea
@@ -77,11 +77,11 @@ const SentencePage = (props) => {
 
         let lastUpdated = paraSentence['rating'];
 
-        if (paraSentence.hasOwnProperty('edited')
-            && paraSentence['edited'].hasOwnProperty('rating')
-            && paraSentence['edited']['rating'] !== undefined) {
-            lastUpdated = paraSentence['edited']['rating'];
-        }
+        // if (paraSentence.hasOwnProperty('edited')
+        //     && paraSentence['edited'].hasOwnProperty('rating')
+        //     && paraSentence['edited']['rating'] !== undefined) {
+        //     lastUpdated = paraSentence['edited']['rating'];
+        // }
 
         return (
             <Radio.Group
@@ -155,7 +155,11 @@ const SentencePage = (props) => {
     };
 
     const handleChange = (value, key) => {
-        setRequestParams({ ...requestParams, [key]: value });
+        if (key == 'text') {
+            setRequestParams({ ...requestParams, text1: value, text2: value });
+        } else {
+            setRequestParams({ ...requestParams, [key]: value });
+        }
     };
 
     const handleFilter = () => {
@@ -176,16 +180,29 @@ const SentencePage = (props) => {
     const [langList2, setLangList2] = useState([]);
     const [ratingList, setRatingList] = useState([]);
 
-    const lang1Option = langList1.map((lang) => {
-        return <Option key={lang}>{lang}</Option>;
-    });
-    const lang2Option = langList2.map((lang) => {
-        return <Option key={lang}>{lang}</Option>;
-    });
+    const lang1Option = [
+        <Option key='all'>{t('sentence.all')}</Option>
+    ].concat(
+        langList1.map((lang) => {
+            return <Option key={lang}>{lang}</Option>;
+        })
+    );
 
-    const ratingOption = ratingList.map((rating) => {
-        return <Option key={rating}>{t(`sentence.${rating}`)}</Option>;
-    });
+    const lang2Option = [
+        <Option key='all'>{t('sentence.all')}</Option>
+    ].concat(
+        langList2.map((lang) => {
+            return <Option key={lang}>{lang}</Option>;
+        })
+    );
+
+    const ratingOption = [
+        <Option key='all'>{t('sentence.all')}</Option>
+    ].concat(
+        ratingList.map((rating) => {
+            return <Option key={rating}>{t(`sentence.${rating}`)}</Option>;
+        })
+    );
 
     const uploadFile = {
         name: 'file',
@@ -353,14 +370,7 @@ const SentencePage = (props) => {
                                 onChange={(e) => {
                                     const currValue = e.target.value;
                                     setValue(currValue);
-                                    const filteredData = dataSource.filter((entry) => {
-                                        if (
-                                            entry.text1.includes(currValue) ||
-                                            entry.text2.includes(currValue)
-                                        )
-                                            return true;
-                                    });
-                                    setDataSource(filteredData);
+                                    handleChange(currValue, "text");
                                 }}
                             />
                         </Col>

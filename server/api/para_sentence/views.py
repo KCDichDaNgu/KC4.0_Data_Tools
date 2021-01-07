@@ -19,19 +19,18 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 def get():
     args = request.args
     
-    spec = {}
     query = {
         '$and': []
     }
-    attr_filter = [
-        ParaSentence.Attr.lang1,
-        ParaSentence.Attr.lang2,
-        ParaSentence.Attr.rating,
-    ]
-    for attr in attr_filter:
-        if attr in args:
-            spec[attr] = args[attr]
-            query['$and'].append({attr: args[attr]}) 
+
+    if ParaSentence.Attr.rating in args and args[ParaSentence.Attr.rating] != 'all':
+        query['$and'].append({ParaSentence.Attr.rating: args[ParaSentence.Attr.rating]})
+        
+    if ParaSentence.Attr.lang1 in args and args[ParaSentence.Attr.lang1] != 'all':
+        query['$and'].append({ParaSentence.Attr.lang1: args[ParaSentence.Attr.lang1]})
+
+    if ParaSentence.Attr.lang2 in args and args[ParaSentence.Attr.lang2] != 'all':
+        query['$and'].append({ParaSentence.Attr.lang2: args[ParaSentence.Attr.lang2]})
 
     # query string contains
     append_or = False
