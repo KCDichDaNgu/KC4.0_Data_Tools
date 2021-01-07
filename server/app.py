@@ -9,11 +9,12 @@ from os.path import abspath, join, dirname, isfile, exists
 
 from flask import (
     Flask, abort, g, send_from_directory, json, Blueprint as BaseBlueprint,
-    make_response
+    make_response,
+    url_for
 )
 from flask_caching import Cache
 
-from flask_wtf.csrf import CSRFProtect
+# from flask_wtf.csrf import CSRFProtect
 from flask_navigation import Navigation
 from speaklater import is_lazy_string
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -38,7 +39,7 @@ ROOT_DIR = abspath(join(dirname(__file__)))
 log = logging.getLogger(__name__)
 
 cache = Cache()
-csrf = CSRFProtect()
+# csrf = CSRFProtect()
 nav = Navigation()
 
 class Blueprint(BaseBlueprint):
@@ -127,7 +128,7 @@ def register_extensions(app):
     db.init_app(app)
     storages.init_app(app)
     cache.init_app(app)
-    csrf.init_app(app)
+    # csrf.init_app(app)
     nav.init_app(app)
     
     return app
@@ -240,6 +241,8 @@ def create_app(
 
     CORS(app)
 
+    setup_app(app)
+
     return app
 
 
@@ -247,9 +250,27 @@ def setup_app(app):
     # Create tables if they do not exist already
     # migrate = Migrate(app, db)
 
-    from api import auth
+    from api.auth.views import auth_bp
 
-    auth.init_app(app)
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
+
+def has_no_empty_params(rule):
+
+    defaults = rule.defaults if rule.defaults is not None else ()
+    arguments = rule.arguments if rule.arguments is not None else ()
+
+    return len(defaults) >= len(arguments)
+
+def site_map(app):
+
+    links = []
+
+    for rule in app.url_map.iter_rules():
+        # Filter out rules we can't navigate to in a browser
+        # and rules that require parameters
+        links.append((rule.endpoint, rule.methods))
+
+    return links
 
 app = create_app()
 
