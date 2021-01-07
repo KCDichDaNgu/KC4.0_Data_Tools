@@ -20,7 +20,7 @@ class ClientSeeder():
         OAuth2Client.objects.delete()
 
         client_name = 'auth'
-        client_id = '12345678'
+        custom_client_id = '12345678'
         client_id_issued_at = int(time.time())
 
         client = OAuth2Client.objects.create(
@@ -36,6 +36,7 @@ class ClientSeeder():
             redirect_uris=[
                 'http://example.com'
             ],
+            client_id='12345678',
             secret='12345678'
         )
 

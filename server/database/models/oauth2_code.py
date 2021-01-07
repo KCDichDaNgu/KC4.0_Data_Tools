@@ -2,7 +2,7 @@ from ..db import db
 
 class OAuth2Code(db.Document):
     user = db.ReferenceField('User', required=True)
-    client = db.ReferenceField('OAuth2Client', required=True)
+    client_id = db.StringField(required=True)
 
     code = db.StringField(required=True)
 

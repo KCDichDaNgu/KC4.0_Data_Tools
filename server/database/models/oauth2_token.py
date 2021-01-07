@@ -10,7 +10,7 @@ TOKEN_TYPES = {
 }
 
 class OAuth2Token(db.Document):
-    client = db.ReferenceField('OAuth2Client', required=True)
+    client_id = db.StringField(required=True)
     user = db.ReferenceField('User')
 
     # currently only bearer is supported
@@ -28,7 +28,7 @@ class OAuth2Token(db.Document):
     }
 
     def __str__(self):
-        return '<OAuth2Token({0.client.name})>'.format(self)
+        return '<OAuth2Token({0.client_id})>'.format(self)
 
     def get_scope(self):
         return self.scope
@@ -38,9 +38,6 @@ class OAuth2Token(db.Document):
 
     def get_expires_at(self):
         return (self.created_at - EPOCH).total_seconds() + self.expires_in
-
-    def get_client_id(self):
-        return str(self.client.id)
 
     def is_refresh_token_valid(self):
         if self.revoked:
