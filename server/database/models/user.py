@@ -100,6 +100,9 @@ class User(UserMixin, db.Document):
     def __str__(self):
         return self.fullname
 
+    def validate_password(self, password):
+        return password == self.password
+
     @property
     def fullname(self):
         return ' '.join((self.first_name or '', self.last_name or '')).strip()
@@ -124,6 +127,16 @@ class User(UserMixin, db.Document):
             cls.on_create.send(document)
         else:
             cls.on_update.send(document)
+
+    @property
+    def serialize(self):
+        
+        return {
+           'id': self.id,
+           'roles': self.roles,
+           'username': self.username,
+           'fullname': self.fullname
+        }
 
 # datastore = MongoEngineUserDatastore(db, User)
 

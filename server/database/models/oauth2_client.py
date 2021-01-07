@@ -3,6 +3,7 @@ from authlib.oauth2.rfc6749 import grants, ClientMixin
 from ..db import db 
 
 from storages import images, default_image_basename
+from authlib.oauth2.rfc6749.util import scope_to_list, list_to_scope
 
 class OAuth2Client(ClientMixin, db.Datetimed, db.Document):
     secret = db.StringField(default=lambda: gen_salt(50))

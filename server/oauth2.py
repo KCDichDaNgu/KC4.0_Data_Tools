@@ -22,6 +22,7 @@ from database.models import (
     OAuth2Token 
 ) 
 
+from bson import ObjectId, DBRef
 
 from database.db import db
 
@@ -79,7 +80,7 @@ class PasswordGrant(grants.ResourceOwnerPasswordCredentialsGrant):
     ]
 
     def authenticate_user(self, username, password):
-        user = User.query.filter_by(username=username).first()
+        user = User.objects(username=username).first()
 
         if user is not None and user.validate_password(password):
             return user
