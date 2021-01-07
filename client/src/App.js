@@ -2,7 +2,7 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import LoginPage from './pages/login';
 import HomePage from './pages/home';
-import DomainsPage from './pages/domains';
+import DomainsPage from './pages/domain';
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
 
@@ -71,7 +71,7 @@ const App = ({ location, initialReduxState }) => {
                                 <AuthRoute 
                                     location={ location } 
                                     exact 
-                                    path="/domains" 
+                                    path="/domain" 
                                     component={ DomainsPage } 
                                 />
 

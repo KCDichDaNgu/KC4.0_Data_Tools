@@ -85,20 +85,22 @@ const SentencePage = (props) => {
 
         return (
             <Radio.Group
-                key={paraSentence['_id']['$oid']} 
-                value={lastUpdated}
-                onChange={event => updateParaSentence(paraSentence, "rating", event.target.value)}>
+                key={ paraSentence['_id']['$oid'] } 
+                value={ lastUpdated }
+                onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }>
                 {
                     ratingList.map((rating) => {
                         if (rating == 'unRated') {
                             if (lastUpdated == 'unRated') {
                                 return (
-                                    <Radio.Button key={rating} value={rating}>?</Radio.Button>
+                                    <Radio.Button key={ rating } value={ rating}>?</Radio.Button>
                                 );
                             }
                         } else {
                             return (
-                                <Radio.Button key={rating} value={rating}>{t(`sentence.${rating}`)}</Radio.Button>
+                                <Radio.Button key={ rating } value={ rating }>
+                                    { t(`sentence.${rating}`) }
+                                </Radio.Button>
                             );
                         }
                     })

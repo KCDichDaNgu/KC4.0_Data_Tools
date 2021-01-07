@@ -251,8 +251,10 @@ def setup_app(app):
     # migrate = Migrate(app, db)
 
     from api.auth.views import auth_bp
+    from api.domain.views import domain_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(domain_bp, url_prefix='/api/domain')
 
 def has_no_empty_params(rule):
 
