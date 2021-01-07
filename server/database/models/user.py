@@ -24,27 +24,16 @@ def default_image_basename(*args, **kwargs):
     uuid = str(uuid4()).replace('-', '')
     return '/'.join((uuid[:2], uuid[2:]))
 
-
-# TODO: use simple text for role
-class Role(db.Document, RoleMixin):
-    ADMIN = 'admin'
-    username = db.StringField(max_length=80, unique=True)
-    description = db.StringField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
-
 class UserSettings(db.EmbeddedDocument):
     prefered_language = db.StringField()
 
 
 class User(UserMixin, db.Document):
-    slug = db.SlugField(
-        max_length=255, 
-        required=True, 
-        populate_from='fullname'
-    )
+    # slug = db.SlugField(
+    #     max_length=255, 
+    #     required=True, 
+    #     populate_from='fullname'
+    # )
 
     email = db.StringField(
         max_length=255, 
@@ -52,9 +41,15 @@ class User(UserMixin, db.Document):
         unique=True
     )
 
+    username = db.StringField(
+        max_length=255, 
+        required=True, 
+        unique=True
+    )
+
     password = db.StringField()
     active = db.BooleanField()
-    roles = db.ListField(db.ReferenceField(Role), default=[])
+    roles = db.ListField(choices=['admin', 'member'], default=[])
 
     first_name = db.StringField(max_length=255, required=True)
     last_name = db.StringField(max_length=255, required=True)
@@ -66,11 +61,6 @@ class User(UserMixin, db.Document):
         thumbnails=AVATAR_SIZES
     )
 
-    website = db.URLField()
-    about = db.StringField()
-
-    prefered_language = db.StringField()
-
     apikey = db.StringField()
 
     created_at = db.DateTimeField(default=datetime.now, required=True)
@@ -79,8 +69,8 @@ class User(UserMixin, db.Document):
     # when SECURITY_CONFIRMABLE is True
     confirmed_at = db.DateTimeField()
 
-    password_rotation_demanded = db.DateTimeField()
-    password_rotation_performed = db.DateTimeField()
+    # password_rotation_demanded = db.DateTimeField()
+    # password_rotation_performed = db.DateTimeField()
 
     # The 5 fields below are required for Flask-security
     # when SECURITY_TRACKABLE is True
@@ -90,8 +80,8 @@ class User(UserMixin, db.Document):
     current_login_ip = db.StringField()
     login_count = db.IntField()
 
-    deleted = db.DateTimeField()
-    ext = db.MapField(db.GenericEmbeddedDocumentField())
+    # deleted = db.DateTimeField()
+    # ext = db.MapField(db.GenericEmbeddedDocumentField())
     extras = db.ExtrasField()
 
     before_save = Signal()
@@ -103,8 +93,8 @@ class User(UserMixin, db.Document):
     on_delete = Signal()
 
     meta = {
-        'indexes': ['-created_at', 'slug', 'apikey'],
-        'ordering': ['-created_at']
+        'indexes': ['-username'],
+        'ordering': ['-username']
     }
 
     def __str__(self):
@@ -117,24 +107,6 @@ class User(UserMixin, db.Document):
     @property
     def sysadmin(self):
         return self.has_role('admin')
-
-    # @cached_property
-    # def datasets_org_count(self):
-    #     """Return the number of datasets of user's organizations."""
-    #     from udata.models import Dataset  # Circular imports.
-    #     return sum(Dataset.objects(organization=org).visible().count()
-    #                for org in self.organizations)
-
-    def generate_api_key(self):
-        s = JSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
-        byte_str = s.dumps({
-            'user': str(self.id),
-            'time': time(),
-        })
-        self.apikey = byte_str.decode()
-
-    def clear_api_key(self):
-        self.apikey = None
 
     @classmethod
     def get(cls, id_or_slug):
@@ -152,27 +124,8 @@ class User(UserMixin, db.Document):
             cls.on_create.send(document)
         else:
             cls.on_update.send(document)
-            
-    def mark_as_deleted(self):
-        copied_user = copy(self)
 
-        self.email = '{}@deleted'.format(self.id)
-        self.slug = 'deleted'
-        self.password = None
-        self.active = False
-        self.first_name = 'DELETED'
-        self.last_name = 'DELETED'
-        self.avatar = None
-        self.avatar_url = None
-        self.website = None
-        self.about = None
-        self.extras = None
-        self.apikey = None
-        self.deleted = datetime.now()
-        self.save()
-
-
-datastore = MongoEngineUserDatastore(db, User, Role)
+# datastore = MongoEngineUserDatastore(db, User)
 
 pre_save.connect(User.pre_save, sender=User)
 post_save.connect(User.post_save, sender=User)

@@ -1,15 +1,13 @@
 from database.models.user import User
-from flask_seeder import Seeder
 
-class UserSeeder(Seeder):
+class UserSeeder():
 
-    def __init__(self, db=None):
-        
-        super().__init__(db=db)
-        
-        self.priority = 1
+    def __init__(self):
 
-    def run(self):
+        pass
+
+    @classmethod
+    def run(cls):
         
         User.objects.delete()
 
@@ -18,8 +16,8 @@ class UserSeeder(Seeder):
         users.append(
             {
                 "username": "admin",
-                "email": "admin@gmail.com"
-                "role": [ "admin" ],
+                "email": "admin@gmail.com",
+                "roles": [ "admin" ],
                 "password": '12345678',
                 "first_name": "admin#firstname",
                 "last_name": "admin#lastname"
@@ -31,14 +29,16 @@ class UserSeeder(Seeder):
             users.append(
                 {
                     "username": "user_{}".format(index),
-                    "email": "user_{}@gmail.com".format(index)
-                    "role": [ "member" ],
+                    "email": "user_{}@gmail.com".format(index),
+                    "roles": [ "member" ],
                     "password": '12345678',
                     "first_name": "user_{}#firstname".format(index),
                     "last_name": "user_{}#lastname".format(index)
                 }
             )
 
-        User.objects.insert(users)
+        user_instances = [User(**user_data) for user_data in users]
+
+        User.objects.insert(user_instances)
 
         print('Fake users added!')

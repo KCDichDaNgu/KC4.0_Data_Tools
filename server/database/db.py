@@ -23,6 +23,8 @@ from database.additional_fields.uuid_fields import AutoUUIDField
 
 from database.helpers.queryset import CustomQuerySet
 
+from flask import Flask
+
 log = logging.getLogger(__name__)
 
 
@@ -111,6 +113,15 @@ def build_test_config(config):
 # Avoid nose misdetecting this function as a test
 build_test_config.__test__ = False
 
+def init_for_migrate(app = Flask('test')):
+
+    db = CustomMongoEngine()
+
+    app.config.from_object('settings.Defaults')
+
+    session_interface = MongoEngineSessionInterface(db)
+
+    db.init_app(app)
 
 def init_app(app):
 
@@ -120,5 +131,3 @@ def init_app(app):
         build_test_config(app.config)
 
     db.init_app(app)
-
-    entrypoints.get_enabled('database.models', app)

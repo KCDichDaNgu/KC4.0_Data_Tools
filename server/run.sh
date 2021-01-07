@@ -1,2 +1,1 @@
-flask db migrate
-flask db upgrade
+python seed.py 
