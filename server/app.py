@@ -42,6 +42,8 @@ cache = Cache()
 # csrf = CSRFProtect()
 nav = Navigation()
 
+os.environ['AUTHLIB_INSECURE_TRANSPORT'] = 'true'
+
 class Blueprint(BaseBlueprint):
     '''A blueprint allowing to decorate class too'''
     def route(self, rule, **options):
