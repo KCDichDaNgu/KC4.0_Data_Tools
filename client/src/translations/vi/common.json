@@ -82,7 +82,9 @@
 		"imported": "Đã thêm vào",
 		"pairParaSentences": "cặp câu",
 		"editedSuccess": "Đã chỉnh sửa thành công",
-		"editedFail": "Chỉnh sửa lỗi"
+		"errorUpdate": "Chỉnh sửa lỗi",
+		"notAllowed": "Một người khác đang cập nhật bản ghi này",
+		"notFound": "Không tìm thấy bản ghi dữ liệu"
 	},
 	"updateSuccess": "Cập nhật thành công"
 }

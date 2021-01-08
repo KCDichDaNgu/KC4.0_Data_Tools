@@ -8,7 +8,7 @@ from database.models.para_sentence import ParaSentence
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
-from .utils import import_parasentences_from_file, hash_para_sentence
+from .utils import import_parasentences_from_file, hash_para_sentence, get_view_due_date
 import re
 
 para_sentence_bp = Blueprint(__name__, 'para_sentence')    
@@ -55,6 +55,20 @@ def get():
                 ]
             })
 
+    # get records has current_user_id and not expired yet or  without viewer_id or expired view_due_date
+    current_timestamp = time.time()
+    user = current_token.user
+    query['$and'].append({
+        '$or': [
+            {'$and': [
+                {'viewer_id': user.id},
+                {'view_due_date': {'$gte': current_timestamp}}
+            ]},
+            {'viewer_id': {'$exists': False}},
+            {'view_due_date': {'$lt': current_timestamp}}
+        ]
+    })
+
     if len(query['$and']) == 0:
         del query['$and']
 
@@ -73,6 +87,12 @@ def get():
     page = int(args.get('page', PaginationParameters.page))
     page_size = int(args.get('page_size', PaginationParameters.page_size))
     para_sentences = para_sentences.paginate(page=page, per_page=page_size)
+
+    # update viewer_id, and view_due_date
+    view_due_date = get_view_due_date()
+
+    for para_sentence in para_sentences.items:
+        para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
     
     return jsonify({
         "data": para_sentences.items,
@@ -151,6 +171,12 @@ def import_from_file():
 def update(_id):
     try:
         para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
+        user = current_token.user
+        if para_sentence.viewer_id != user.id:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'notAllowed', 
+            })
     except:
         return jsonify({
             'code': STATUS_CODES['failure'], 

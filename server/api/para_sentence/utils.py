@@ -2,6 +2,7 @@
 import time
 import hashlib
 from database.models.para_sentence import ParaSentence
+from datetime import timedelta, datetime
 
 def import_parasentences_from_file(text_file):
     count = 0
@@ -99,3 +100,9 @@ def hash_para_sentence(text1, text2, lang1, lang2):
     text = f"{text1}\n{text2}\n{lang1}\n{lang2}"
     hash = hashtext(text)
     return hash
+
+def get_view_due_date(minutes_to_expire=15):
+    cur_time = datetime.now()
+    end_time = cur_time + timedelta(minutes=minutes_to_expire)
+    end_timestamp = end_time.timestamp()
+    return end_timestamp
