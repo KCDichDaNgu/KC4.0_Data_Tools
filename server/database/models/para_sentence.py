@@ -27,6 +27,9 @@ class ParaSentence(db.Document):
     hash = db.StringField()
     original = db.EmbeddedDocumentField(OriginalParaSentence)
 
+    viewer_id = db.ObjectIdField()
+    view_due_date = db.FloatField()
+
     meta = {'collection': 'para_sentence'}
 
     RATING_GOOD = 'Good'
@@ -56,6 +59,9 @@ class ParaSentence(db.Document):
         created_time = 'created_time'
         updated_time = 'updated_time'
         original = 'original'
+        
+        viewer_id = 'viewer_id'
+        view_due_date = 'view_due_date'
     
 
     def save(self):

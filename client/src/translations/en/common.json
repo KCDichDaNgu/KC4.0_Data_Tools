@@ -75,6 +75,8 @@
 		"imported": "Imported",
 		"pairParaSentences": "pair of para-sentences",
 		"editedSuccess": "Edited successfully",
-		"editedFail": "Edited failure"
+		"errorUpdate": "Edited failure",
+		"notAllowed": "Another user is updating this record",
+		"notFound": "Not found record in the database"
 	}
 }

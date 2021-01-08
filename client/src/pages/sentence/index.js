@@ -292,7 +292,7 @@ const SentencePage = (props) => {
                     setPaginationParams(res.data.pagination);
                 });
             } else {
-                message.error(t('sentence.editedFail'));
+                message.error(t(`sentence.${res.data.message}`));
             }
         });
     }
