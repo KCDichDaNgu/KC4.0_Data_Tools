@@ -159,7 +159,6 @@ const DocumentPage = (props) => {
     const [dataSource, setDataSource] = useState(data);
     const [count, setCount] = useState(data.length + 1);
     const [value, setValue] = useState('');
-    const [selectedDomain, setSeletedDomain] = useState([]);
     const [isAdding, setIsAdding] = useState(false);
     const [filterOptions, setFilterOptions] = useState({
         domain: '',

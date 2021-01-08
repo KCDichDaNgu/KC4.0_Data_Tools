@@ -148,12 +148,6 @@ const SentencePage = (props) => {
         }
     ];
 
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            setSeletedDomain(selectedRowKeys);
-        },
-    };
-
     const handleChange = (value, key) => {
         if (key == 'text') {
             setRequestParams({ ...requestParams, text1: value, text2: value });
