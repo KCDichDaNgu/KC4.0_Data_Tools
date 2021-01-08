@@ -122,28 +122,34 @@ const SentencePage = (props) => {
             key: "text2",
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
         },
-        {
-            title: t('sentence.lastUpdate'),
-            dataIndex: "updated_time",
-            key: "updated_time",
-            render: (updated_time) => (
-                formatDate(updated_time)
-            ),
-            sorter: (a, b, sortOrder) => { },
-            sortDirections: ['ascend', 'descend', 'ascend']
-        },
+        // {
+        //     title: t('sentence.lastUpdate'),
+        //     // dataIndex: "updated_time",
+        //     key: "updated_time",
+        //     render: (record) => {
+        //         // formatDate(updated_time)
+        //         console.log(record)
+        //     },
+        //     sorter: (a, b, sortOrder) => { },
+        //     sortDirections: ['ascend', 'descend', 'ascend']
+        // },
         {
             title: t('sentence.score'),
             dataIndex: "score",
             key: "score.senAlign",
-            render: (score) => Number(score['senAlign']).toFixed(2),
+            render: (score) => {
+                console.log(score)
+                return Number(score['senAlign']).toFixed(2)
+            },
             sorter: (a, b, sortOrder) => { },
+            width: '5%',
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         {
             title: t('sentence.rating'),
             dataIndex: "rating",
             key: "rating",
+            width: '20%',
             render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
         }
     ];
@@ -359,11 +365,13 @@ const SentencePage = (props) => {
                                 { t('sentence.by_text') }
                             </div>
                             <Input
-                                placeholder={t('sentence.searchBox')}
-                                value={value}
+                                placeholder={ t('sentence.searchBox') }
+                                value={ value }
                                 onChange={(e) => {
                                     const currValue = e.target.value;
+
                                     setValue(currValue);
+
                                     handleChange(currValue, "text");
                                 }}
                             />
@@ -386,7 +394,7 @@ const SentencePage = (props) => {
                                 defaultValue={
                                     ratingOption.length === 0 ? "" : ratingOption[0]
                                 }
-                                onChange={(value) => handleChange(value, "rating")}
+                                onChange={ (value) => handleChange(value, "rating") }
                             >
                                 {ratingOption}
                             </Select>
@@ -408,7 +416,7 @@ const SentencePage = (props) => {
                                 defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
                                 onChange={(value) => handleChange(value, "lang1")}
                             >
-                                {lang1Option}
+                                { lang1Option }
                             </Select>
                         </Col>
 
@@ -427,7 +435,7 @@ const SentencePage = (props) => {
                                     width: '100%',
                                 }}
                                 defaultValue={lang2Option.length === 0 ? "" : lang2Option[0]}
-                                onChange={(value) => handleChange(value, "lang2")}
+                                onChange={ value => handleChange(value, "lang2") }
                             >
                                 {lang2Option}
                             </Select>
@@ -442,10 +450,77 @@ const SentencePage = (props) => {
                         //   type: "checkbox",
                         //   ...rowSelection,
                         // }}
-                        rowKey="key"
-                        dataSource={dataSource}
-                        columns={columns}
-                        onChange={handleTableChange}
+                        rowKey={ record => record._id.$oid } 
+                        expandable={{
+                            expandedRowRender: record => {
+                                return (
+                                    <div style={{
+                                        padding: '20px'
+                                    }}>
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('originalText') } { t(record.lang1) }
+                                            </label>
+                                            <div>
+                                                { record.original.text1 }
+                                            </div>
+                                        </div>
+
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('originalText') } { t(record.lang2) }
+                                            </label>
+
+                                            <div>
+                                                { record.original.text2 }
+                                            </div>
+                                        </div>
+
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('sentence.lastUpdate') } 
+                                            </label>
+                                            <div>
+                                                { formatDate(record.updated_time) }
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('sentence.createdTime') } 
+                                            </label>
+                                            <div>
+                                                { formatDate(record.created_time) }
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            rowExpandable: record => {console.log(record) ;return !!record.editor_id},
+                        }}
+                        dataSource={ dataSource }
+                        columns={ columns }
+                        onChange={ handleTableChange } 
                         pagination={{
                             pageSize: paginationParams.page_size,
                             total: paginationParams.total_items,

@@ -1,5 +1,7 @@
 from database.db import db
 
+from database.models.user import User
+
 
 class OriginalParaSentence(db.EmbeddedDocument):
     text1 = db.StringField()
@@ -19,11 +21,13 @@ class ParaSentence(db.Document):
     lang2 = db.StringField()
     rating = db.StringField()
     score = db.DictField()
-    editor_id = db.StringField()
+    editor_id = db.ReferenceField(User, default=None)
+
     para_document_id = db.StringField()
     origin_para_document_id = db.StringField()
     created_time = db.IntField()
     updated_time = db.IntField()
+
     hash = db.StringField()
     original = db.EmbeddedDocumentField(OriginalParaSentence)
 

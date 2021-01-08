@@ -84,8 +84,12 @@
 		"editedSuccess": "Đã chỉnh sửa thành công",
 		"errorUpdate": "Chỉnh sửa lỗi",
 		"notAllowed": "Một người khác đang cập nhật bản ghi này",
-		"notFound": "Không tìm thấy bản ghi dữ liệu"
+		"notFound": "Không tìm thấy bản ghi dữ liệu",
+		"createdTime": "Thời điểm tạo"
 	},
-	"updateSuccess": "Cập nhật thành công"
+	"updateSuccess": "Cập nhật thành công",
+	"originalText": "Câu gốc",
+	"vi": "Tiếng Việt",
+	"khm": "Tiếng Khmer"
 }
 
