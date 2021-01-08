@@ -14,7 +14,8 @@ import {
     Radio,
     Card,
     Row,
-    Col
+    Col,
+    Modal
 } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
@@ -47,6 +48,8 @@ const SentencePage = (props) => {
         page: ""
     });
     const [uploadingFile, setUploadingFile] = useState(false);
+    const [isModalImportVisible, setIsModalImportVisible] = useState(false);
+    const [importStatus, setImportStatus] = useState({});
 
     const renderText = (key, paraSentence, index) => {
 
@@ -237,17 +240,18 @@ const SentencePage = (props) => {
             if (info.file.status === 'done') {
                 setUploadingFile(false);
 
-                let nSuccess = info.file.response.data.n_success;
-                let nData = info.file.response.data.n_data;
+                // let nSuccess = info.file.response.data.n_success;
+                // let nData = info.file.response.data.n_data;
 
-                message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
-
+                setImportStatus(info.file.response.data);
+                setIsModalImportVisible(true);
+                // message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
+                
                 // reload new results
                 paraSentenceAPI.getSentences({}).then((res) => {
                     setDataSource(res.data.data);
                     setPaginationParams(res.data.pagination);
                 });
-
             } else if (info.file.status === 'error') {
                 setUploadingFile(false);
 
@@ -466,11 +470,11 @@ const SentencePage = (props) => {
                         //   type: "checkbox",
                         //   ...rowSelection,
                         // }}
-                        rowKey={ record => record._id.$oid } 
+                        rowKey={ record => record.id } 
                         rowClassName={ record =>  {
-                            if (!record.editor_id) return '';
-                            if (record.editor_id['$oid'] === currentUserId) return 'edited-by-my-self';
-                            if (record.editor_id['$oid'] !== currentUserId) return 'edited-by-someone';
+                            if (!record.editor.id) return '';
+                            if (record.editor.id === currentUserId) return 'edited-by-my-self';
+                            if (record.editor.id !== currentUserId) return 'edited-by-someone';
                         }}
                         expandable={{
                             expandedRowRender: record => {
@@ -514,7 +518,8 @@ const SentencePage = (props) => {
                                                     marginBottom: '10px',
                                                     fontWeight: 600
                                                 }}>
-                                                { t('sentence.lastUpdate') } 
+                                                { t('sentence.lastUpdate') } { t('sentence.by') }
+                                                &nbsp;{ record.editor.id === currentUserId ? t('sentence.you') : record.editor.username }
                                             </label>
                                             
                                             <div>
@@ -550,6 +555,24 @@ const SentencePage = (props) => {
                         }}>
                     </Table>
                 </Card>
+
+                <Modal 
+                    title={ t('sentence.resultUpdateData') } 
+                    visible={isModalImportVisible} 
+                    footer={[
+                        <Button 
+                            type="primary"
+                            onClick={() => setIsModalImportVisible(false)}>
+                            { t('sentence.ok') }
+                        </Button>
+                    ]}>
+                    <p>
+                        - { t('sentence.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentence.pairParaSentences') }.
+                    </p>
+                    <p>
+                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentence.duplicatedRecords') }.
+                    </p>
+                </Modal>
             </SiteLayout>
         </React.Fragment>
     );

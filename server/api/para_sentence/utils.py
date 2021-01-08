@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 def import_parasentences_from_file(text_file):
     count = 0
     n_rows = 0
+    n_error_hash_exists = 0
 
     with open(text_file, encoding='utf-16') as fp:
         for line in fp:
@@ -17,6 +18,7 @@ def import_parasentences_from_file(text_file):
 
             try:
                 hash = hash_para_sentence(text1, text2, lang1, lang2)
+                similar = ParaSentence.objects.filter(hash=hash).all()
 
                 para_sentence = ParaSentence(
                     text1=text1,
@@ -35,12 +37,17 @@ def import_parasentences_from_file(text_file):
                 para_sentence.save()
 
                 count += 1
-            except:
-                pass 
+            except Exception as err:
+                if str(err) == "hashExists":
+                    n_error_hash_exists += 1
 
             n_rows += 1
 
-    return count, n_rows
+    return {
+        'nSuccess': count,
+        'nData': n_rows,
+        'nErrorHashExists': n_error_hash_exists
+    }
 
 
 # def import_parasentences_from_file(excel_file):

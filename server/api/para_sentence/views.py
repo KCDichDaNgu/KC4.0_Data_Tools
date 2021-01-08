@@ -160,12 +160,9 @@ def import_from_file():
     with open(filepath, 'wb') as fp: # save uploaded file
         fp.write(file_content)
 
-    n_success, n_data = import_parasentences_from_file(filepath)
+    status = import_parasentences_from_file(filepath)
     
-    return jsonify({
-        "n_success": n_success,
-        "n_data": n_data
-    })
+    return jsonify(status)
 
 @para_sentence_bp.route('/<_id>', methods=['PUT'])
 @require_oauth()
@@ -192,12 +189,6 @@ def update(_id):
             'lang2': para_sentence.lang2,
         }
 
-        original = {
-            'text1': para_sentence.text1,
-            'text2': para_sentence.text2,
-            'rating': para_sentence.rating,
-        }
-
         filter_params = {}
         hash_changed = False
         text_changed = False
@@ -214,11 +205,22 @@ def update(_id):
         if text_changed:
             filter_params['rating'] = ParaSentence.RATING_GOOD
 
+        if para_sentence['original'] is None:
+            original = {
+                'text1': para_sentence.text1,
+                'text2': para_sentence.text2,
+                'rating': para_sentence.rating,
+            }
+            filter_params['original'] = original
+        
+        filter_params['updated_time'] = time.time()
+
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            para_sentence.update(original=original, hash=hash, **filter_params, editor_id=user)
+            para_sentence.update(hash=hash, **filter_params, editor_id=user)
+            print('update hash')
         else:
-            para_sentence.update(original=original, **filter_params, editor_id=user)
+            para_sentence.update(**filter_params, editor_id=user)
 
         return jsonify({
             'code': STATUS_CODES['success'], 

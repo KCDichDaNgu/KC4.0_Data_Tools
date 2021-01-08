@@ -77,6 +77,11 @@
 		"editedSuccess": "Edited successfully",
 		"errorUpdate": "Edited failure",
 		"notAllowed": "Another user is updating this record",
-		"notFound": "Not found record in the database"
+		"notFound": "Not found record in the database",
+		"by": "by",
+		"you": "you",
+		"duplicatedRecords": "duplicated records which will not be added",
+		"resultUpdateData": "Import file notification",
+		"ok": "OK"
 	}
 }
