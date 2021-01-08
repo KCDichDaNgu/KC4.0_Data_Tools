@@ -61,14 +61,14 @@ const App = ({ location, initialReduxState }) => {
                     
                         <Suspense>
                             <Switch>
-                                <AuthRoute 
+                                <AdminRoute 
                                     location={ location } 
                                     exact 
                                     path="/" 
                                     component={ HomePage } 
                                 />
 
-                                <AuthRoute 
+                                <AdminRoute 
                                     location={ location } 
                                     exact 
                                     path="/domain" 
@@ -81,14 +81,13 @@ const App = ({ location, initialReduxState }) => {
                                     path="/document" 
                                     component={ DocumentPage } 
                                 />
+                                
                                 <AuthRoute 
                                     location={ location } 
                                     exact 
                                     path="/sentence" 
                                     component={ SentencePage } 
                                 />
-
-                                
 
                                 <Route 
                                     location={ location } 

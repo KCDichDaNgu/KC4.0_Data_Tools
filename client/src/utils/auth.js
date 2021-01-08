@@ -34,7 +34,7 @@ const isAdmin = () => {
 
     let profile = clonedStore.getState().User.profile;
 
-    if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.role === 'admin';
+    if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.roles.includes('admin');
 
     return false
 }
