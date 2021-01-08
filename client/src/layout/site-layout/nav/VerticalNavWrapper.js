@@ -13,16 +13,6 @@ const Nav = () => {
     let [ isClient, setIsClient ] = useState(false)
     let [ mainNav, setMainNav ] = useState([
         {
-            icon: 'pe-7s-home',
-            label: t('home.title'),
-            to: '/',
-        },
-        {
-            icon: 'pe-7s-global',
-            label: t('domain.title'),
-            to: 'domain',
-        },
-        {
             icon: 'pe-7s-news-paper',
             label: t('document.title'),
             to: 'document',
@@ -48,18 +38,23 @@ const Nav = () => {
                     setMainNav([
                         {
                             icon: 'pe-7s-home',
-                            label: 'Home',
+                            label: t('home.title'),
                             to: '/',
                         },
                         {
-                            icon: 'pe-7s-rocket',
-                            label: 'History',
-                            to: 'log',
+                            icon: 'pe-7s-global',
+                            label: t('domain.title'),
+                            to: 'domain',
                         },
                         {
-                            icon: 'pe-7s-download',
-                            label: 'Download data',
-                            to: 'download-data',
+                            icon: 'pe-7s-news-paper',
+                            label: t('document.title'),
+                            to: 'document',
+                        },
+                        {
+                            icon: 'pe-7s-copy-file',
+                            label: t('sentence.title'),
+                            to: 'sentence',
                         },
                     ])
                 }

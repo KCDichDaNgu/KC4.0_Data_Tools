@@ -7,7 +7,7 @@ import LoginForm from "./form";
 import { userLogin } from "../../store/user/action";
 import { Row } from 'reactstrap';
 import { useHistory } from "react-router-dom";
-import { isAuthenticatedUser } from '../../utils/auth';
+import { isAuthenticatedUser, isAdmin } from '../../utils/auth';
 
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +25,9 @@ const LoginPage = (props) => {
 
         let check = setInterval(() => {
             if (isAuthenticatedUser()) {
-                history.push('/')
+                
+                if (isAdmin()) history.push('/')
+                else history.push('/sentence')
 
                 clearInterval(check)
             }

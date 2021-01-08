@@ -516,6 +516,7 @@ const SentencePage = (props) => {
                                                 }}>
                                                 { t('sentence.lastUpdate') } 
                                             </label>
+                                            
                                             <div>
                                                 { formatDate(record.updated_time) }
                                             </div>
@@ -537,7 +538,7 @@ const SentencePage = (props) => {
                                     </div>
                                 )
                             },
-                            rowExpandable: record => {console.log(record) ;return !!record.editor_id},
+                            rowExpandable: record => { return !!record.editor_id },
                         }}
                         dataSource={ dataSource }
                         columns={ columns }
