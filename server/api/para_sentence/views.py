@@ -119,7 +119,8 @@ def create():
         para_document_id=args[ParaSentence.Attr.para_document_id],
         origin_para_document_id=args[ParaSentence.Attr.origin_para_document_id],
         created_time=args[ParaSentence.Attr.created_time],
-        updated_time=args[ParaSentence.Attr.updated_time])
+        updated_time=args[ParaSentence.Attr.updated_time]
+    )
 
     para_sentence.save()
 
@@ -215,9 +216,9 @@ def update(_id):
 
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            para_sentence.update(original=original, hash=hash, **filter_params)
+            para_sentence.update(original=original, hash=hash, **filter_params, editor_id=user)
         else:
-            para_sentence.update(original=original, **filter_params)
+            para_sentence.update(original=original, **filter_params, editor_id=user)
 
         return jsonify({
             'code': STATUS_CODES['success'], 

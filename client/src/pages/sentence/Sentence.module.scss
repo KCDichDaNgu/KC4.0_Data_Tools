@@ -40,3 +40,18 @@
         margin: 20px;
     }
 }
+
+.edited-by-someone {
+    background: #e74c3c !important;
+    color: #fff !important;
+}
+
+.has-not-been-edited {
+    background:#fff;
+    color: #000000;
+}
+
+.edited-by-my-self {
+    background:#2ecc71;
+    color: #fff;
+} 

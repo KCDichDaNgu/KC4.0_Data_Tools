@@ -23,7 +23,7 @@ import "./Sentence.module.scss";
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
-import paraSentence from "../../api/paraSentence";
+import { clonedStore } from '../../store';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -31,6 +31,8 @@ const { Option } = Select;
 const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
+
+    const currentUserId = clonedStore.getState().User?.profile?.id;
 
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
@@ -122,30 +124,51 @@ const SentencePage = (props) => {
             key: "text2",
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
         },
+        // {
+        //     title: t('sentence.lastUpdate'),
+        //     // dataIndex: "updated_time",
+        //     key: "updated_time",
+        //     render: (record) => {
+        //         // formatDate(updated_time)
+        //         console.log(record)
+        //     },
+        //     sorter: (a, b, sortOrder) => { },
+        //     sortDirections: ['ascend', 'descend', 'ascend']
+        // },
         {
-            title: t('sentence.lastUpdate'),
-            dataIndex: "updated_time",
-            key: "updated_time",
-            render: (updated_time) => (
-                formatDate(updated_time)
-            ),
+            title: `${t('sentence.score')} / ${t('sentence.rating')}`,
+            // dataIndex: "score",
+            key: "score",
+            render: (record, index) => {
+                return (
+                    <div style={{
+                        width: 'fit-content'
+                    }}>
+                        <div style={{ 
+                            textAlign: 'center',
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            marginBottom: '10px'
+                        }}>
+                            { Number(record.score.senAlign).toFixed(2) }
+                        </div>
+                        
+                        <div>
+                            { renderRating(record.rating, record, index) }
+                        </div>
+                    </div>
+                )
+            },
             sorter: (a, b, sortOrder) => { },
+            width: '20%',
             sortDirections: ['ascend', 'descend', 'ascend']
         },
-        {
-            title: t('sentence.score'),
-            dataIndex: "score",
-            key: "score.senAlign",
-            render: (score) => Number(score['senAlign']).toFixed(2),
-            sorter: (a, b, sortOrder) => { },
-            sortDirections: ['ascend', 'descend', 'ascend']
-        },
-        {
-            title: t('sentence.rating'),
-            dataIndex: "rating",
-            key: "rating",
-            render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
-        }
+        // {
+        //     title: t('sentence.rating'),
+        //     dataIndex: "rating",
+        //     key: "rating",
+        //     render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
+        // }
     ];
 
     const handleChange = (value, key) => {
@@ -247,7 +270,7 @@ const SentencePage = (props) => {
     }, []);
 
     const handleTableChange = (pagination, filters, sorter) => {
-        console.log(filters);
+        
         let params = {
             ...requestParams,
             sort_by: sorter['columnKey'],
@@ -341,7 +364,7 @@ const SentencePage = (props) => {
                                     float: 'right'
                                 }}
                                 type="primary"
-                                onClick={handleFilter}>
+                                onClick={ handleFilter }>
                                 { t('sentence.search') }
                             </Button> 
                         </div>
@@ -359,10 +382,12 @@ const SentencePage = (props) => {
                                 { t('sentence.by_text') }
                             </div>
                             <Input
-                                placeholder={t('sentence.searchBox')}
-                                value={value}
+                                placeholder={ t('sentence.searchBox') }
+                                value={ value }
                                 onChange={(e) => {
+
                                     const currValue = e.target.value;
+
                                     setValue(currValue);
                                     handleChange(currValue, "text");
                                 }}
@@ -386,7 +411,7 @@ const SentencePage = (props) => {
                                 defaultValue={
                                     ratingOption.length === 0 ? "" : ratingOption[0]
                                 }
-                                onChange={(value) => handleChange(value, "rating")}
+                                onChange={ value => handleChange(value, "rating") }
                             >
                                 {ratingOption}
                             </Select>
@@ -405,10 +430,10 @@ const SentencePage = (props) => {
                                 style={{
                                     width: '100%',
                                 }}
-                                defaultValue={lang1Option.length === 0 ? "" : lang1Option[0]}
-                                onChange={(value) => handleChange(value, "lang1")}
+                                defaultValue={ lang1Option.length === 0 ? "" : lang1Option[0] }
+                                onChange={ value => handleChange(value, "lang1")}
                             >
-                                {lang1Option}
+                                { lang1Option }
                             </Select>
                         </Col>
 
@@ -427,7 +452,7 @@ const SentencePage = (props) => {
                                     width: '100%',
                                 }}
                                 defaultValue={lang2Option.length === 0 ? "" : lang2Option[0]}
-                                onChange={(value) => handleChange(value, "lang2")}
+                                onChange={ value => handleChange(value, "lang2") }
                             >
                                 {lang2Option}
                             </Select>
@@ -437,15 +462,86 @@ const SentencePage = (props) => {
 
                 <Card className='card-body-padding-0'>
                     <Table
-                        className="table-striped-rows"
                         // rowSelection={{
                         //   type: "checkbox",
                         //   ...rowSelection,
                         // }}
-                        rowKey="key"
-                        dataSource={dataSource}
-                        columns={columns}
-                        onChange={handleTableChange}
+                        rowKey={ record => record._id.$oid } 
+                        rowClassName={ record =>  {
+                            if (!record.editor_id) return '';
+                            if (record.editor_id['$oid'] === currentUserId) return 'edited-by-my-self';
+                            if (record.editor_id['$oid'] !== currentUserId) return 'edited-by-someone';
+                        }}
+                        expandable={{
+                            expandedRowRender: record => {
+                                return (
+                                    <div style={{
+                                        padding: '20px'
+                                    }}>
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('originalText') } { t(record.lang1) }
+                                            </label>
+                                            <div>
+                                                { record.original.text1 }
+                                            </div>
+                                        </div>
+
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('originalText') } { t(record.lang2) }
+                                            </label>
+
+                                            <div>
+                                                { record.original.text2 }
+                                            </div>
+                                        </div>
+
+                                        <div style={{ marginBottom: '20px' }}>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('sentence.lastUpdate') } 
+                                            </label>
+                                            <div>
+                                                { formatDate(record.updated_time) }
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label 
+                                                style={{
+                                                    fontSize: '16px',
+                                                    marginBottom: '10px',
+                                                    fontWeight: 600
+                                                }}>
+                                                { t('sentence.createdTime') } 
+                                            </label>
+                                            <div>
+                                                { formatDate(record.created_time) }
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            },
+                            rowExpandable: record => {console.log(record) ;return !!record.editor_id},
+                        }}
+                        dataSource={ dataSource }
+                        columns={ columns }
+                        onChange={ handleTableChange } 
                         pagination={{
                             pageSize: paginationParams.page_size,
                             total: paginationParams.total_items,
