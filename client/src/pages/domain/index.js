@@ -129,7 +129,6 @@ const DomainsPage = (props) => {
     };
 
     const reload = () => {
-        setSeletedDomain('');
         searchDomain();
     };
 
