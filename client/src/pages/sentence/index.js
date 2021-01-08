@@ -60,7 +60,7 @@ const SentencePage = (props) => {
 
         return (
             <TextArea
-                key={paraSentence['_id']['$oid']}
+                key={paraSentence['id']}
                 autoSize
                 showCount
                 defaultValue={lastUpdated}
@@ -87,7 +87,7 @@ const SentencePage = (props) => {
 
         return (
             <Radio.Group
-                key={ paraSentence['_id']['$oid'] } 
+                key={ paraSentence['id'] } 
                 value={ lastUpdated }
                 onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }>
                 {
@@ -293,7 +293,7 @@ const SentencePage = (props) => {
 
         filterParams[key] = value;
 
-        paraSentenceAPI.updateParaSentence(paraSentence['_id']['$oid'], filterParams).then((res) => {
+        paraSentenceAPI.updateParaSentence(paraSentence['id'], filterParams).then((res) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
                 message.success(t('sentence.editedSuccess'));
 

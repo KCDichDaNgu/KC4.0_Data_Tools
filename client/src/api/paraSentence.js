@@ -38,7 +38,7 @@ export default {
 	getOptions: () =>
 		customAxios({
 			method: 'get',
-			url: `${server_endpoint}/api/${module_api}/list_option_field`,
+			url: `${server_endpoint}/api/${module_api}/list-option-field`,
 		}),
 
 	getSentences: (data) =>
@@ -79,7 +79,7 @@ export default {
 
 		return customAxios({
             method: 'post',
-			url: `${server_endpoint}/api/${module_api}/import_from_file`,
+			url: `${server_endpoint}/api/${module_api}/import-from-file`,
 			data: formData,
             headers: {
 				'content-type': 'multipart/form-data'

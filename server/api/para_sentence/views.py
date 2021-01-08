@@ -95,7 +95,7 @@ def get():
         para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
     
     return jsonify({
-        "data": para_sentences.items,
+        "data": [x.serialize for x in para_sentences.items],
         "pagination": {
             "current_page": para_sentences.page,
             "total_pages": para_sentences.pages,
@@ -126,7 +126,7 @@ def create():
 
     return jsonify(para_sentence)
 
-@para_sentence_bp.route('/list_option_field', methods=['GET'])
+@para_sentence_bp.route('/list-option-field', methods=['GET'])
 @require_oauth()
 def list_option_field():
     list_lang1 = ParaSentence.objects.distinct('lang1')
@@ -143,7 +143,7 @@ def list_option_field():
         "rating" : list_rating
     })
 
-@para_sentence_bp.route('/import_from_file', methods=['POST'])
+@para_sentence_bp.route('/import-from-file', methods=['POST'])
 @require_oauth()
 def import_from_file():
     """
