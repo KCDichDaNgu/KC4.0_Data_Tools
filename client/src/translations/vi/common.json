@@ -85,7 +85,12 @@
 		"errorUpdate": "Chỉnh sửa lỗi",
 		"notAllowed": "Một người khác đang cập nhật bản ghi này",
 		"notFound": "Không tìm thấy bản ghi dữ liệu",
-		"createdTime": "Thời điểm tạo"
+		"createdTime": "Thời điểm tạo",
+		"by": "bởi",
+		"you": "bạn",
+		"duplicatedRecords": "bản ghi trùng lặp không được thêm vào",
+		"resultUpdateData": "Kết quả cập nhật dữ liệu",
+		"ok": "OK"
 	},
 	"updateSuccess": "Cập nhật thành công",
 	"originalText": "Câu gốc",

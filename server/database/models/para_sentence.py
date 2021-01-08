@@ -74,5 +74,26 @@ class ParaSentence(db.Document):
         if len(similar_parasentences) == 0:
             return super(ParaSentence, self).save()
         else:
-            raise Exception('ParaSentence exists!')
+            raise Exception('hashExists')
         
+    @property
+    def serialize(self):
+        
+        return {
+            'id': str(self.id),
+            'text1': self.text1,
+            'text2': self.text2,
+            'lang1': self.lang1,
+            'lang2': self.lang2,
+            'rating': self.rating,
+            'score': self.score,
+            'editor': {
+                'id': str(self.editor_id.id) if self.editor_id else None,
+                'username': str(self.editor_id.username) if self.editor_id else None
+            },
+            'created_time': self.created_time,
+            'updated_time': self.updated_time,
+            'original': self.original,
+            'viewer_id': str(self.viewer_id),
+            'view_due_date': self.view_due_date
+        }
