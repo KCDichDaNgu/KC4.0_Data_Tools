@@ -49,7 +49,7 @@ class User(UserMixin, db.Document):
 
     password = db.StringField()
     active = db.BooleanField()
-    roles = db.ListField(choices=['admin', 'member'], default=[])
+    roles = db.ListField(choices=['admin', 'member', 'reviewer'], default=['member'])
 
     first_name = db.StringField(max_length=255, required=True)
     last_name = db.StringField(max_length=255, required=True)
