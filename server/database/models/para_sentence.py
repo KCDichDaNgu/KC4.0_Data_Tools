@@ -13,13 +13,37 @@ class OriginalParaSentence(db.EmbeddedDocument):
         text2 = 'text2'
         rating = 'rating'
 
+class UserRating(db.EmbeddedDocument):
+
+    RATING_TYPES = {
+        RATING_GOOD: RATING_GOOD,
+        RATING_BAD: RATING_BAD,
+        RATING_UNRATED: RATING_UNRATED
+    }
+
+    RATING_GOOD = 'good'
+    RATING_BAD = 'bad'
+    RATING_UNRATED = 'unRated'
+
+    user_id = db.ReferenceField(User)
+
+    user_current_role = db.ListField(
+        choices=User.USER_ROLES.keys(),
+        required=True
+    ) # role của user trong thời điểm rating
+
+    rating = db.StringField(
+        choices=RATING_TYPES.keys(), 
+        required=True
+    )
+
 class ParaSentence(db.Document):
 
     text1 = db.StringField()
     text2 = db.StringField()
     lang1 = db.StringField()
     lang2 = db.StringField()
-    rating = db.StringField()
+    rating = db.EmbeddedDocumentListField(UserRating, default=[])
     score = db.DictField()
     editor_id = db.ReferenceField(User, default=None)
 
@@ -34,21 +58,20 @@ class ParaSentence(db.Document):
     viewer_id = db.ObjectIdField()
     view_due_date = db.FloatField()
 
+    ignore_users_id = db.EmbeddedDocumentListField(User, default=[])
+
     meta = {'collection': 'para_sentence'}
 
-    RATING_GOOD = 'Good'
-    RATING_NOTGOOD = 'notGood'
-    RATING_UNRATED = 'unRated'
-    RATE_MAPPING_VI2STANDARD = {
-        'Chưa đánh giá': RATING_UNRATED,
-        'Chưa tốt': RATING_NOTGOOD,
-        'Tốt': RATING_GOOD
-    }
-    RATE_MAPPING_EN2STANDARD = {
-        'Unrated': RATING_UNRATED,
-        'Not Good': RATING_NOTGOOD,
-        'Good': RATING_GOOD
-    }
+    # RATE_MAPPING_VI2STANDARD = {
+    #     'Chưa đánh giá': RATING_UNRATED,
+    #     'Chưa tốt': RATING_BAD,
+    #     'Tốt': RATING_GOOD
+    # }
+    # RATE_MAPPING_EN2STANDARD = {
+    #     'Unrated': RATING_UNRATED,
+    #     'Not Good': RATING_BAD,
+    #     'Good': RATING_GOOD
+    # }
 
     class Attr:
         text1 = 'text1'

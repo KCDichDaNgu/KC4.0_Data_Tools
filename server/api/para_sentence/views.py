@@ -133,7 +133,7 @@ def list_option_field():
     list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
         ParaSentence.RATING_GOOD,
-        ParaSentence.RATING_NOTGOOD,
+        ParaSentence.RATING_BAD,
         ParaSentence.RATING_UNRATED,
     ]
     
