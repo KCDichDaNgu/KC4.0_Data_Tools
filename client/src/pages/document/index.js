@@ -1,3 +1,5 @@
+import './document.module.scss';
+
 import React, { useEffect, useState, useRef } from 'react';
 import PageTitle from '../../layout/site-layout/main/PageTitle';
 import {
@@ -11,9 +13,6 @@ import {
     Select,
 } from 'antd';
 import SiteLayout from '../../layout/site-layout';
-
-import './Document.module.css';
-import { set } from 'numeral';
 
 import { useTranslation } from 'react-i18next';
 

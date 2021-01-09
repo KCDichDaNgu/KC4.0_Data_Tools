@@ -1,6 +1,8 @@
+import "./sentence.module.scss";
+
 import React, { useEffect, useState, useRef } from "react";
 import PageTitle from "../../layout/site-layout/main/PageTitle";
-import paraSentenceAPI from "../../api/paraSentence";
+import paraSentenceAPI from "../../api/para-sentence";
 
 import {
     Input,
@@ -19,8 +21,6 @@ import {
 } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
-
-import "./Sentence.module.scss";
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';

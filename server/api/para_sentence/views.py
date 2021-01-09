@@ -4,7 +4,7 @@ from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
 from oauth2 import authorization, require_oauth
-from database.models.para_sentence import ParaSentence
+from database.models.para_sentence import ParaSentence, UserRating
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
@@ -211,7 +211,7 @@ def update(_id):
                 text_changed = True
 
         if text_changed:
-            filter_params['rating'] = ParaSentence.RATING_GOOD
+            filter_params['rating'] = UserRating.RATING_TYPES['good']
 
         if para_sentence['original'] is None:
             original = {

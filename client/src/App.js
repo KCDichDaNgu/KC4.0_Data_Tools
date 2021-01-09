@@ -5,11 +5,13 @@ import HomePage from './pages/home';
 import DomainsPage from './pages/domain';
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
+import ManageUserPage from './pages/admin/manage-user';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
 import { Provider } from "react-redux";
 import { PersistGate } from 'redux-persist/lib/integration/react';
+
 import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
 
@@ -73,6 +75,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/domain" 
                                     component={ DomainsPage } 
+                                />
+
+                                <AdminRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/manage-user" 
+                                    component={ ManageUserPage } 
                                 />
 
                                 <AuthRoute 

@@ -16,14 +16,10 @@ class OriginalParaSentence(db.EmbeddedDocument):
 class UserRating(db.EmbeddedDocument):
 
     RATING_TYPES = {
-        RATING_GOOD: RATING_GOOD,
-        RATING_BAD: RATING_BAD,
-        RATING_UNRATED: RATING_UNRATED
+        'good': 'good',
+        'bad': 'bad',
+        'unRated': 'unRated'
     }
-
-    RATING_GOOD = 'good'
-    RATING_BAD = 'bad'
-    RATING_UNRATED = 'unRated'
 
     user_id = db.ReferenceField(User)
 
@@ -58,7 +54,7 @@ class ParaSentence(db.Document):
     viewer_id = db.ObjectIdField()
     view_due_date = db.FloatField()
 
-    ignore_users_id = db.EmbeddedDocumentListField(User, default=[])
+    ignore_users_id = db.ListField(db.ReferenceField(User), default=[])
 
     meta = {'collection': 'para_sentence'}
 

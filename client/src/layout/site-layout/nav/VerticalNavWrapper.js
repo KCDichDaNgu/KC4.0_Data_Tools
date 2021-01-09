@@ -42,6 +42,11 @@ const Nav = () => {
                             to: '/',
                         },
                         {
+                            icon: 'pe-7s-users',
+                            label: t('manageUser.title'),
+                            to: '/manage-user',
+                        },
+                        {
                             icon: 'pe-7s-global',
                             label: t('domain.title'),
                             to: 'domain',

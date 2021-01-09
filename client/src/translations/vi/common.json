@@ -92,6 +92,9 @@
 		"resultUpdateData": "Kết quả cập nhật dữ liệu",
 		"ok": "OK"
 	},
+	"manageUser": {
+		"title": "Quản lý người dùng"
+	},
 	"updateSuccess": "Cập nhật thành công",
 	"originalText": "Câu gốc",
 	"vi": "Tiếng Việt",
