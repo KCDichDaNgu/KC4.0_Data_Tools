@@ -34,16 +34,21 @@ def get():
 
     # query string contains
     append_or = False
+
     if 'text1' in args:
         pattern = re.compile(f".*{args['text1']}.*", re.IGNORECASE)
+
         query['$and'].append({
             '$or': [
                 {'text1': {'$regex': pattern}}
             ]
         })
+
         append_or = True
+
     if 'text2' in args:
         pattern = re.compile(f".*{args['text2']}.*", re.IGNORECASE)
+
         if append_or:
             query['$and'][-1]['$or'].append(
                 {'text2': {'$regex': pattern}}
@@ -57,7 +62,9 @@ def get():
 
     # get records has current_user_id and not expired yet or  without viewer_id or expired view_due_date
     current_timestamp = time.time()
+
     user = current_token.user
+
     query['$and'].append({
         '$or': [
             {'$and': [
@@ -81,6 +88,7 @@ def get():
         
         if args['sort_order'] == 'descend':
             sort_mark = '-'
+            
         para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')
 
     # pagination
@@ -133,7 +141,7 @@ def list_option_field():
     list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
         ParaSentence.RATING_GOOD,
-        ParaSentence.RATING_NOTGOOD,
+        ParaSentence.RATING_BAD,
         ParaSentence.RATING_UNRATED,
     ]
     

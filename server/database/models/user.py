@@ -49,7 +49,14 @@ class User(UserMixin, db.Document):
 
     password = db.StringField()
     active = db.BooleanField()
-    roles = db.ListField(choices=['admin', 'member', 'reviewer'], default=['member'])
+
+    USER_ROLES = {
+        'admin': 'admin', 
+        'member': 'member', 
+        'reviewer': 'reviewer'
+    }
+
+    roles = db.ListField(choices=[USER_ROLES.keys()], default=['member'])
 
     first_name = db.StringField(max_length=255, required=True)
     last_name = db.StringField(max_length=255, required=True)
