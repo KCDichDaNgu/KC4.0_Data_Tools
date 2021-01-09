@@ -472,7 +472,7 @@ const SentencePage = (props) => {
                         // }}
                         rowKey={ record => record.id } 
                         rowClassName={ record =>  {
-                            if (!record.editor.id) return '';
+                            if (!record.editor?.id) return '';
                             if (record.editor.id === currentUserId) return 'edited-by-my-self';
                             if (record.editor.id !== currentUserId) return 'edited-by-someone';
                         }}
@@ -519,7 +519,7 @@ const SentencePage = (props) => {
                                                     fontWeight: 600
                                                 }}>
                                                 { t('sentence.lastUpdate') } { t('sentence.by') }
-                                                &nbsp;{ record.editor.id === currentUserId ? t('sentence.you') : record.editor.username }
+                                                &nbsp;{ record.editor?.id === currentUserId ? t('sentence.you') : record.editor.username }
                                             </label>
                                             
                                             <div>
@@ -543,7 +543,7 @@ const SentencePage = (props) => {
                                     </div>
                                 )
                             },
-                            rowExpandable: record => { return !!record.editor_id },
+                            rowExpandable: record => { return !!record.editor?.id },
                         }}
                         dataSource={ dataSource }
                         columns={ columns }
@@ -558,7 +558,7 @@ const SentencePage = (props) => {
 
                 <Modal 
                     title={ t('sentence.resultUpdateData') } 
-                    visible={isModalImportVisible} 
+                    visible={ isModalImportVisible } 
                     footer={[
                         <Button 
                             type="primary"
