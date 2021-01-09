@@ -1,12 +1,13 @@
 from database.models.oauth2_client import OAuth2Client
-
+from database.models.oauth2_code import OAuth2Code
+from database.models.oauth2_token import OAuth2Token
 from database.models.user import User 
 import time
 
 def split_by_crlf(s):
     return [v for v in s.splitlines() if v]
 
-class ClientSeeder():
+class Oauth2Seeder():
 
     def __init__(self):
         
@@ -18,6 +19,8 @@ class ClientSeeder():
         admin = User.objects(roles__all=['admin']).first()
         
         OAuth2Client.objects.delete()
+        OAuth2Code.objects.delete()
+        OAuth2Token.objects.delete()
 
         client_name = 'auth'
         custom_client_id = '12345678'
