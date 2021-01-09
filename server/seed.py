@@ -1,5 +1,5 @@
 from seeds.user import UserSeeder
-from seeds.client import ClientSeeder
+from seeds.oauth2 import Oauth2Seeder
 from seeds.domain import DomainSeeder
 from seeds.para_sentence import ParaSentenceSeeder
 
@@ -15,4 +15,4 @@ if __name__ == '__main__':
 
     ParaSentenceSeeder.run()
 
-    ClientSeeder.run()
+    Oauth2Seeder.run()
