@@ -1,7 +1,7 @@
-import './domain.module.scss';
+import './manage-user.module.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
-import PageTitle from '../../layout/site-layout/main/PageTitle';
+import PageTitle from '../../../layout/site-layout/main/PageTitle';
 import {
     Input,
     Table,
@@ -13,20 +13,20 @@ import {
     message
 } from 'antd';
 
-import SiteLayout from '../../layout/site-layout';
-import domainAPI from '../../api/domain';
+import SiteLayout from '../../../layout/site-layout';
+import userAPI from '../../../api/admin/user';
 
 import { useTranslation } from 'react-i18next';
 
-import { formatDate } from '../../utils/date';
+import { formatDate } from '../../../utils/date';
 
-import { STATUS_CODES } from '../../constants';
+import { STATUS_CODES } from '../../../constants';
 
-const DomainsPage = (props) => {
+const ManageUserPage = (props) => {
     
     const { t } = useTranslation(['common']);
 
-    const [domainList, setDomainList] = useState({
+    const [userList, setUserList] = useState({
         items: [],
         total: 0,
         page: 1,
@@ -60,39 +60,42 @@ const DomainsPage = (props) => {
         },
 
         pageSizeOptions: [5, 10, 15, 20, 50, 100],
-        total: domainList.total,
+        total: userList.total,
         defaultPageSize: pagination.pagination__perPage,
 
         showTotal: (total, range) => `${range[0]} to ${range[1]} of ${total}`,
     };
 
     useEffect(() => {
-        searchDomain();
-    }, [ pagination.pagination__page, pagination.pagination__perPage ]);
+        searchUser();
+    }, [ 
+        pagination.pagination__page, 
+        pagination.pagination__perPage 
+    ]);
 
-    const addDomain = async (domainName) => {
+    const addUser = async (userName) => {
 
-        let _newDomainData = {
-            name: domainName
+        let _newUserData = {
+            name: userName
         }
 
-        await domainAPI.create(_newDomainData);
+        await userAPI.create(_newUserData);
         
         reload();
     };
 
-    const updateDomain = async (id, domain) => {
+    const updateUser = async (id, user) => {
 
-        if (domain == '' || domain == null) {
-            message.error(t('domain.nameNotNull'));
+        if (user == '' || user == null) {
+            message.error(t('user.nameNotNull'));
         } else {
 
             let data = {
-                name: domain,
+                name: user,
                 id: id,
             };
 
-            let result = await domainAPI.update(data);
+            let result = await userAPI.update(data);
 
             if (result.code == STATUS_CODES.success) {
                 message.success(t('updateSuccess'))
@@ -101,16 +104,16 @@ const DomainsPage = (props) => {
         }
     };
 
-    const searchDomain = async () => {
+    const searchUser = async () => {
 
         let data = {
             name: searchInput || '',
             ...pagination
         };
 
-        let result = await domainAPI.search(data);
+        let result = await userAPI.search(data);
         
-        setDomainList({
+        setUserList({
             items: result.data.items,
             total: result.data.total,
             page: result.data.page,
@@ -123,62 +126,58 @@ const DomainsPage = (props) => {
         })
     };
 
-    const deleteDomain = (id) => {
-        id?.forEach((item) => domainAPI.delete(item));
-        searchDomain();
+    const deleteUser = (id) => {
+        id?.forEach((item) => userAPI.delete(item));
+        searchUser();
     };
 
     const reload = () => {
-        searchDomain();
+        searchUser();
     };
-
-    const crawlDomain = () => {
-        return '';
-    }
 
     const columns = [
         {
-            title: t('domain.title'),
+            title: t('user.title'),
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
-            render: (name, domain) => (
+            render: (name, user) => (
                 <Tooltip
                     trigger={ ['focus'] }
-                    title={ t('domain.inputAdd') }
+                    title={ t('user.inputAdd') }
                     placement='topLeft'>
                     <Input
-                        className='domain-input'
+                        className='user-input'
                         defaultValue={name}
                         onPressEnter={ event => {
-                            updateDomain(domain.id, event.target.value)
+                            updateUser(user.id, event.target.value)
                         }
                     }/> 
                 </Tooltip>
             ),
         },
         {
-            title: t('domain.lastUpdate'),
+            title: t('user.lastUpdate'),
             dataIndex: 'created_time',
             key: 'created_time',
             render: (created_time) => formatDate(created_time),
             sorter: (a, b) => a.created_time - b.created_time,
         },
         {
-            title: t('domain.crawledDocuments'),
+            title: t('user.crawledDocuments'),
             dataIndex: 'crawled',
             key: 'crawled',
             sorter: (a, b) => a.crawled - b.crawled,
         },
         {
-            title: t('domain.crawl'),
+            title: t('user.crawl'),
             dataIndex: '',
             key: 'x',
             render: () => (
                 <Button 
                     type='primary' 
-                    onClick={ crawlDomain }>
-                    { t('domain.crawl') }
+                    onClick={ crawlUser }>
+                    { t('user.crawl') }
                 </Button>
             ),
         },
@@ -188,28 +187,28 @@ const DomainsPage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={ t('domain.title' )}
+                    heading={ t('manageUser.title') }
                     // subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
-                <Card className='domain-table-card'>
+                <Card className='user-table-card'>
                     <div style={{ float: 'right' }}>
                         <Button onClick={() => setIsAdding(!isAdding)}>
-                            { t('domain.addDomain') }
+                            { t('user.addUser') }
                         </Button>
 
-                        <Button onClick={() => deleteDomain(selectedDomain)} danger>
-                            { t('domain.deleteDomain') }
+                        <Button onClick={() => deleteUser(selectedUser)} danger>
+                            { t('user.deleteUser') }
                         </Button>
 
                         { isAdding && (
                             <div>
                                 <Input
                                     style={{ margin: '10px 0' }}
-                                    placeholder={ t('domain.inputAdd') }
+                                    placeholder={ t('user.inputAdd') }
                                     onPressEnter={ event => {
-                                        addDomain(event.target.value);
+                                        addUser(event.target.value);
                                     }}
                                 />
                                 <i className='ps-7s-plus'></i>
@@ -218,10 +217,10 @@ const DomainsPage = (props) => {
                     </div>
 
                     <Input
-                        placeholder={ t('domain.searchBox') }
+                        placeholder={ t('user.searchBox') }
                         className='search-input-box'
                         onChange={ (e) => { setSearchInput(e.target.value) }}
-                        onPressEnter={ event => searchDomain(event.target.value) }
+                        onPressEnter={event => searchUser(event.target.value)}
                     />
 
                     <Table
@@ -229,7 +228,7 @@ const DomainsPage = (props) => {
                         rowSelection={{
                             type: 'checkbox'
                         }}
-                        dataSource={ domainList.items.map(d => ({...d, key: d.id})) }
+                        dataSource={ userList.items.map(d => ({...d, key: d.id})) }
                         columns={ columns }
                         pagination={ paginationOptions }>
                     </Table>
@@ -239,4 +238,4 @@ const DomainsPage = (props) => {
     );
 };
 
-export default DomainsPage;
+export default ManageUserPage;
