@@ -67,17 +67,19 @@ customAxios.interceptors.response.use(
         return response
     },
     async (error) => {
-        console.log(error?.response.status)
-        if (error?.response.status == 401) {
+        
+        if (error?.response?.status == 401) {
 
             // let res = await userAPI.revokeToken()
 
             clonedStore.dispatch(userLogout())
 
+            window.location.href = '/login'
+
             return
         }
         
-        if (error.response.config.data.includes('access_token')) {
+        if (error?.response?.config?.data.includes('access_token')) {
 
             let auth_info = clonedStore.getState().User.auth_info;
         
@@ -92,7 +94,7 @@ customAxios.interceptors.response.use(
             }   
         }
 
-        if (error.response.config.data.includes('refresh_token')) {
+        if (error?.response?.config?.data.includes('refresh_token')) {
 
             let res = userAPI.revokeToken()
             
