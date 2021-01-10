@@ -57,6 +57,12 @@ const SentencePage = (props) => {
     const currentUserId = clonedStore.getState().User?.profile?.id;
     const currentUserRoles = clonedStore.getState().User?.profile?.roles;
 
+    const defaultFilter = {
+        rating: 'unRated',
+        // sort_by: 'score',
+        // sort_order: 'descend'
+    }
+
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
@@ -83,8 +89,8 @@ const SentencePage = (props) => {
                 key={paraSentence['id']}
                 autoSize
                 showCount
-                defaultValue={lastUpdated}
-                onPressEnter={event => {
+                defaultValue={ lastUpdated }
+                onPressEnter={ event => {
                     event.preventDefault();
                     updateParaSentence(paraSentence, key, event.target.value);
                 }}
@@ -275,7 +281,7 @@ const SentencePage = (props) => {
     };
 
     useEffect(() => {
-        paraSentenceAPI.getSentences({}).then((res) => {
+        paraSentenceAPI.getSentences(defaultFilter).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -343,8 +349,8 @@ const SentencePage = (props) => {
 
         if (!edittedByHigherUserRole(paraSentence)) {
             if (!paraSentence.editor?.id) className = '';
-            if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
-            if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
+            else if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
+            else if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
         }
         
         // if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
@@ -446,9 +452,7 @@ const SentencePage = (props) => {
                                 style={{
                                     width: '100%',
                                 }}
-                                defaultValue={
-                                    ratingOption.length === 0 ? "" : ratingOption[0]
-                                }
+                                defaultValue={ defaultFilter.rating }
                                 onChange={ value => handleChange(value, "rating") }
                             >
                                 {ratingOption}
@@ -504,6 +508,8 @@ const SentencePage = (props) => {
                         //   type: "checkbox",
                         //   ...rowSelection,
                         // }}
+                        // defaultFilteredValue={ defaultFilter.sort_by }
+                        // defaultSortOrder={ defaultFilter.sort_order }
                         rowKey={ record => record.id } 
                         rowClassName={ record => getTableRowClassName(record)}
                         expandable={{
