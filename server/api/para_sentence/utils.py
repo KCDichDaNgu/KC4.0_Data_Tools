@@ -1,7 +1,7 @@
 # import pandas as pd
 import time
 import hashlib
-from database.models.para_sentence import ParaSentence
+from database.models.para_sentence import ParaSentence, UserRating
 from datetime import timedelta, datetime
 
 def import_parasentences_from_file(text_file):
@@ -14,18 +14,17 @@ def import_parasentences_from_file(text_file):
             score, text1, text2 = line.strip('\n').split('\t')
             lang1 = 'vi'
             lang2 = 'khm'
-            rating = ParaSentence.RATING_UNRATED
+            # rating = UserRating.RATING_TYPES['unRated'] 
 
             try:
                 hash = hash_para_sentence(text1, text2, lang1, lang2)
-                similar = ParaSentence.objects.filter(hash=hash).all()
 
                 para_sentence = ParaSentence(
                     text1=text1,
                     text2=text2,
                     lang1=lang1,
                     lang2=lang2,
-                    rating=rating,
+                    # rating=rating,
                     editor_id=None,
                     origin_para_document_id=None,
                     para_document_id=None,
@@ -113,3 +112,19 @@ def get_view_due_date(minutes_to_expire=15):
     end_time = cur_time + timedelta(minutes=minutes_to_expire)
     end_timestamp = end_time.timestamp()
     return end_timestamp
+
+def update_rating_list(old_rating_list, new_rating):
+    new_rating_list = []
+    added_new_rating = False
+
+    for old_rating in old_rating_list:
+        if old_rating['user_id'] == str(new_rating['user_id']):
+            new_rating_list.append(new_rating)
+            added_new_rating = True
+        else:
+            new_rating_list.append(old_rating)
+    
+    if not added_new_rating:
+        new_rating_list.append(new_rating)
+
+    return new_rating_list

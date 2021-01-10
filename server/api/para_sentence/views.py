@@ -8,7 +8,7 @@ from database.models.para_sentence import ParaSentence, UserRating
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
-from .utils import import_parasentences_from_file, hash_para_sentence, get_view_due_date
+from .utils import import_parasentences_from_file, hash_para_sentence, get_view_due_date, remove_viewer_from_old_parasentences
 import re
 
 para_sentence_bp = Blueprint(__name__, 'para_sentence')    
@@ -18,7 +18,13 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 @require_oauth()
 def get():
     args = request.args
-    
+
+    # delete old records which has current user id
+    user = current_token.user
+    remove_viewer_from_old_parasentences(user.id)
+
+    # request new records
+
     query = {
         '$and': []
     }
@@ -63,15 +69,13 @@ def get():
     # get records has current_user_id and not expired yet or  without viewer_id or expired view_due_date
     current_timestamp = time.time()
 
-    user = current_token.user
-
     query['$and'].append({
         '$or': [
             {'$and': [
                 {'viewer_id': user.id},
                 {'view_due_date': {'$gte': current_timestamp}}
             ]},
-            {'viewer_id': {'$exists': False}},
+            {'viewer_id': None},
             {'view_due_date': {'$lt': current_timestamp}}
         ]
     })
@@ -79,7 +83,7 @@ def get():
     if len(query['$and']) == 0:
         del query['$and']
 
-    para_sentences = ParaSentence.objects.filter(__raw__=query).all()
+    para_sentences = ParaSentence.objects.filter(__raw__=query)
 
     # sort
     if 'sort_by' in args:
@@ -102,15 +106,21 @@ def get():
     for para_sentence in para_sentences.items:
         para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
     
-    return jsonify({
-        "data": [x.serialize for x in para_sentences.items],
-        "pagination": {
-            "current_page": para_sentences.page,
-            "total_pages": para_sentences.pages,
-            "page_size": para_sentences.per_page,
-            "total_items": para_sentences.total
-        }
-    })
+    # assert ParaSentence.objects(viewer_id=user.id).count() == PaginationParameters.page_size, "viewer has too many parasentences"
+
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            "para_sentences": [x.serialize for x in para_sentences.items],
+            "pagination": {
+                "current_page": para_sentences.page,
+                "total_pages": para_sentences.pages,
+                "page_size": para_sentences.per_page,
+                "total_items": para_sentences.total
+            }
+        },
+        message='success'
+    )
 
 @para_sentence_bp.route('/', methods=['POST'])
 @require_oauth()
@@ -140,16 +150,20 @@ def list_option_field():
     list_lang1 = ParaSentence.objects.distinct('lang1')
     list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
-        ParaSentence.RATING_GOOD,
-        ParaSentence.RATING_BAD,
-        ParaSentence.RATING_UNRATED,
+        UserRating.RATING_TYPES['good'],
+        UserRating.RATING_TYPES['bad'],
+        UserRating.RATING_TYPES['unRated'],
     ]
     
-    return jsonify({
-        "lang1": list_lang1,
-        "lang2" : list_lang2,
-        "rating" : list_rating
-    })
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            "lang1": list_lang1,
+            "lang2" : list_lang2,
+            "rating" : list_rating
+        },
+        message='success'
+    )
 
 @para_sentence_bp.route('/import-from-file', methods=['POST'])
 @require_oauth()
@@ -170,7 +184,11 @@ def import_from_file():
 
     status = import_parasentences_from_file(filepath)
     
-    return jsonify(status)
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data=status,
+        message='success'
+    )
 
 @para_sentence_bp.route('/<_id>', methods=['PUT'])
 @require_oauth()
@@ -199,19 +217,13 @@ def update(_id):
 
         filter_params = {}
         hash_changed = False
-        text_changed = False
 
         for key, value in request.json.items():
-            if key == '_id': continue
+            if key == '_id' or key == 'rating': continue
             filter_params[key] = value
             if key in hashes.keys():
                 hashes[key] = value
                 hash_changed = True
-            if key in ['text1', 'text2']:
-                text_changed = True
-
-        if text_changed:
-            filter_params['rating'] = UserRating.RATING_TYPES['good']
 
         if para_sentence['original'] is None:
             original = {
@@ -226,15 +238,31 @@ def update(_id):
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
             para_sentence.update(hash=hash, **filter_params, editor_id=user)
-            print('update hash')
         else:
             para_sentence.update(**filter_params, editor_id=user)
+
+        # update rating
+        new_rating = {
+            'rating': request.json.get('rating', UserRating.RATING_TYPES['good']),
+            'user_id': str(user.id),
+            'user_current_role': user.roles
+        }
+
+        
+        updated = ParaSentence.objects(
+            id=para_sentence.id, 
+            rating__user_id=new_rating['user_id']
+        ).update_one(set__rating__S=UserRating(**new_rating))
+
+        if not updated:
+            ParaSentence.objects(id=para_sentence.id).update_one(push__rating=UserRating(**new_rating))
 
         return jsonify({
             'code': STATUS_CODES['success'], 
             'message': 'updatedSuccess'
         })
-    except:
+    except Exception as err:
+        print(err)
         return jsonify({
             'code': STATUS_CODES['failure'], 
             'message': 'errorUpdate'

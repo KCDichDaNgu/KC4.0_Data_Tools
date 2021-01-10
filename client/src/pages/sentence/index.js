@@ -80,13 +80,12 @@ const SentencePage = (props) => {
 
     const renderRating = (rating, paraSentence, index) => {
 
-        let lastUpdated = paraSentence['rating'];
-
-        // if (paraSentence.hasOwnProperty('edited')
-        //     && paraSentence['edited'].hasOwnProperty('rating')
-        //     && paraSentence['edited']['rating'] !== undefined) {
-        //     lastUpdated = paraSentence['edited']['rating'];
-        // }
+        let lastUpdated = 'unRated'; // default notExist = unRated
+        paraSentence.rating.map((rating, idx) => {
+            if (rating['user_id'] === currentUserId) {
+                lastUpdated = rating['rating'];
+            }
+        });
 
         return (
             <Radio.Group
@@ -191,8 +190,8 @@ const SentencePage = (props) => {
         setRequestParams(params);
 
         paraSentenceAPI.getSentences(params).then((res) => {
-            setDataSource(res.data.data)
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
     };
 
@@ -243,14 +242,14 @@ const SentencePage = (props) => {
                 // let nSuccess = info.file.response.data.n_success;
                 // let nData = info.file.response.data.n_data;
 
-                setImportStatus(info.file.response.data);
+                setImportStatus(info.file.response.data.data);
                 setIsModalImportVisible(true);
                 // message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
                 
                 // reload new results
                 paraSentenceAPI.getSentences({}).then((res) => {
-                    setDataSource(res.data.data);
-                    setPaginationParams(res.data.pagination);
+                    setDataSource(res.data.data.para_sentences);
+                    setPaginationParams(res.data.data.pagination);
                 });
             } else if (info.file.status === 'error') {
                 setUploadingFile(false);
@@ -262,14 +261,14 @@ const SentencePage = (props) => {
 
     useEffect(() => {
         paraSentenceAPI.getSentences({}).then((res) => {
-            setDataSource(res.data.data);
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
 
         paraSentenceAPI.getOptions().then((res) => {
-            setLangList1(res.data.lang1);
-            setLangList2(res.data.lang2);
-            setRatingList(res.data.rating);
+            setLangList1(res.data.data.lang1);
+            setLangList2(res.data.data.lang2);
+            setRatingList(res.data.data.rating);
         });
     }, []);
 
@@ -286,8 +285,8 @@ const SentencePage = (props) => {
         setSortedInfo(sorter)
 
         paraSentenceAPI.getSentences(params).then((res) => {
-            setDataSource(res.data.data);
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
     }
 
@@ -309,8 +308,8 @@ const SentencePage = (props) => {
                 }
 
                 paraSentenceAPI.getSentences(params).then((res) => {
-                    setDataSource(res.data.data);
-                    setPaginationParams(res.data.pagination);
+                    setDataSource(res.data.data.para_sentences);
+                    setPaginationParams(res.data.data.pagination);
                 });
             } else {
                 message.error(t(`sentence.${res.data.message}`));
@@ -561,6 +560,7 @@ const SentencePage = (props) => {
                     visible={ isModalImportVisible } 
                     footer={[
                         <Button 
+                            key="ok"
                             type="primary"
                             onClick={() => setIsModalImportVisible(false)}>
                             { t('sentence.ok') }

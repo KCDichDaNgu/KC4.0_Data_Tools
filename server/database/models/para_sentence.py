@@ -2,17 +2,6 @@ from database.db import db
 
 from database.models.user import User
 
-
-class OriginalParaSentence(db.EmbeddedDocument):
-    text1 = db.StringField()
-    text2 = db.StringField()
-    rating = db.StringField()
-
-    class Attr:
-        text1 = 'text1'
-        text2 = 'text2'
-        rating = 'rating'
-
 class UserRating(db.EmbeddedDocument):
 
     RATING_TYPES = {
@@ -32,6 +21,16 @@ class UserRating(db.EmbeddedDocument):
         choices=RATING_TYPES.keys(), 
         required=True
     )
+
+class OriginalParaSentence(db.EmbeddedDocument):
+    text1 = db.StringField()
+    text2 = db.StringField()
+    rating = db.EmbeddedDocumentListField(UserRating, default=[])
+
+    class Attr:
+        text1 = 'text1'
+        text2 = 'text2'
+        rating = 'rating'
 
 class ParaSentence(db.Document):
 
@@ -104,7 +103,13 @@ class ParaSentence(db.Document):
             'text2': self.text2,
             'lang1': self.lang1,
             'lang2': self.lang2,
-            'rating': self.rating,
+            'rating': [
+                {
+                    'rating': rating.rating,
+                    'user_current_role': rating.user_current_role,
+                    'user_id': str(rating.user_id.id)
+                } for rating in self.rating
+            ],
             'score': self.score,
             'editor': {
                 'id': str(self.editor_id.id) if self.editor_id else None,
