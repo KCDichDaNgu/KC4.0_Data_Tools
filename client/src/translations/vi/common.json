@@ -90,7 +90,8 @@
 		"you": "bạn",
 		"duplicatedRecords": "bản ghi trùng lặp không được thêm vào",
 		"resultUpdateData": "Kết quả cập nhật dữ liệu",
-		"ok": "OK"
+		"ok": "OK",
+		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa"
 	},
 	"manageUser": {
 		"title": "Quản lý người dùng"

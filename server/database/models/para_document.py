@@ -13,7 +13,7 @@ class ParaDocument(db.Document):
     creator_id = db.StringField()
     status = db.IntField()
     created_time = db.IntField()
-    updated_time = db.IntField()
+    updated_at = db.IntField()
 
     meta = {'collection': 'para_document'}
 
@@ -28,4 +28,4 @@ class ParaDocument(db.Document):
         creator_id = 'creator_id'
         status = 'status'
         created_time = 'created_time'
-        updated_time = 'updated_time'
+        updated_at = 'updated_at'

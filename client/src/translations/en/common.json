@@ -82,6 +82,7 @@
 		"you": "you",
 		"duplicatedRecords": "duplicated records which will not be added",
 		"resultUpdateData": "Import file notification",
-		"ok": "OK"
+		"ok": "OK",
+		"updatedByHigherRole": "This record has been editted by admin"
 	}
 }

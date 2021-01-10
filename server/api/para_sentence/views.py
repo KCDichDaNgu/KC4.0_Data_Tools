@@ -5,11 +5,12 @@ from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
 from oauth2 import authorization, require_oauth
 from database.models.para_sentence import ParaSentence, UserRating
+from database.models.para_sentence_history import ParaSentenceHistory
 from database.models.user import User
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
-from .utils import import_parasentences_from_file, hash_para_sentence, get_view_due_date, remove_viewer_from_old_parasentences
+from .utils import *
 import re
 
 para_sentence_bp = Blueprint(__name__, 'para_sentence')    
@@ -28,16 +29,6 @@ def get():
     query = {
         '$and': []
     }
-
-    # if parasentences have been rated by other editors, not show them to this editor
-    # parasentences are still showed to reviewer and admin
-    if User.USER_ROLES['member'] in user.roles:
-        query['$and'].append({
-            '$or': [
-                {'editor_id': None},
-                {'editor_id': ObjectId(user.id)}
-            ]
-        })
 
     # filter params send by request
     if ParaSentence.Attr.rating in args and args[ParaSentence.Attr.rating] != 'all':
@@ -77,7 +68,7 @@ def get():
                 ]
             })
 
-    # get records has current_user_id and not expired yet or  without viewer_id or expired view_due_date
+    # get records has current_user_id and not expired yet or without viewer_id or expired view_due_date
     current_timestamp = time.time()
 
     query['$and'].append({
@@ -145,7 +136,7 @@ def create():
         para_document_id=args[ParaSentence.Attr.para_document_id],
         origin_para_document_id=args[ParaSentence.Attr.origin_para_document_id],
         created_time=args[ParaSentence.Attr.created_time],
-        updated_time=args[ParaSentence.Attr.updated_time]
+        updated_at=args[ParaSentence.Attr.updated_at]
     )
 
     para_sentence.save()
@@ -197,23 +188,30 @@ def import_from_file():
         data=status,
         message='success'
     )
-
+            
 @para_sentence_bp.route('/<_id>', methods=['PUT'])
 @require_oauth()
 def update(_id):
     try:
         para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
-        user = current_token.user
-        if para_sentence.viewer_id != user.id:
-            return jsonify({
-                'code': STATUS_CODES['failure'], 
-                'message': 'notAllowed', 
-            })
     except:
         return jsonify({
             'code': STATUS_CODES['failure'], 
             'message': 'notFound', 
         })
+
+    user = current_token.user
+    if para_sentence.viewer_id != user.id:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'notAllowed', 
+        })
+    
+    if ROLE2IDX[para_sentence.editor_role] > ROLE2IDX[get_highest_user_role(user.roles)]:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'updatedByHigherRole', 
+        }) 
 
     try:
         hashes = {
@@ -223,52 +221,55 @@ def update(_id):
             'lang2': para_sentence.lang2,
         }
 
-        update_args = {}
+        update_args = {
+            'rating': ParaSentence.RATING_TYPES['good']
+        }
         hash_changed = False
 
         for key, value in request.json.items():
-            if key == '_id' or key == 'rating': continue
+            if key == '_id': continue
             update_args[key] = value
             if key in hashes.keys():
                 hashes[key] = value
                 hash_changed = True
 
-        if para_sentence['original'] is None:
-            original = {
-                'text1': para_sentence.text1,
-                'text2': para_sentence.text2,
-                'rating': para_sentence.rating,
-            }
-            update_args['original'] = original
-        
         # update last_updated time
-        update_args['updated_time'] = time.time()
-
-        # if current user's role is editor -> update editor_id of parasentence
-        if User.USER_ROLES['member'] in user.roles:
-            update_args['editor_id'] = user.id
+        updated_at = time.time()
+        update_args['updated_at'] = updated_at
 
         # recompute hash 
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
             update_args['hash'] = hash
 
-        para_sentence.update(**update_args)
+        # assign highest user role to para_sentence.editor_role
+        editor_role = get_highest_user_role(user.roles)
+        update_args['editor_id'] = user.id
+        update_args['editor_role'] = editor_role
 
-        # update rating
-        new_rating = {
-            'rating': request.json.get('rating', UserRating.RATING_TYPES['good']),
-            'user_id': str(user.id),
-            'user_current_role': user.roles
+        # save original para sentence
+        if para_sentence.original is None:
+            original = {
+                'text1': para_sentence.text1,
+                'text2': para_sentence.text2,
+                'rating': para_sentence.rating,
+            }
+            update_args['original'] = original
+
+        # save revised history
+        before_update_status = {
+            'text1': para_sentence.text1,
+            'text2': para_sentence.text2,
+            'rating': para_sentence.rating,
+            'updated_at': updated_at,
+            'editor_id': para_sentence.editor_id,
+            'editor_role': para_sentence.editor_role
         }
-        
-        updated = ParaSentence.objects(
-            id=para_sentence.id, 
-            rating__user_id=new_rating['user_id']
-        ).update_one(set__rating__S=UserRating(**new_rating))
+        root_para_sentence_history = ParaSentenceHistory(**before_update_status)
+        root_para_sentence_history.save()
 
-        if not updated:
-            ParaSentence.objects(id=para_sentence.id).update_one(push__rating=UserRating(**new_rating))
+        # update para sentence
+        para_sentence.update(**update_args)
 
         return jsonify({
             'code': STATUS_CODES['success'], 
@@ -280,4 +281,3 @@ def update(_id):
             'code': STATUS_CODES['failure'], 
             'message': 'errorUpdate'
         })
-            

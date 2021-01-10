@@ -4,6 +4,19 @@ import hashlib
 from database.models.para_sentence import ParaSentence, UserRating
 from datetime import timedelta, datetime
 
+ROLE2IDX = {
+    None: 0,
+    'member': 1,
+    'reviewer': 2,
+    'admin': 2,
+}
+
+IDX2ROLE = {
+    0: None,
+    1: 'member',
+    2: 'reviewer'
+}
+
 def import_parasentences_from_file(text_file):
     count = 0
     n_rows = 0
@@ -31,7 +44,7 @@ def import_parasentences_from_file(text_file):
                     score={"senAlign": score},
                     hash=hash,
                     created_time=time.time(),
-                    updated_time=time.time())
+                    updated_at=time.time())
 
                 para_sentence.save()
 
@@ -86,7 +99,7 @@ def import_parasentences_from_file(text_file):
 #                 score={"senAlign": score},
 #                 hash=hash,
 #                 created_time=time.time(),
-#                 updated_time=time.time())
+#                 updated_at=time.time())
 
 #             para_sentence.save()
 
@@ -117,3 +130,10 @@ def remove_viewer_from_old_parasentences(user_id):
     para_sentences = ParaSentence.objects(viewer_id=user_id)
     updated = para_sentences.update(viewer_id=None, view_due_date=None)
     return updated
+
+def get_highest_user_role(user_roles):
+    role_values = [ROLE2IDX[role] for role in user_roles]
+    max_role_value = max(role_values)
+    max_role_name = IDX2ROLE[max_role_value]
+    return max_role_name
+

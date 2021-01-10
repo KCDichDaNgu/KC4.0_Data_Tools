@@ -29,11 +29,33 @@ import { clonedStore } from '../../store';
 const { TextArea } = Input;
 const { Option } = Select;
 
+const UserRole2Idx = {
+    null: 0,
+    'member': 1,
+    'reviewer': 2,
+    'admin': 2
+};
+
+const Idx2UserRole = {
+    0: null,
+    1: 'member',
+    2: 'reviewer'
+}
+
+const getHighestUserRole = (userRoles) => {
+    let userRoleValues = userRoles.map((role, idx) => {
+        return UserRole2Idx[role];
+    });
+
+    return Idx2UserRole[Math.max.apply(Math, userRoleValues)]; 
+}
+
 const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
 
     const currentUserId = clonedStore.getState().User?.profile?.id;
+    const currentUserRoles = clonedStore.getState().User?.profile?.roles;
 
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
@@ -54,12 +76,13 @@ const SentencePage = (props) => {
     const renderText = (key, paraSentence, index) => {
 
         let lastUpdated = paraSentence[key];
+        let disabled = false;
 
-        // if (paraSentence.hasOwnProperty('edited')
-        //     && paraSentence['edited'].hasOwnProperty(key)
-        //     && paraSentence['edited'][key] !== undefined) {
-        //     lastUpdated = paraSentence['edited'][key];
-        // }
+        // if editted by reviewer and current user is editor -> can not edit
+        let highestUserRole = getHighestUserRole(currentUserRoles);
+        if (UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role]) {
+            disabled = true;
+        }
 
         return (
             <TextArea
@@ -74,18 +97,14 @@ const SentencePage = (props) => {
                 onResize={({ width, height }) => {
                     return height + 10;
                 }} 
+                disabled={ disabled }
             />
         );
     }
 
     const renderRating = (rating, paraSentence, index) => {
 
-        let lastUpdated = 'unRated'; // default notExist = unRated
-        paraSentence.rating.map((rating, idx) => {
-            if (rating['user_id'] === currentUserId) {
-                lastUpdated = rating['rating'];
-            }
-        });
+        let lastUpdated = paraSentence.rating; // default notExist = unRated
 
         return (
             <Radio.Group
@@ -128,10 +147,10 @@ const SentencePage = (props) => {
         },
         // {
         //     title: t('sentence.lastUpdate'),
-        //     // dataIndex: "updated_time",
-        //     key: "updated_time",
+        //     // dataIndex: "updated_at",
+        //     key: "updated_at",
         //     render: (record) => {
-        //         // formatDate(updated_time)
+        //         // formatDate(updated_at)
         //         console.log(record)
         //     },
         //     sorter: (a, b, sortOrder) => { },
@@ -317,6 +336,23 @@ const SentencePage = (props) => {
         });
     }
 
+    const edittedByHigherUserRole = (paraSentence) => {
+        // if editted by reviewer and current user is editor -> can not edit
+        let highestUserRole = getHighestUserRole(currentUserRoles);
+        return UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role];
+    }
+
+    const getTableRowClassName = (paraSentence) => {
+        let className = "";
+        if (!paraSentence.editor?.id) className = '';
+        if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
+        if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
+        
+        if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
+
+        return className;
+    }
+
     return (
         <React.Fragment>
             <SiteLayout>
@@ -470,11 +506,7 @@ const SentencePage = (props) => {
                         //   ...rowSelection,
                         // }}
                         rowKey={ record => record.id } 
-                        rowClassName={ record =>  {
-                            if (!record.editor?.id) return '';
-                            if (record.editor.id === currentUserId) return 'edited-by-my-self';
-                            if (record.editor.id !== currentUserId) return 'edited-by-someone';
-                        }}
+                        rowClassName={ record => getTableRowClassName(record)}
                         expandable={{
                             expandedRowRender: record => {
                                 return (
@@ -522,7 +554,7 @@ const SentencePage = (props) => {
                                             </label>
                                             
                                             <div>
-                                                { formatDate(record.updated_time) }
+                                                { formatDate(record.updated_at) }
                                             </div>
                                         </div>
 
