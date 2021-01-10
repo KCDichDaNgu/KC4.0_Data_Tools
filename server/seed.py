@@ -1,7 +1,4 @@
-from seeds.user import UserSeeder
-from seeds.oauth2 import Oauth2Seeder
-from seeds.domain import DomainSeeder
-from seeds.para_sentence import ParaSentenceSeeder
+from database.models.user import User
 
 from database.db import init_for_migrate
 
@@ -9,10 +6,16 @@ if __name__ == '__main__':
 
     init_for_migrate()
 
-    UserSeeder.run()
+    admin = User(**{
+        "username": "admin",
+        "email": "admin@gmail.com",
+        "roles": [ "admin" ],
+        "password": '12345678',
+        "first_name": "admin#firstname",
+        "last_name": "admin#lastname",
+        "status": User.USER_STATUS['active']
+    })
 
-    DomainSeeder.run()
+    admin.save()
 
-    ParaSentenceSeeder.run()
-
-    Oauth2Seeder.run()
+    print('Admin added!')
