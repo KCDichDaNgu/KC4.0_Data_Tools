@@ -113,18 +113,7 @@ def get_view_due_date(minutes_to_expire=15):
     end_timestamp = end_time.timestamp()
     return end_timestamp
 
-def update_rating_list(old_rating_list, new_rating):
-    new_rating_list = []
-    added_new_rating = False
-
-    for old_rating in old_rating_list:
-        if old_rating['user_id'] == str(new_rating['user_id']):
-            new_rating_list.append(new_rating)
-            added_new_rating = True
-        else:
-            new_rating_list.append(old_rating)
-    
-    if not added_new_rating:
-        new_rating_list.append(new_rating)
-
-    return new_rating_list
+def remove_viewer_from_old_parasentences(user_id):
+    para_sentences = ParaSentence.objects(viewer_id=user_id)
+    updated = para_sentences.update(viewer_id=None, view_due_date=None)
+    return updated
