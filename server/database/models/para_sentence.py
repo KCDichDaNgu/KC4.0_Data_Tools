@@ -2,16 +2,11 @@ from database.db import db
 
 from database.models.user import User
 
-
-class OriginalParaSentence(db.EmbeddedDocument):
-    text1 = db.StringField()
-    text2 = db.StringField()
-    rating = db.StringField()
-
-    class Attr:
-        text1 = 'text1'
-        text2 = 'text2'
-        rating = 'rating'
+RATING_TYPES = {
+    'good': 'good',
+    'bad': 'bad',
+    'unRated': 'unRated'
+}
 
 class UserRating(db.EmbeddedDocument):
 
@@ -33,20 +28,37 @@ class UserRating(db.EmbeddedDocument):
         required=True
     )
 
+class OriginalParaSentence(db.EmbeddedDocument):
+    text1 = db.StringField()
+    text2 = db.StringField()
+    rating = db.StringField(
+        choices=RATING_TYPES.keys(),
+        default=RATING_TYPES['unRated']
+    )
+
 class ParaSentence(db.Document):
+    RATING_TYPES = RATING_TYPES
 
     text1 = db.StringField()
     text2 = db.StringField()
     lang1 = db.StringField()
     lang2 = db.StringField()
-    rating = db.EmbeddedDocumentListField(UserRating, default=[])
+    # rating = db.EmbeddedDocumentListField(UserRating, default=[])
+    rating = db.StringField(
+        choices=RATING_TYPES.keys(),
+        default=RATING_TYPES['unRated']
+    )
     score = db.DictField()
     editor_id = db.ReferenceField(User, default=None)
+    editor_role = db.StringField(
+        choices=User.USER_ROLES.keys(),
+        default=None
+    ) # role của user edit lần cuối
 
     para_document_id = db.StringField()
     origin_para_document_id = db.StringField()
     created_time = db.IntField()
-    updated_time = db.IntField()
+    updated_at = db.IntField()
 
     hash = db.StringField()
     original = db.EmbeddedDocumentField(OriginalParaSentence)
@@ -80,7 +92,7 @@ class ParaSentence(db.Document):
         para_document_id = 'para_document_id'
         origin_para_document_id = 'origin_para_document_id'
         created_time = 'created_time'
-        updated_time = 'updated_time'
+        updated_at = 'updated_at'
         original = 'original'
         
         viewer_id = 'viewer_id'
@@ -105,13 +117,21 @@ class ParaSentence(db.Document):
             'lang1': self.lang1,
             'lang2': self.lang2,
             'rating': self.rating,
+            # 'rating': [
+            #     {
+            #         'rating': rating.rating,
+            #         'user_current_role': rating.user_current_role,
+            #         'user_id': str(rating.user_id.id)
+            #     } for rating in self.rating
+            # ],
             'score': self.score,
             'editor': {
                 'id': str(self.editor_id.id) if self.editor_id else None,
                 'username': str(self.editor_id.username) if self.editor_id else None
             },
+            'editor_role': self.editor_role,
             'created_time': self.created_time,
-            'updated_time': self.updated_time,
+            'updated_at': self.updated_at,
             'original': self.original,
             'viewer_id': str(self.viewer_id),
             'view_due_date': self.view_due_date

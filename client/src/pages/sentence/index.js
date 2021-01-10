@@ -29,11 +29,33 @@ import { clonedStore } from '../../store';
 const { TextArea } = Input;
 const { Option } = Select;
 
+const UserRole2Idx = {
+    null: 0,
+    'member': 1,
+    'reviewer': 2,
+    'admin': 2
+};
+
+const Idx2UserRole = {
+    0: null,
+    1: 'member',
+    2: 'reviewer'
+}
+
+const getHighestUserRole = (userRoles) => {
+    let userRoleValues = userRoles.map((role, idx) => {
+        return UserRole2Idx[role];
+    });
+
+    return Idx2UserRole[Math.max.apply(Math, userRoleValues)]; 
+}
+
 const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
 
     const currentUserId = clonedStore.getState().User?.profile?.id;
+    const currentUserRoles = clonedStore.getState().User?.profile?.roles;
 
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
@@ -54,12 +76,13 @@ const SentencePage = (props) => {
     const renderText = (key, paraSentence, index) => {
 
         let lastUpdated = paraSentence[key];
+        let disabled = false;
 
-        // if (paraSentence.hasOwnProperty('edited')
-        //     && paraSentence['edited'].hasOwnProperty(key)
-        //     && paraSentence['edited'][key] !== undefined) {
-        //     lastUpdated = paraSentence['edited'][key];
-        // }
+        // if editted by reviewer and current user is editor -> can not edit
+        let highestUserRole = getHighestUserRole(currentUserRoles);
+        if (UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role]) {
+            disabled = true;
+        }
 
         return (
             <TextArea
@@ -74,19 +97,14 @@ const SentencePage = (props) => {
                 onResize={({ width, height }) => {
                     return height + 10;
                 }} 
+                disabled={ disabled }
             />
         );
     }
 
     const renderRating = (rating, paraSentence, index) => {
 
-        let lastUpdated = paraSentence['rating'];
-
-        // if (paraSentence.hasOwnProperty('edited')
-        //     && paraSentence['edited'].hasOwnProperty('rating')
-        //     && paraSentence['edited']['rating'] !== undefined) {
-        //     lastUpdated = paraSentence['edited']['rating'];
-        // }
+        let lastUpdated = paraSentence.rating; // default notExist = unRated
 
         return (
             <Radio.Group
@@ -129,10 +147,10 @@ const SentencePage = (props) => {
         },
         // {
         //     title: t('sentence.lastUpdate'),
-        //     // dataIndex: "updated_time",
-        //     key: "updated_time",
+        //     // dataIndex: "updated_at",
+        //     key: "updated_at",
         //     render: (record) => {
-        //         // formatDate(updated_time)
+        //         // formatDate(updated_at)
         //         console.log(record)
         //     },
         //     sorter: (a, b, sortOrder) => { },
@@ -191,8 +209,8 @@ const SentencePage = (props) => {
         setRequestParams(params);
 
         paraSentenceAPI.getSentences(params).then((res) => {
-            setDataSource(res.data.data)
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
     };
 
@@ -243,14 +261,14 @@ const SentencePage = (props) => {
                 // let nSuccess = info.file.response.data.n_success;
                 // let nData = info.file.response.data.n_data;
 
-                setImportStatus(info.file.response.data);
+                setImportStatus(info.file.response.data.data);
                 setIsModalImportVisible(true);
                 // message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
                 
                 // reload new results
                 paraSentenceAPI.getSentences({}).then((res) => {
-                    setDataSource(res.data.data);
-                    setPaginationParams(res.data.pagination);
+                    setDataSource(res.data.data.para_sentences);
+                    setPaginationParams(res.data.data.pagination);
                 });
             } else if (info.file.status === 'error') {
                 setUploadingFile(false);
@@ -262,14 +280,14 @@ const SentencePage = (props) => {
 
     useEffect(() => {
         paraSentenceAPI.getSentences({}).then((res) => {
-            setDataSource(res.data.data);
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
 
         paraSentenceAPI.getOptions().then((res) => {
-            setLangList1(res.data.lang1);
-            setLangList2(res.data.lang2);
-            setRatingList(res.data.rating);
+            setLangList1(res.data.data.lang1);
+            setLangList2(res.data.data.lang2);
+            setRatingList(res.data.data.rating);
         });
     }, []);
 
@@ -286,8 +304,8 @@ const SentencePage = (props) => {
         setSortedInfo(sorter)
 
         paraSentenceAPI.getSentences(params).then((res) => {
-            setDataSource(res.data.data);
-            setPaginationParams(res.data.pagination);
+            setDataSource(res.data.data.para_sentences);
+            setPaginationParams(res.data.data.pagination);
         });
     }
 
@@ -309,13 +327,30 @@ const SentencePage = (props) => {
                 }
 
                 paraSentenceAPI.getSentences(params).then((res) => {
-                    setDataSource(res.data.data);
-                    setPaginationParams(res.data.pagination);
+                    setDataSource(res.data.data.para_sentences);
+                    setPaginationParams(res.data.data.pagination);
                 });
             } else {
                 message.error(t(`sentence.${res.data.message}`));
             }
         });
+    }
+
+    const edittedByHigherUserRole = (paraSentence) => {
+        // if editted by reviewer and current user is editor -> can not edit
+        let highestUserRole = getHighestUserRole(currentUserRoles);
+        return UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role];
+    }
+
+    const getTableRowClassName = (paraSentence) => {
+        let className = "";
+        if (!paraSentence.editor?.id) className = '';
+        if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
+        if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
+        
+        if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
+
+        return className;
     }
 
     return (
@@ -471,11 +506,7 @@ const SentencePage = (props) => {
                         //   ...rowSelection,
                         // }}
                         rowKey={ record => record.id } 
-                        rowClassName={ record =>  {
-                            if (!record.editor?.id) return '';
-                            if (record.editor.id === currentUserId) return 'edited-by-my-self';
-                            if (record.editor.id !== currentUserId) return 'edited-by-someone';
-                        }}
+                        rowClassName={ record => getTableRowClassName(record)}
                         expandable={{
                             expandedRowRender: record => {
                                 return (
@@ -523,7 +554,7 @@ const SentencePage = (props) => {
                                             </label>
                                             
                                             <div>
-                                                { formatDate(record.updated_time) }
+                                                { formatDate(record.updated_at) }
                                             </div>
                                         </div>
 
@@ -561,6 +592,7 @@ const SentencePage = (props) => {
                     visible={ isModalImportVisible } 
                     footer={[
                         <Button 
+                            key="ok"
                             type="primary"
                             onClick={() => setIsModalImportVisible(false)}>
                             { t('sentence.ok') }

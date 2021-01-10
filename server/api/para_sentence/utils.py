@@ -1,8 +1,21 @@
 # import pandas as pd
 import time
 import hashlib
-from database.models.para_sentence import ParaSentence
+from database.models.para_sentence import ParaSentence, UserRating
 from datetime import timedelta, datetime
+
+ROLE2IDX = {
+    None: 0,
+    'member': 1,
+    'reviewer': 2,
+    'admin': 2,
+}
+
+IDX2ROLE = {
+    0: None,
+    1: 'member',
+    2: 'reviewer'
+}
 
 def import_parasentences_from_file(text_file):
     count = 0
@@ -14,25 +27,24 @@ def import_parasentences_from_file(text_file):
             score, text1, text2 = line.strip('\n').split('\t')
             lang1 = 'vi'
             lang2 = 'khm'
-            rating = ParaSentence.RATING_UNRATED
+            # rating = UserRating.RATING_TYPES['unRated'] 
 
             try:
                 hash = hash_para_sentence(text1, text2, lang1, lang2)
-                similar = ParaSentence.objects.filter(hash=hash).all()
 
                 para_sentence = ParaSentence(
                     text1=text1,
                     text2=text2,
                     lang1=lang1,
                     lang2=lang2,
-                    rating=rating,
+                    # rating=rating,
                     editor_id=None,
                     origin_para_document_id=None,
                     para_document_id=None,
                     score={"senAlign": score},
                     hash=hash,
                     created_time=time.time(),
-                    updated_time=time.time())
+                    updated_at=time.time())
 
                 para_sentence.save()
 
@@ -87,7 +99,7 @@ def import_parasentences_from_file(text_file):
 #                 score={"senAlign": score},
 #                 hash=hash,
 #                 created_time=time.time(),
-#                 updated_time=time.time())
+#                 updated_at=time.time())
 
 #             para_sentence.save()
 
@@ -113,3 +125,15 @@ def get_view_due_date(minutes_to_expire=15):
     end_time = cur_time + timedelta(minutes=minutes_to_expire)
     end_timestamp = end_time.timestamp()
     return end_timestamp
+
+def remove_viewer_from_old_parasentences(user_id):
+    para_sentences = ParaSentence.objects(viewer_id=user_id)
+    updated = para_sentences.update(viewer_id=None, view_due_date=None)
+    return updated
+
+def get_highest_user_role(user_roles):
+    role_values = [ROLE2IDX[role] for role in user_roles]
+    max_role_value = max(role_values)
+    max_role_name = IDX2ROLE[max_role_value]
+    return max_role_name
+

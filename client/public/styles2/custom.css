@@ -165,3 +165,8 @@
 .btn-upload-file {
     margin-left: 30px;
 }
+
+.disabled-row {
+    background-color: #dcdcdc;
+    pointer-events: none;
+}

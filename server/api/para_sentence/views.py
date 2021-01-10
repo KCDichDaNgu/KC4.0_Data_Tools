@@ -5,10 +5,12 @@ from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
 from oauth2 import authorization, require_oauth
 from database.models.para_sentence import ParaSentence, UserRating
+from database.models.para_sentence_history import ParaSentenceHistory
+from database.models.user import User
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
-from .utils import import_parasentences_from_file, hash_para_sentence, get_view_due_date
+from .utils import *
 import re
 
 para_sentence_bp = Blueprint(__name__, 'para_sentence')    
@@ -18,11 +20,17 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 @require_oauth()
 def get():
     args = request.args
-    
+
+    # delete old records which has current user id
+    user = current_token.user
+    remove_viewer_from_old_parasentences(user.id)
+
+    # request new records
     query = {
         '$and': []
     }
 
+    # filter params send by request
     if ParaSentence.Attr.rating in args and args[ParaSentence.Attr.rating] != 'all':
         query['$and'].append({ParaSentence.Attr.rating: args[ParaSentence.Attr.rating]})
         
@@ -60,10 +68,8 @@ def get():
                 ]
             })
 
-    # get records has current_user_id and not expired yet or  without viewer_id or expired view_due_date
+    # get records has current_user_id and not expired yet or without viewer_id or expired view_due_date
     current_timestamp = time.time()
-
-    user = current_token.user
 
     query['$and'].append({
         '$or': [
@@ -71,15 +77,12 @@ def get():
                 {'viewer_id': user.id},
                 {'view_due_date': {'$gte': current_timestamp}}
             ]},
-            {'viewer_id': {'$exists': False}},
+            {'viewer_id': None},
             {'view_due_date': {'$lt': current_timestamp}}
         ]
     })
 
-    if len(query['$and']) == 0:
-        del query['$and']
-
-    para_sentences = ParaSentence.objects.filter(__raw__=query).all()
+    para_sentences = ParaSentence.objects.filter(__raw__=query)
 
     # sort
     if 'sort_by' in args:
@@ -102,15 +105,21 @@ def get():
     for para_sentence in para_sentences.items:
         para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
     
-    return jsonify({
-        "data": [x.serialize for x in para_sentences.items],
-        "pagination": {
-            "current_page": para_sentences.page,
-            "total_pages": para_sentences.pages,
-            "page_size": para_sentences.per_page,
-            "total_items": para_sentences.total
-        }
-    })
+    # assert ParaSentence.objects(viewer_id=user.id).count() == PaginationParameters.page_size, "viewer has too many parasentences"
+
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            "para_sentences": [x.serialize for x in para_sentences.items],
+            "pagination": {
+                "current_page": para_sentences.page,
+                "total_pages": para_sentences.pages,
+                "page_size": para_sentences.per_page,
+                "total_items": para_sentences.total
+            }
+        },
+        message='success'
+    )
 
 @para_sentence_bp.route('/', methods=['POST'])
 @require_oauth()
@@ -127,7 +136,7 @@ def create():
         para_document_id=args[ParaSentence.Attr.para_document_id],
         origin_para_document_id=args[ParaSentence.Attr.origin_para_document_id],
         created_time=args[ParaSentence.Attr.created_time],
-        updated_time=args[ParaSentence.Attr.updated_time]
+        updated_at=args[ParaSentence.Attr.updated_at]
     )
 
     para_sentence.save()
@@ -140,16 +149,20 @@ def list_option_field():
     list_lang1 = ParaSentence.objects.distinct('lang1')
     list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
-        ParaSentence.RATING_GOOD,
-        ParaSentence.RATING_BAD,
-        ParaSentence.RATING_UNRATED,
+        UserRating.RATING_TYPES['good'],
+        UserRating.RATING_TYPES['bad'],
+        UserRating.RATING_TYPES['unRated'],
     ]
     
-    return jsonify({
-        "lang1": list_lang1,
-        "lang2" : list_lang2,
-        "rating" : list_rating
-    })
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            "lang1": list_lang1,
+            "lang2" : list_lang2,
+            "rating" : list_rating
+        },
+        message='success'
+    )
 
 @para_sentence_bp.route('/import-from-file', methods=['POST'])
 @require_oauth()
@@ -170,24 +183,35 @@ def import_from_file():
 
     status = import_parasentences_from_file(filepath)
     
-    return jsonify(status)
-
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data=status,
+        message='success'
+    )
+            
 @para_sentence_bp.route('/<_id>', methods=['PUT'])
 @require_oauth()
 def update(_id):
     try:
         para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
-        user = current_token.user
-        if para_sentence.viewer_id != user.id:
-            return jsonify({
-                'code': STATUS_CODES['failure'], 
-                'message': 'notAllowed', 
-            })
     except:
         return jsonify({
             'code': STATUS_CODES['failure'], 
             'message': 'notFound', 
         })
+
+    user = current_token.user
+    if para_sentence.viewer_id != user.id:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'notAllowed', 
+        })
+    
+    if ROLE2IDX[para_sentence.editor_role] > ROLE2IDX[get_highest_user_role(user.roles)]:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'updatedByHigherRole', 
+        }) 
 
     try:
         hashes = {
@@ -197,46 +221,63 @@ def update(_id):
             'lang2': para_sentence.lang2,
         }
 
-        filter_params = {}
+        update_args = {
+            'rating': ParaSentence.RATING_TYPES['good']
+        }
         hash_changed = False
-        text_changed = False
 
         for key, value in request.json.items():
             if key == '_id': continue
-            filter_params[key] = value
+            update_args[key] = value
             if key in hashes.keys():
                 hashes[key] = value
                 hash_changed = True
-            if key in ['text1', 'text2']:
-                text_changed = True
 
-        if text_changed:
-            filter_params['rating'] = UserRating.RATING_TYPES['good']
+        # update last_updated time
+        updated_at = time.time()
+        update_args['updated_at'] = updated_at
 
-        if para_sentence['original'] is None:
+        # recompute hash 
+        if hash_changed:
+            hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
+            update_args['hash'] = hash
+
+        # assign highest user role to para_sentence.editor_role
+        editor_role = get_highest_user_role(user.roles)
+        update_args['editor_id'] = user.id
+        update_args['editor_role'] = editor_role
+
+        # save original para sentence
+        if para_sentence.original is None:
             original = {
                 'text1': para_sentence.text1,
                 'text2': para_sentence.text2,
                 'rating': para_sentence.rating,
             }
-            filter_params['original'] = original
-        
-        filter_params['updated_time'] = time.time()
+            update_args['original'] = original
 
-        if hash_changed:
-            hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            para_sentence.update(hash=hash, **filter_params, editor_id=user)
-            print('update hash')
-        else:
-            para_sentence.update(**filter_params, editor_id=user)
+        # save revised history
+        before_update_status = {
+            'text1': para_sentence.text1,
+            'text2': para_sentence.text2,
+            'rating': para_sentence.rating,
+            'updated_at': updated_at,
+            'editor_id': para_sentence.editor_id,
+            'editor_role': para_sentence.editor_role
+        }
+        root_para_sentence_history = ParaSentenceHistory(**before_update_status)
+        root_para_sentence_history.save()
+
+        # update para sentence
+        para_sentence.update(**update_args)
 
         return jsonify({
             'code': STATUS_CODES['success'], 
             'message': 'updatedSuccess'
         })
-    except:
+    except Exception as err:
+        print(err)
         return jsonify({
             'code': STATUS_CODES['failure'], 
             'message': 'errorUpdate'
         })
-            
