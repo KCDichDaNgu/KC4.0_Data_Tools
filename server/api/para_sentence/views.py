@@ -5,6 +5,7 @@ from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
 from oauth2 import authorization, require_oauth
 from database.models.para_sentence import ParaSentence, UserRating
+from database.models.user import User
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
@@ -24,11 +25,21 @@ def get():
     remove_viewer_from_old_parasentences(user.id)
 
     # request new records
-
     query = {
         '$and': []
     }
 
+    # if parasentences have been rated by other editors, not show them to this editor
+    # parasentences are still showed to reviewer and admin
+    if User.USER_ROLES['member'] in user.roles:
+        query['$and'].append({
+            '$or': [
+                {'editor_id': None},
+                {'editor_id': ObjectId(user.id)}
+            ]
+        })
+
+    # filter params send by request
     if ParaSentence.Attr.rating in args and args[ParaSentence.Attr.rating] != 'all':
         query['$and'].append({ParaSentence.Attr.rating: args[ParaSentence.Attr.rating]})
         
@@ -79,9 +90,6 @@ def get():
             {'view_due_date': {'$lt': current_timestamp}}
         ]
     })
-
-    if len(query['$and']) == 0:
-        del query['$and']
 
     para_sentences = ParaSentence.objects.filter(__raw__=query)
 
@@ -215,12 +223,12 @@ def update(_id):
             'lang2': para_sentence.lang2,
         }
 
-        filter_params = {}
+        update_args = {}
         hash_changed = False
 
         for key, value in request.json.items():
             if key == '_id' or key == 'rating': continue
-            filter_params[key] = value
+            update_args[key] = value
             if key in hashes.keys():
                 hashes[key] = value
                 hash_changed = True
@@ -231,15 +239,21 @@ def update(_id):
                 'text2': para_sentence.text2,
                 'rating': para_sentence.rating,
             }
-            filter_params['original'] = original
+            update_args['original'] = original
         
-        filter_params['updated_time'] = time.time()
+        # update last_updated time
+        update_args['updated_time'] = time.time()
 
+        # if current user's role is editor -> update editor_id of parasentence
+        if User.USER_ROLES['member'] in user.roles:
+            update_args['editor_id'] = user.id
+
+        # recompute hash 
         if hash_changed:
             hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            para_sentence.update(hash=hash, **filter_params, editor_id=user)
-        else:
-            para_sentence.update(**filter_params, editor_id=user)
+            update_args['hash'] = hash
+
+        para_sentence.update(**update_args)
 
         # update rating
         new_rating = {
@@ -247,7 +261,6 @@ def update(_id):
             'user_id': str(user.id),
             'user_current_role': user.roles
         }
-
         
         updated = ParaSentence.objects(
             id=para_sentence.id, 
