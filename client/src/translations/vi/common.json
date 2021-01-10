@@ -94,11 +94,46 @@
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa"
 	},
 	"manageUser": {
-		"title": "Quản lý người dùng"
+		"title": "Quản lý người dùng",
+		"addUser": "Thêm người dùng",
+		"deleteUser": "Xóa người dùng",
+		"searchUser": "Tìm kiếm người dùng"
 	},
 	"updateSuccess": "Cập nhật thành công",
 	"originalText": "Câu gốc",
 	"vi": "Tiếng Việt",
-	"khm": "Tiếng Khmer"
+	"khm": "Tiếng Khmer",
+	"email": "Email",
+	"username": "Tên đăng nhập",
+	"password": "Mật khẩu",
+	"status": "Trạng thái",
+	"userStatus": {
+		"active": "Hoạt động",
+		"inactive": "Không hoạt động"
+	},
+	"changeInput": "Chỉnh sửa thông tin",
+	"formMessages": {
+		"errors": {
+			"fieldRequired": "Trường dữ liệu này là bắt buộc"
+		}
+	},
+	"create": "Tạo",
+	"role": "Quyền",
+	"userRoles": {
+		"admin": "Quản trị",
+		"member": "Cộng tác viên",
+		"reviewer": "Đánh giá viên"
+	},
+	"serverMessages": {
+		"success": {
+			"createUserSuccess": "Tạo người dùng thành công",
+			"updateSuccess": "Cập nhật thành công"
+		}	
+	},
+	"modalMessages": {
+		"warning": {
+			"deleteDomain": "Bạn có chắc chắn muốn xóa những tên miền này? Hành động này sẽ không thể  hoàn tác",
+			"deleteUser": "Bạn có chắc chắn muốn xóa những người dùng này? Hành động này sẽ không thể  hoàn tác"
+		}
+	}
 }
-

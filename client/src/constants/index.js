@@ -5,6 +5,17 @@ export const STATUS_CODES = {
     success: 1
 }
 
+export const USER_STATUS = {
+    active: 'active',
+    inactive: 'inactive'
+}
+
+export const USER_ROLES = {
+    admin: 'admin',
+    member: 'member',
+    reviewer: 'reviewer'
+}
+
 export const defaultThemeOption = {
     backgroundColor: 'bg-royal sidebar-text-light',
     headerBackgroundColor: 'bg-strong-bliss header-text-light',

@@ -66,7 +66,17 @@ customAxios.interceptors.response.use(
     (response) => {
         return response
     },
-    (error) => {
+    async (error) => {
+        console.log(error?.response.status)
+        if (error?.response.status == 401) {
+
+            // let res = await userAPI.revokeToken()
+
+            clonedStore.dispatch(userLogout())
+
+            return
+        }
+        
         if (error.response.config.data.includes('access_token')) {
 
             let auth_info = clonedStore.getState().User.auth_info;
