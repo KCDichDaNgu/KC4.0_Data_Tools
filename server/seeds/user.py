@@ -20,7 +20,8 @@ class UserSeeder():
                 "roles": [ "admin" ],
                 "password": '12345678',
                 "first_name": "admin#firstname",
-                "last_name": "admin#lastname"
+                "last_name": "admin#lastname",
+                "status": User.USER_STATUS['active']
             }
         )
 
@@ -33,7 +34,8 @@ class UserSeeder():
                     "roles": [ "member" ],
                     "password": '12345678',
                     "first_name": "user_{}#firstname".format(index),
-                    "last_name": "user_{}#lastname".format(index)
+                    "last_name": "user_{}#lastname".format(index),
+                    "status": User.USER_STATUS['active']
                 }
             )
 
@@ -46,7 +48,8 @@ class UserSeeder():
                     "roles": [ "reviewer" ],
                     "password": '12345678',
                     "first_name": "reviewer_{}#firstname".format(index),
-                    "last_name": "reviewer_{}#lastname".format(index)
+                    "last_name": "reviewer_{}#lastname".format(index),
+                    "status": User.USER_STATUS['active']
                 }
             )
 

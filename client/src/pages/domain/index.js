@@ -10,8 +10,11 @@ import {
     Card,
     Dropdown,
     Tooltip,
-    message
+    message,
+    Modal
 } from 'antd';
+
+import { WarningOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../layout/site-layout';
 import domainAPI from '../../api/domain';
@@ -33,8 +36,9 @@ const DomainsPage = (props) => {
         perPage: 5,
     });
 
-    const [searchInput, setSearchInput] = useState('')
+    const [searchInput, setSearchInput] = useState('');
     const [isAdding, setIsAdding] = useState(false);
+    const [selectedDomainsId, setSelectedDomainsId] = useState([]);
 
     const [pagination, setPagination] = useState({
         pagination__page: 1,
@@ -123,8 +127,21 @@ const DomainsPage = (props) => {
         })
     };
 
-    const deleteDomain = (id) => {
-        id?.forEach((item) => domainAPI.delete(item));
+    const openDeleteModal = () => {
+        Modal.confirm({
+            icon: <WarningOutlined />,
+            content: <div style={{ display: 'flex' }}>{ t('modalMessages.warning.deleteDomain') }</div>,
+            onOk() {
+                deleteDomains()
+            },
+            onCancel() { },
+        });
+    }
+
+    const deleteDomains = () => {
+
+        selectedDomainsId?.forEach(async (item) => await domainAPI.delete(item));
+        
         searchDomain();
     };
 
@@ -199,7 +216,10 @@ const DomainsPage = (props) => {
                             { t('domain.addDomain') }
                         </Button>
 
-                        <Button onClick={() => deleteDomain(selectedDomain)} danger>
+                        <Button 
+                            onClick={() => openDeleteModal()}
+                            disabled={ selectedDomainsId.length == 0 } 
+                            danger>
                             { t('domain.deleteDomain') }
                         </Button>
 
@@ -227,7 +247,10 @@ const DomainsPage = (props) => {
                     <Table
                         className='table-striped-rows'
                         rowSelection={{
-                            type: 'checkbox'
+                            type: 'checkbox',
+                            onChange: (selectedRowKeys) => {
+                                setSelectedDomainsId(selectedRowKeys)
+                            },
                         }}
                         dataSource={ domainList.items.map(d => ({...d, key: d.id})) }
                         columns={ columns }

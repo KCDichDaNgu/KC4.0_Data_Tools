@@ -16,6 +16,9 @@ from werkzeug import cached_property
 from database.db import db
 from storages import avatars, default_image_basename
 
+from database.models.oauth2_code import OAuth2Code
+from database.models.oauth2_token import OAuth2Token
+
 __all__ = ('User', 'Role', 'datastore')
 
 AVATAR_SIZES = [500, 200, 100, 32, 25]
@@ -35,6 +38,17 @@ class User(UserMixin, db.Document):
     #     populate_from='fullname'
     # )
 
+    USER_STATUS = {
+        'active': 'active',
+        'inactive': 'inactive',
+    }
+
+    USER_ROLES = {
+        'admin': 'admin', 
+        'member': 'member', 
+        'reviewer': 'reviewer'
+    }
+
     email = db.StringField(
         max_length=255, 
         required=True, 
@@ -48,18 +62,16 @@ class User(UserMixin, db.Document):
     )
 
     password = db.StringField()
-    active = db.BooleanField()
+    status = db.StringField(
+        choices=USER_STATUS.keys(),
+        required=True,
+        default=USER_STATUS['inactive']
+    )
 
-    USER_ROLES = {
-        'admin': 'admin', 
-        'member': 'member', 
-        'reviewer': 'reviewer'
-    }
+    roles = db.ListField(choices=USER_ROLES.keys(), default=['member'])
 
-    roles = db.ListField(choices=[USER_ROLES.keys()], default=['member'])
-
-    first_name = db.StringField(max_length=255, required=True)
-    last_name = db.StringField(max_length=255, required=True)
+    first_name = db.StringField(max_length=255)
+    last_name = db.StringField(max_length=255)
 
     avatar_url = db.URLField()
     avatar = db.ImageField(
@@ -71,6 +83,7 @@ class User(UserMixin, db.Document):
     apikey = db.StringField()
 
     created_at = db.DateTimeField(default=datetime.now, required=True)
+    updated_at = db.DateTimeField(default=datetime.now, required=True)
 
     # The field below is required for Flask-security
     # when SECURITY_CONFIRMABLE is True
@@ -99,6 +112,8 @@ class User(UserMixin, db.Document):
     after_delete = Signal()
     on_delete = Signal()
 
+    deleted_at = db.DateTimeField()
+
     meta = {
         'indexes': ['-username'],
         'ordering': ['-username']
@@ -109,6 +124,11 @@ class User(UserMixin, db.Document):
 
     def validate_password(self, password):
         return password == self.password
+
+    def clear_auth_info(self):
+
+        # OAuth2Code.objects.filter(user_id=self.id).delete()
+        OAuth2Token.objects.filter(user=self.id).delete()
 
     @property
     def fullname(self):
@@ -121,15 +141,19 @@ class User(UserMixin, db.Document):
     @classmethod
     def get(cls, id_or_slug):
         obj = cls.objects(slug=id_or_slug).first()
+        
         return obj or cls.objects.get_or_404(id=id_or_slug)
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
+        document.updated_at = datetime.now
+        
         cls.before_save.send(document)
 
     @classmethod
     def post_save(cls, sender, document, **kwargs):
         cls.after_save.send(document)
+        
         if kwargs.get('created'):
             cls.on_create.send(document)
         else:
@@ -142,8 +166,14 @@ class User(UserMixin, db.Document):
            'id': str(self.id),
            'roles': self.roles,
            'username': self.username,
-           'fullname': self.fullname
+           'fullname': self.fullname,
+           'email': self.email,
+           'password': self.password,
+           'status': self.status
         }
+
+    def has_role(self, roles_name):
+        return set(self.roles).issubset(set(roles_name))
 
 # datastore = MongoEngineUserDatastore(db, User)
 

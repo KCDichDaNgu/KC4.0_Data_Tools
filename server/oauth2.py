@@ -26,6 +26,9 @@ from bson import ObjectId, DBRef
 
 from database.db import db
 
+from functools import wraps
+from authlib.integrations.flask_oauth2 import current_token
+
 GRANT_EXPIRATION = 100  # 100 seconds
 
 authorization = AuthorizationServer()
@@ -152,6 +155,23 @@ def save_token(token, request):
             scope=scope,
             **token
         )
+
+def role_required(roles_name):
+    def decorator(f):
+        @wraps(f)
+
+        def authorize(*args, **kwargs):
+
+            with require_oauth.acquire() as token:
+                
+                if not token.user.has_role(roles_name):
+                    abort(401) # not authorized
+
+            return f(*args, **kwargs)
+
+        return authorize
+
+    return decorator
 
 
 def check_credentials():

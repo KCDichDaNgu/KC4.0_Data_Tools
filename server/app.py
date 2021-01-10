@@ -260,6 +260,11 @@ def setup_app(app):
     app.register_blueprint(domain_bp, url_prefix='/api/domain')
     app.register_blueprint(para_sentence_bp, url_prefix='/api/para_sentence') 
 
+
+    from api.admin.user.views import admin_manage_user_bp
+    
+    app.register_blueprint(admin_manage_user_bp, url_prefix='/api/admin/manage-user') 
+
 def has_no_empty_params(rule):
 
     defaults = rule.defaults if rule.defaults is not None else ()
