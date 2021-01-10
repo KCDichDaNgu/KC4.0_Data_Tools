@@ -76,13 +76,7 @@ const SentencePage = (props) => {
     const renderText = (key, paraSentence, index) => {
 
         let lastUpdated = paraSentence[key];
-        let disabled = false;
-
-        // if editted by reviewer and current user is editor -> can not edit
-        let highestUserRole = getHighestUserRole(currentUserRoles);
-        if (UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role]) {
-            disabled = true;
-        }
+        let disabled = edittedByHigherUserRole(paraSentence);
 
         return (
             <TextArea
@@ -105,12 +99,14 @@ const SentencePage = (props) => {
     const renderRating = (rating, paraSentence, index) => {
 
         let lastUpdated = paraSentence.rating; // default notExist = unRated
+        let disabled = edittedByHigherUserRole(paraSentence);
 
         return (
             <Radio.Group
                 key={ paraSentence['id'] } 
                 value={ lastUpdated }
-                onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }>
+                onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }
+                disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
                         if (rating == 'unRated') {
@@ -344,11 +340,14 @@ const SentencePage = (props) => {
 
     const getTableRowClassName = (paraSentence) => {
         let className = "";
-        if (!paraSentence.editor?.id) className = '';
-        if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
-        if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
+
+        if (!edittedByHigherUserRole(paraSentence)) {
+            if (!paraSentence.editor?.id) className = '';
+            if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
+            if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
+        }
         
-        if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
+        // if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
 
         return className;
     }
