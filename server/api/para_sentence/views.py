@@ -214,33 +214,33 @@ def update(_id):
         }) 
 
     try:
-        hashes = {
-            'text1': para_sentence.text1,
-            'text2': para_sentence.text2,
-            'lang1': para_sentence.lang1,
-            'lang2': para_sentence.lang2,
-        }
+        # hashes = {
+        #     'text1': para_sentence.text1,
+        #     'text2': para_sentence.text2,
+        #     'lang1': para_sentence.lang1,
+        #     'lang2': para_sentence.lang2,
+        # }
 
         update_args = {
             'rating': ParaSentence.RATING_TYPES['good']
         }
-        hash_changed = False
+        # hash_changed = False
 
         for key, value in request.json.items():
             if key == '_id': continue
             update_args[key] = value
-            if key in hashes.keys():
-                hashes[key] = value
-                hash_changed = True
+            # if key in hashes.keys():
+            #     hashes[key] = value
+                # hash_changed = True
 
         # update last_updated time
         updated_at = time.time()
         update_args['updated_at'] = updated_at
 
         # recompute hash 
-        if hash_changed:
-            hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
-            update_args['hash'] = hash
+        # if hash_changed:
+        #     hash = hash_para_sentence(hashes['text1'], hashes['text2'], hashes['lang1'], hashes['lang2'])
+        #     update_args['hash'] = hash
 
         # assign highest user role to para_sentence.editor_role
         editor_role = get_highest_user_role(user.roles)
