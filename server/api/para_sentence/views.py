@@ -258,6 +258,7 @@ def update(_id):
 
         # save revised history
         before_update_status = {
+            'para_sentence_id': para_sentence.id,
             'text1': para_sentence.text1,
             'text2': para_sentence.text2,
             'rating': para_sentence.rating,

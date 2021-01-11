@@ -4,6 +4,8 @@ from database.models.user import User
 from database.models.para_sentence import ParaSentence
 
 class ParaSentenceHistory(db.Document):
+    para_sentence_id = db.ObjectIdField()
+
     text1 = db.StringField(default=None)
     text2 = db.StringField(default=None)
     rating = db.StringField(
