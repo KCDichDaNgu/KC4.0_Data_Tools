@@ -40,17 +40,14 @@ class ParaSentenceHistory(db.Document):
     
     @property
     def serialize(self):
-        # lam lai nhe
         return {
             'id': str(self.id),
-            'text1': self.text1,
-            'text2': self.text2,
-            'rating': self.rating,
-            'score': self.score,
+            'para_sentence_id': str(self.para_sentence_id),
+            'newest_para_sentence': self.newest_para_sentence,
             'editor': {
-                'id': str(self.editor_id.id) if self.editor_id else None,
-                'username': str(self.editor_id.username) if self.editor_id else None
+                'id': str(self.editor.user_id.id),
+                'username': self.editor.user_id.username,
+                'roles': self.editor.roles
             },
-            'editor_role': self.editor_role,
             'updated_at': self.updated_at,
         }

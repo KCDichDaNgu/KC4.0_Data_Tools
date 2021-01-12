@@ -70,8 +70,10 @@ class ParaSentence(db.Document):
 
     meta = {'collection': 'para_sentence'}
 
-    def save(self):
-        similar_parasentences = ParaSentence.objects.filter(hash=self.hash)
+    def save(self, is_update=False):
+        similar_parasentences = ParaSentence.objects.filter(
+            original_para_sentence__hash_content=self.original_para_sentence.hash_content
+        )
 
         if len(similar_parasentences) == 0:
             return super(ParaSentence, self).save()
@@ -80,30 +82,21 @@ class ParaSentence(db.Document):
         
     @property
     def serialize(self):
-        # lam lai serializer, theo cau truc cua collection
         return {
             'id': str(self.id),
-            'text1': self.text1,
-            'text2': self.text2,
-            'lang1': self.lang1,
-            'lang2': self.lang2,
-            'rating': self.rating,
-            # 'rating': [
-            #     {
-            #         'rating': rating.rating,
-            #         'user_current_role': rating.user_current_role,
-            #         'user_id': str(rating.user_id.id)
-            #     } for rating in self.rating
-            # ],
+            'newest_para_sentence': self.newest_para_sentence,
+            'original_para_sentence': self.original_para_sentence,
             'score': self.score,
+            'creator_id': str(self.creator_id),
             'editor': {
-                'id': str(self.editor_id.id) if self.editor_id else None,
-                'username': str(self.editor_id.username) if self.editor_id else None
+                'id': str(self.editor.user_id.id) if self.editor is not None else None,
+                'username': self.editor.user_id.username if self.editor is not None else None,
+                'roles': self.editor.roles if self.editor is not None else None
             },
-            'editor_role': self.editor_role,
-            'created_time': self.created_time,
+            'para_document_id': self.para_document_id,
+            'last_history_record_id': self.last_history_record_id,
+            'created_at': self.created_at,
             'updated_at': self.updated_at,
-            'original': self.original,
             'viewer_id': str(self.viewer_id),
             'view_due_date': self.view_due_date
         }
