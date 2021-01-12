@@ -1,6 +1,6 @@
 # Các gói cần cài đặt
-* Cài đặt MongoDB
-* Cài đặt virtualenv
+* MongoDB
+* virtualenv
 * Nodejs
 
 # Cài đặt

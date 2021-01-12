@@ -19,6 +19,7 @@ import {
     Col,
     Modal
 } from "antd";
+
 import { UploadOutlined } from '@ant-design/icons';
 import SiteLayout from "../../layout/site-layout";
 
@@ -58,13 +59,13 @@ const SentencePage = (props) => {
     const currentUserRoles = clonedStore.getState().User?.profile?.roles;
 
     const [dataSource, setDataSource] = useState([]);
-    const [value, setValue] = useState("");
+    const [searchInput, setSearchInput] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     const [filter, setFilter] = useState({
         domain: "",
         rating: 'unRated',
-        lang1: "",
+        lang1: "vi",
         lang2: "",
         sort_by: "",
         sort_order: "",
@@ -114,7 +115,7 @@ const SentencePage = (props) => {
                         if (rating == 'unRated') {
                             if (lastUpdated == 'unRated') {
                                 return (
-                                    <Radio.Button key={ rating } value={ rating}>?</Radio.Button>
+                                    <Radio.Button key={ rating } value={ rating }>?</Radio.Button>
                                 );
                             }
                         } else {
@@ -190,11 +191,11 @@ const SentencePage = (props) => {
         // }
     ];
 
-    const handleChange = (value, key) => {
+    const handleChange = (searchInput, key) => {
         if (key == 'text') {
-            setFilter({ ...filter, text1: value, text2: value });
+            setFilter({ ...filter, text1: searchInput, text2: searchInput });
         } else {
-            setFilter({ ...filter, [key]: value });
+            setFilter({ ...filter, [key]: searchInput });
         }
     };
 
@@ -423,12 +424,12 @@ const SentencePage = (props) => {
                             </div>
                             <Input
                                 placeholder={ t('sentence.searchBox') }
-                                value={ value }
+                                value={ searchInput }
                                 onChange={(e) => {
 
                                     const currValue = e.target.value;
 
-                                    setValue(currValue);
+                                    setSearchInput(currValue);
                                     handleChange(currValue, "text");
                                 }}
                             />
