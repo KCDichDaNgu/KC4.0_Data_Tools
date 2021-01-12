@@ -6,7 +6,7 @@ from constants.common import STATUS_CODES
 
 from database.models.user import User
 
-from oauth2 import authorization, require_oauth, role_required
+from oauth2 import authorization, require_oauth, role_required, status_required
 
 from bson import ObjectId
 

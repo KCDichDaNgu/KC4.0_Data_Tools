@@ -3,9 +3,9 @@ from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
-from oauth2 import authorization, require_oauth
+from oauth2 import authorization, require_oauth, status_required
 
-from database.models.para_sentence import ParaSentence, UserRating
+from database.models.para_sentence import ParaSentence
 from database.models.para_sentence_history import ParaSentenceHistory
 from database.models.user import User
 
@@ -154,9 +154,9 @@ def list_option_field():
     list_lang1 = ParaSentence.objects.distinct('lang1')
     list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
-        UserRating.RATING_TYPES['good'],
-        UserRating.RATING_TYPES['bad'],
-        UserRating.RATING_TYPES['unRated'],
+        ParaSentence.RATING_TYPES['good'],
+        ParaSentence.RATING_TYPES['bad'],
+        ParaSentence.RATING_TYPES['unRated'],
     ]
     
     return jsonify(

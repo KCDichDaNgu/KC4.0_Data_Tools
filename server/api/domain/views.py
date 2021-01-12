@@ -7,11 +7,11 @@ from constants.common import STATUS_CODES
 from database.models.domain import Domain
 from database.models.user import User
 
-from oauth2 import authorization, require_oauth
+from oauth2 import authorization, require_oauth, status_required
 
 from bson import ObjectId
 
-domain_bp = Blueprint(__url__, 'domain')    
+domain_bp = Blueprint(__name__, 'domain')    
 
 @domain_bp.route('/', methods=['POST'])
 @require_oauth()

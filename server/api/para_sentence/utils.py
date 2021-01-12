@@ -1,7 +1,7 @@
 # import pandas as pd
 import time
 import hashlib
-from database.models.para_sentence import ParaSentence, UserRating
+from database.models.para_sentence import ParaSentence
 from datetime import timedelta, datetime
 
 ROLE2IDX = {
