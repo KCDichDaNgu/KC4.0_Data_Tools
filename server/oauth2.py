@@ -156,6 +156,23 @@ def save_token(token, request):
             **token
         )
 
+def status_required(status_name):
+    def decorator(f):
+        @wraps(f)
+
+        def authorize(*args, **kwargs):
+
+            with require_oauth.acquire() as token:
+                
+                if not token.user.has_status(status_name):
+                    abort(401) # not authorized
+
+            return f(*args, **kwargs)
+
+        return authorize
+
+    return decorator
+
 def role_required(roles_name):
     def decorator(f):
         @wraps(f)

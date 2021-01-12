@@ -4,13 +4,13 @@ from database.db import db
 
 from database.models.user import User
 
-class Domain(db.Document):
+class DataField(db.Document):
 
-    url = db.StringField()
+    name = db.StringField()
 
     creator_id = db.ReferenceField(User)
     editor_id = db.ReferenceField(User)
-
+    
     created_at = db.DateTimeField(default=datetime.now, required=True)
     updated_at = db.DateTimeField(default=datetime.now, required=True)
 
@@ -19,9 +19,9 @@ class Domain(db.Document):
         
         return {
            'id': str(self.id),
-           'url': self.url,
+           'name': self.name,
            'creator_id': str(self.creator_id),
            'editor_id': str(self.editor_id),
-           'created_at': created_at,
-           'updated_at': updated_at
+           'created_at': self.created_at,
+           'updated_at': self.updated_at
         }

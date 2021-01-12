@@ -3,22 +3,26 @@ from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
+
 from database.models.domain import Domain
+from database.models.user import User
+
 from oauth2 import authorization, require_oauth
 
 from bson import ObjectId
 
-domain_bp = Blueprint(__name__, 'domain')    
+domain_bp = Blueprint(__url__, 'domain')    
 
 @domain_bp.route('/', methods=['POST'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def create():
 
     user = current_token.user
 
     domain = Domain(
-        name=request.get_json()['name'],
-        user_id=user
+        url=request.get_json()['url'],
+        creator_id=user
     )
 
     domain.save()
@@ -32,6 +36,7 @@ def create():
 
 @domain_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def delete(id):
 
     Domain.objects.filter(id=ObjectId(id)).delete()
@@ -45,13 +50,14 @@ def delete(id):
 
 @domain_bp.route('/<id>', methods=['PUT'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def update(id):
 
-    name = request.get_json().get('name')
+    url = request.get_json().get('url')
 
     domain = Domain.objects.filter(id=ObjectId(id))
     
-    domain.update(name=name)
+    domain.update(url=url, editor_id=current_token.user)
 
     return jsonify(
         code=STATUS_CODES['success'],
@@ -60,10 +66,11 @@ def update(id):
     )
 
 @domain_bp.route('/search', methods=['POST'])
+@status_required(User.USER_STATUS['active'])
 def search():
     
     result = Domain.objects \
-        .filter(name__contains=request.get_json().get('name') or '') \
+        .filter(url__contains=request.get_json().get('url') or '') \
         .paginate(
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)

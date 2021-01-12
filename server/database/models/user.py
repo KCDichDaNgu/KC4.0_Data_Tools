@@ -175,6 +175,9 @@ class User(UserMixin, db.Document):
     def has_role(self, roles_name):
         return set(self.roles).issubset(set(roles_name))
 
+    def has_status(self, status_name):
+        return self.status == status_name
+
 # datastore = MongoEngineUserDatastore(db, User)
 
 pre_save.connect(User.pre_save, sender=User)

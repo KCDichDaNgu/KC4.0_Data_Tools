@@ -4,9 +4,11 @@ from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
 from oauth2 import authorization, require_oauth
+
 from database.models.para_sentence import ParaSentence, UserRating
 from database.models.para_sentence_history import ParaSentenceHistory
 from database.models.user import User
+
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
 import os
@@ -18,6 +20,7 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 
 @para_sentence_bp.route('/', methods=['GET'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def get():
     args = request.args
 
@@ -123,6 +126,7 @@ def get():
 
 @para_sentence_bp.route('/', methods=['POST'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def create():
     """
     Create a new ParaSentences.
@@ -145,6 +149,7 @@ def create():
 
 @para_sentence_bp.route('/list-option-field', methods=['GET'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def list_option_field():
     list_lang1 = ParaSentence.objects.distinct('lang1')
     list_lang2 = ParaSentence.objects.distinct('lang2')
@@ -166,6 +171,7 @@ def list_option_field():
 
 @para_sentence_bp.route('/import-from-file', methods=['POST'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def import_from_file():
     """
     Create new ParaSentences from files
@@ -191,6 +197,7 @@ def import_from_file():
             
 @para_sentence_bp.route('/<_id>', methods=['PUT'])
 @require_oauth()
+@status_required(User.USER_STATUS['active'])
 def update(_id):
     try:
         para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
