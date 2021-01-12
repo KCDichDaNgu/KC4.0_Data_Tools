@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from database.db import db
 
 from database.models.user import User

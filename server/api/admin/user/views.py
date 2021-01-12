@@ -3,7 +3,9 @@ from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
+
 from database.models.user import User
+
 from oauth2 import authorization, require_oauth, role_required
 
 from bson import ObjectId
@@ -13,6 +15,7 @@ admin_manage_user_bp = Blueprint(__name__, 'user')
 @admin_manage_user_bp.route('/', methods=['POST'])
 @require_oauth()
 @role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
 def create():
 
     user = current_token.user
@@ -41,6 +44,7 @@ def create():
 @admin_manage_user_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
 @role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
 def delete(id):
 
     User.objects.filter(id=ObjectId(id)).delete()
@@ -55,6 +59,7 @@ def delete(id):
 @admin_manage_user_bp.route('/<id>', methods=['PUT'])
 @require_oauth()
 @role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
 def update(id):
 
     _form_data = request.get_json()
@@ -83,6 +88,7 @@ def update(id):
 
 @admin_manage_user_bp.route('/search', methods=['POST'])
 @role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
 def search():
 
     _raw_query = { '$or': [] }
