@@ -57,24 +57,20 @@ const SentencePage = (props) => {
     const currentUserId = clonedStore.getState().User?.profile?.id;
     const currentUserRoles = clonedStore.getState().User?.profile?.roles;
 
-    const defaultFilter = {
-        rating: 'unRated',
-        // sort_by: 'score',
-        // sort_order: 'descend'
-    }
-
     const [dataSource, setDataSource] = useState([]);
     const [value, setValue] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-    const [requestParams, setRequestParams] = useState({
+    const [filter, setFilter] = useState({
         domain: "",
+        rating: 'unRated',
         lang1: "",
         lang2: "",
         sort_by: "",
         sort_order: "",
         page: ""
     });
+
     const [uploadingFile, setUploadingFile] = useState(false);
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
     const [importStatus, setImportStatus] = useState({});
@@ -196,19 +192,19 @@ const SentencePage = (props) => {
 
     const handleChange = (value, key) => {
         if (key == 'text') {
-            setRequestParams({ ...requestParams, text1: value, text2: value });
+            setFilter({ ...filter, text1: value, text2: value });
         } else {
-            setRequestParams({ ...requestParams, [key]: value });
+            setFilter({ ...filter, [key]: value });
         }
     };
 
     const handleFilter = () => {
         let params = {
-            ...requestParams,
+            ...filter,
             page: 1
         }; // reset page to 1
 
-        setRequestParams(params);
+        setFilter(params);
 
         paraSentenceAPI.getSentences(params).then((res) => {
             setDataSource(res.data.data.para_sentences);
@@ -281,7 +277,7 @@ const SentencePage = (props) => {
     };
 
     useEffect(() => {
-        paraSentenceAPI.getSentences(defaultFilter).then((res) => {
+        paraSentenceAPI.getSentences(filter).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -296,13 +292,13 @@ const SentencePage = (props) => {
     const handleTableChange = (pagination, filters, sorter) => {
         
         let params = {
-            ...requestParams,
+            ...filter,
             sort_by: sorter['columnKey'],
             sort_order: sorter['order'],
             page: pagination['current']
         }
 
-        setRequestParams(params);
+        setFilter(params);
         setSortedInfo(sorter)
 
         paraSentenceAPI.getSentences(params).then((res) => {
@@ -322,7 +318,7 @@ const SentencePage = (props) => {
                 message.success(t('sentence.editedSuccess'));
 
                 let params = {
-                    ...requestParams,
+                    ...filter,
                     sort_by: sortedInfo['columnKey'],
                     sort_order: sortedInfo['order'],
                     page: paginationParams.current_page
@@ -452,7 +448,7 @@ const SentencePage = (props) => {
                                 style={{
                                     width: '100%',
                                 }}
-                                defaultValue={ defaultFilter.rating }
+                                defaultValue={ filter.rating }
                                 onChange={ value => handleChange(value, "rating") }
                             >
                                 {ratingOption}
@@ -504,12 +500,6 @@ const SentencePage = (props) => {
 
                 <Card className='card-body-padding-0'>
                     <Table
-                        // rowSelection={{
-                        //   type: "checkbox",
-                        //   ...rowSelection,
-                        // }}
-                        // defaultFilteredValue={ defaultFilter.sort_by }
-                        // defaultSortOrder={ defaultFilter.sort_order }
                         rowKey={ record => record.id } 
                         rowClassName={ record => getTableRowClassName(record)}
                         expandable={{
