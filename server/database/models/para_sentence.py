@@ -4,7 +4,12 @@ from database.db import db
 
 from database.models.user import User
 from database.models.para_document import ParaDocument
-from database.models.para_sentence_history import ParaSentenceHistory
+
+RATING_TYPES = {
+    'good': 'good',
+    'bad': 'bad',
+    'unRated': 'unRated'
+}
 
 class ParaSentenceText(db.EmbeddedDocument):
 
@@ -42,11 +47,7 @@ class Editor(db.EmbeddedDocument):
 
 class ParaSentence(db.Document):
 
-    RATING_TYPES = {
-        'good': 'good',
-        'bad': 'bad',
-        'unRated': 'unRated'
-    }
+    RATING_TYPES = RATING_TYPES
 
     newest_para_sentence = db.EmbeddedDocumentField(NewestParaSentence, required=True)
     original_para_sentence = db.EmbeddedDocumentField(OriginalParaSentence, required=True)
@@ -57,7 +58,7 @@ class ParaSentence(db.Document):
     editor = db.EmbeddedDocumentField(Editor)
 
     para_document_id = db.ReferenceField(ParaDocument)
-    las_history_record_id = db.ReferenceField(ParaSentenceHistory)
+    last_history_record_id = db.ReferenceField('ParaSentenceHistory')
     
     created_at = db.DateTimeField(default=datetime.now, required=True)
     updated_at = db.DateTimeField(default=datetime.now, required=True)

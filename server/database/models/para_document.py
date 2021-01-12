@@ -5,11 +5,17 @@ from database.models import User
 
 class ParaDocumentText(db.EmbeddedDocument):
 
-    content = db.StringFiled(required=True)
+    content = db.StringField(required=True)
     lang = db.StringField(required=True)
     url = db.StringField(required=True)
 
 class ParaDocument(db.Document):
+
+    RATING_TYPES = {
+        'good': 'good',
+        'bad': 'bad',
+        'unRated': 'unRated'
+    }
 
     text1 = db.EmbeddedDocumentField(ParaDocumentText)
     text2 = db.EmbeddedDocumentField(ParaDocumentText)
