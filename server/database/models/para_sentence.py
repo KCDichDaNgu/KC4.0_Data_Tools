@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 from database.db import db
 
@@ -60,8 +60,8 @@ class ParaSentence(db.Document):
     para_document_id = db.ReferenceField(ParaDocument)
     last_history_record_id = db.ReferenceField('ParaSentenceHistory')
     
-    created_at = db.DateTimeField(default=datetime.now, required=True)
-    updated_at = db.DateTimeField(default=datetime.now, required=True)
+    created_at = db.IntField(default=int(time.time()), required=True)
+    updated_at = db.IntField(default=int(time.time()), required=True)
 
     viewer_id = db.ObjectIdField()
     view_due_date = db.FloatField()

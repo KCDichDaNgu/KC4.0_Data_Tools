@@ -1,7 +1,7 @@
 from copy import copy
-from datetime import datetime
+import time
 from itertools import chain
-from time import time
+# from time import time
 from uuid import uuid4
 
 from blinker import Signal
@@ -82,8 +82,8 @@ class User(UserMixin, db.Document):
 
     apikey = db.StringField()
 
-    created_at = db.DateTimeField(default=datetime.now, required=True)
-    updated_at = db.DateTimeField(default=datetime.now, required=True)
+    created_at = db.IntField(default=int(time.time()), required=True)
+    updated_at = db.IntField(default=int(time.time()), required=True)
 
     # The field below is required for Flask-security
     # when SECURITY_CONFIRMABLE is True
@@ -146,7 +146,7 @@ class User(UserMixin, db.Document):
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
-        document.updated_at = datetime.now
+        document.updated_at = int(time.time())
         
         cls.before_save.send(document)
 

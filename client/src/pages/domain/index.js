@@ -77,7 +77,7 @@ const DomainsPage = (props) => {
     const addDomain = async (domainName) => {
 
         let _newDomainData = {
-            name: domainName
+            url: domainName
         }
 
         await domainAPI.create(_newDomainData);
@@ -88,11 +88,11 @@ const DomainsPage = (props) => {
     const updateDomain = async (id, domain) => {
 
         if (domain == '' || domain == null) {
-            message.error(t('domain.nameNotNull'));
+            message.error(t('domain.urlNotNull'));
         } else {
 
             let data = {
-                name: domain,
+                url: domain,
                 id: id,
             };
 
@@ -108,7 +108,7 @@ const DomainsPage = (props) => {
     const searchDomain = async () => {
 
         let data = {
-            name: searchInput || '',
+            url: searchInput || '',
             ...pagination
         };
 
@@ -156,17 +156,17 @@ const DomainsPage = (props) => {
     const columns = [
         {
             title: t('domain.title'),
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a, b) => a.name.localeCompare(b.name),
-            render: (name, domain) => (
+            dataIndex: 'url',
+            key: 'url',
+            sorter: (a, b) => a.url.localeCompare(b.url),
+            render: (url, domain) => (
                 <Tooltip
                     trigger={ ['focus'] }
                     title={ t('domain.inputAdd') }
                     placement='topLeft'>
                     <Input
                         className='domain-input'
-                        defaultValue={name}
+                        defaultValue={ url }
                         onPressEnter={ event => {
                             updateDomain(domain.id, event.target.value)
                         }
@@ -176,10 +176,10 @@ const DomainsPage = (props) => {
         },
         {
             title: t('domain.lastUpdate'),
-            dataIndex: 'created_time',
-            key: 'created_time',
-            render: (created_time) => formatDate(created_time),
-            sorter: (a, b) => a.created_time - b.created_time,
+            dataIndex: 'updated_at',
+            key: 'updated_at',
+            render: (updated_at) => formatDate(updated_at),
+            // sorter: (a, b) => a.updated_at - b.updated_at,
         },
         {
             title: t('domain.crawledDocuments'),
