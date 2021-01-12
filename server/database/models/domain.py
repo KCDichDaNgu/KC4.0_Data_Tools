@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 from database.db import db
 
@@ -11,8 +11,8 @@ class Domain(db.Document):
     creator_id = db.ReferenceField(User)
     editor_id = db.ReferenceField(User)
 
-    created_at = db.DateTimeField(default=datetime.now, required=True)
-    updated_at = db.DateTimeField(default=datetime.now, required=True)
+    created_at = db.IntField(default=int(time.time()), required=True)
+    updated_at = db.IntField(default=int(time.time()), required=True)
 
     @property
     def serialize(self):
@@ -22,6 +22,6 @@ class Domain(db.Document):
            'url': self.url,
            'creator_id': str(self.creator_id),
            'editor_id': str(self.editor_id),
-           'created_at': created_at,
-           'updated_at': updated_at
+           'created_at': self.created_at,
+           'updated_at': self.updated_at
         }

@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 from database.db import db
 
@@ -34,7 +34,7 @@ class ParaSentenceHistory(db.Document):
 
     editor = db.EmbeddedDocumentField(Editor)
 
-    updated_at = db.DateTimeField(default=datetime.now, required=True)
+    updated_at = db.IntField(default=int(time.time()), required=True)
 
     meta = {'collection': 'para_sentence_history'}
     

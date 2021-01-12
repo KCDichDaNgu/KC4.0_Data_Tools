@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 from database.db import db
 from database.models import User
@@ -28,7 +28,7 @@ class ParaDocument(db.Document):
         default=RATING_TYPES['unRated']
     )
     
-    created_at = db.DateTimeField(default=datetime.now, required=True)
-    updated_at = db.DateTimeField(default=datetime.now, required=True)
+    created_at = db.IntField(default=int(time.time()), required=True)
+    updated_at = db.IntField(default=int(time.time()), required=True)
 
     meta = {'collection': 'para_document'}
