@@ -3,36 +3,42 @@ from database.db import db
 from database.models.user import User
 from database.models.para_sentence import ParaSentence
 
+class ParaSentenceText(db.EmbeddedDocument):
+
+    content = db.StringField()
+    lang = db.StringField()
+
+class NewestParaSentence(db.EmbeddedDocument):
+
+    text1 = db.EmbeddedDocumentField(ParaSentenceText)
+    text2 = db.EmbeddedDocumentField(ParaSentenceText)
+
+    hash_content = db.StringField(required=True)
+
+    rating = db.StringField(
+        choices=ParaSentence.RATING_TYPES.keys(),
+        default=ParaSentence.RATING_TYPES['unRated']
+    )
+
+class Editor(db.EmbeddedDocument):
+
+    user_id = db.ReferenceField(User, default=None)
+    roles = db.ListField(choices=User.USER_ROLES.keys(), default=[])
+
 class ParaSentenceHistory(db.Document):
     para_sentence_id = db.ObjectIdField()
 
-    text1 = db.StringField(default=None)
-    text2 = db.StringField(default=None)
-    rating = db.StringField(
-        choices=ParaSentence.RATING_TYPES.keys(),
-        default=None
-    )
+    newest_para_sentence = db.EmbeddedDocumentField(NewestParaSentence, required=True)
 
-    editor_id = db.ReferenceField(User, default=None)
-    editor_role = db.StringField(
-        choices=User.USER_ROLES.keys(),
-        default=None
-    ) # role của user edit lần cuối
+    editor = db.EmbeddedDocumentField(Editor)
 
-    updated_at = db.IntField()
+    updated_at = db.DateTimeField(default=datetime.now, required=True)
 
     meta = {'collection': 'para_sentence_history'}
-
-    class Attr:
-        text1 = 'text1'
-        text2 = 'text2'
-        rating = 'rating'
-        editor_id = 'editor_id'
-        editor_role = 'editor_role'
     
     @property
     def serialize(self):
-        
+        # lam lai nhe
         return {
             'id': str(self.id),
             'text1': self.text1,
