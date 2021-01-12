@@ -51,6 +51,7 @@ class ParaSentence(db.Document):
 
     score = db.DictField()
 
+    creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
 
     para_document_id = db.ReferenceField(ParaDocument)
