@@ -78,7 +78,7 @@ const SentencePage = (props) => {
 
     const renderText = (key, paraSentence, index) => {
 
-        let lastUpdated = paraSentence[key];
+        let lastUpdated = paraSentence.newest_para_sentence[key].content;
         let disabled = edittedByHigherUserRole(paraSentence);
 
         return (
@@ -101,7 +101,7 @@ const SentencePage = (props) => {
 
     const renderRating = (rating, paraSentence, index) => {
 
-        let lastUpdated = paraSentence.rating; // default notExist = unRated
+        let lastUpdated = paraSentence.newest_para_sentence.rating; // default notExist = unRated
         let disabled = edittedByHigherUserRole(paraSentence);
 
         return (
@@ -265,7 +265,7 @@ const SentencePage = (props) => {
                 // message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
                 
                 // reload new results
-                paraSentenceAPI.getSentences({}).then((res) => {
+                paraSentenceAPI.getSentences(filter).then((res) => {
                     setDataSource(res.data.data.para_sentences);
                     setPaginationParams(res.data.data.pagination);
                 });
@@ -338,7 +338,10 @@ const SentencePage = (props) => {
     const edittedByHigherUserRole = (paraSentence) => {
         // if editted by reviewer and current user is editor -> can not edit
         let highestUserRole = getHighestUserRole(currentUserRoles);
-        return UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor_role];
+        // return UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor.roles];
+        return  (paraSentence.editor && paraSentence.editor.roles &&
+            (paraSentence.editor.roles.includes('admin') || paraSentence.editor.roles.includes('reviewer')) &&
+            highestUserRole === 'member') 
     }
 
     const getTableRowClassName = (paraSentence) => {
@@ -516,10 +519,10 @@ const SentencePage = (props) => {
                                                     marginBottom: '10px',
                                                     fontWeight: 600
                                                 }}>
-                                                { t('originalText') } { t(record.lang1) }
+                                                { t('originalText') } { t(record.original_para_sentence.text1.lang) }
                                             </label>
                                             <div>
-                                                { record.original.text1 }
+                                                { record.original_para_sentence.text1.content }
                                             </div>
                                         </div>
 
@@ -530,11 +533,11 @@ const SentencePage = (props) => {
                                                     marginBottom: '10px',
                                                     fontWeight: 600
                                                 }}>
-                                                { t('originalText') } { t(record.lang2) }
+                                                { t('originalText') } { t(record.original_para_sentence.text2.lang) }
                                             </label>
 
                                             <div>
-                                                { record.original.text2 }
+                                                { record.original_para_sentence.text2.content }
                                             </div>
                                         </div>
 
@@ -564,7 +567,7 @@ const SentencePage = (props) => {
                                                 { t('sentence.createdTime') } 
                                             </label>
                                             <div>
-                                                { formatDate(record.created_time) }
+                                                { formatDate(record.created_at) }
                                             </div>
                                         </div>
                                     </div>
