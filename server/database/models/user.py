@@ -112,7 +112,7 @@ class User(UserMixin, db.Document):
     after_delete = Signal()
     on_delete = Signal()
 
-    deleted_at = db.DateTimeField()
+    # deleted_at = db.DateTimeField()
 
     meta = {
         'indexes': ['-username'],
