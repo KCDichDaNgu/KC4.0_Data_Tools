@@ -1,8 +1,10 @@
 import time
+from blinker import Signal
 
 from database.db import db
-
 from database.models.user import User
+
+from mongoengine.signals import pre_save, post_save
 
 class Domain(db.Document):
 
@@ -13,6 +15,14 @@ class Domain(db.Document):
 
     created_at = db.IntField(default=int(time.time()), required=True)
     updated_at = db.IntField(default=int(time.time()), required=True)
+
+    before_save = Signal()
+    after_save = Signal()
+    on_create = Signal()
+    on_update = Signal()
+    before_delete = Signal()
+    after_delete = Signal()
+    on_delete = Signal()
 
     @property
     def serialize(self):
@@ -25,3 +35,15 @@ class Domain(db.Document):
            'created_at': self.created_at,
            'updated_at': self.updated_at
         }
+
+    @classmethod
+    def pre_save(cls, sender, document, **kwargs):
+        cls.after_save.send(document)
+
+        if kwargs.get('created'):
+            cls.on_create.send(document)
+        else:
+            cls.on_update.send(document)
+
+
+pre_save.connect(Domain.pre_save, sender=Domain)
