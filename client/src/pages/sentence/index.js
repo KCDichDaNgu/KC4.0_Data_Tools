@@ -1,4 +1,4 @@
-import "./sentence.module.scss";
+import "./style.module.scss";
 
 import React, { useEffect, useState, useRef } from "react";
 import PageTitle from "../../layout/site-layout/main/PageTitle";
@@ -133,19 +133,19 @@ const SentencePage = (props) => {
 
     const columns = [
         {
-            title: `${t('sentence.text')} 1`,
+            title: `${t('sentencePage.text')} 1`,
             dataIndex: "text1",
             key: "text1",
             render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
         },
         {
-            title: `${t('sentence.text')} 2`,
+            title: `${t('sentencePage.text')} 2`,
             dataIndex: "text2",
             key: "text2",
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
         },
         // {
-        //     title: t('sentence.lastUpdate'),
+        //     title: t('sentencePage.lastUpdate'),
         //     // dataIndex: "updated_at",
         //     key: "updated_at",
         //     render: (record) => {
@@ -156,7 +156,7 @@ const SentencePage = (props) => {
         //     sortDirections: ['ascend', 'descend', 'ascend']
         // },
         {
-            title: `${t('sentence.score')} / ${t('sentence.rating')}`,
+            title: `${t('sentencePage.score')} / ${t('sentencePage.rating')}`,
             // dataIndex: "score",
             key: "score",
             render: (record, index) => {
@@ -184,7 +184,7 @@ const SentencePage = (props) => {
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         // {
-        //     title: t('sentence.rating'),
+        //     title: t('sentencePage.rating'),
         //     dataIndex: "rating",
         //     key: "rating",
         //     render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
@@ -218,7 +218,7 @@ const SentencePage = (props) => {
     const [ratingList, setRatingList] = useState([]);
 
     const lang1Option = [
-        <Option key='all'>{t('sentence.all')}</Option>
+        <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
         langList1.map((lang) => {
             return <Option key={lang}>{lang}</Option>;
@@ -226,7 +226,7 @@ const SentencePage = (props) => {
     );
 
     const lang2Option = [
-        <Option key='all'>{t('sentence.all')}</Option>
+        <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
         langList2.map((lang) => {
             return <Option key={lang}>{lang}</Option>;
@@ -234,7 +234,7 @@ const SentencePage = (props) => {
     );
 
     const ratingOption = [
-        <Option key='all'>{t('sentence.all')}</Option>
+        <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
         ratingList.map((rating) => {
             return <Option key={rating}>{t(`sentence.${rating}`)}</Option>;
@@ -262,7 +262,7 @@ const SentencePage = (props) => {
 
                 setImportStatus(info.file.response.data.data);
                 setIsModalImportVisible(true);
-                // message.success(`${t('sentence.imported')} ${nSuccess}/${nData} ${t('sentence.pairParaSentences')}`);
+                // message.success(`${t('sentencePage.imported')} ${nSuccess}/${nData} ${t('sentencePage.pairParaSentences')}`);
                 
                 // reload new results
                 paraSentenceAPI.getSentences(filter).then((res) => {
@@ -272,7 +272,7 @@ const SentencePage = (props) => {
             } else if (info.file.status === 'error') {
                 setUploadingFile(false);
 
-                message.error(`${info.file.name} ${t('sentence.uploadFailed')}`);
+                message.error(`${info.file.name} ${t('sentencePage.uploadFailed')}`);
             }
         },
     };
@@ -316,7 +316,7 @@ const SentencePage = (props) => {
 
         paraSentenceAPI.updateParaSentence(paraSentence['id'], filterParams).then((res) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
-                message.success(t('sentence.editedSuccess'));
+                message.success(t('sentencePage.editedSuccess'));
 
                 let params = {
                     ...filter,
@@ -362,7 +362,7 @@ const SentencePage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={t('sentence.title')}
+                    heading={t('sentencePage.title')}
                     icon="pe-7s-home icon-gradient bg-happy-itmeo"
                     customComponent={
                         (
@@ -374,7 +374,7 @@ const SentencePage = (props) => {
                                 }
                                 <Upload {...uploadFile}>
                                     <Button icon={<UploadOutlined />}>
-                                        {t('sentence.uploadFile')}
+                                        {t('sentencePage.uploadFile')}
                                     </Button>
                                 </Upload>
                             </div>
@@ -395,7 +395,7 @@ const SentencePage = (props) => {
                                     fontSize: '25px',
                                     fontWeight: 600
                                 }}>
-                                { t('sentence.filter') }
+                                { t('sentencePage.filter') }
                             </div>
 
                             <Button
@@ -409,7 +409,7 @@ const SentencePage = (props) => {
                                 }}
                                 type="primary"
                                 onClick={ handleFilter }>
-                                { t('sentence.search') }
+                                { t('sentencePage.search') }
                             </Button> 
                         </div>
                     } 
@@ -423,10 +423,10 @@ const SentencePage = (props) => {
                                     fontSize: '20px',
                                     fontWeight: 500
                                 }}>
-                                { t('sentence.by_text') }
+                                { t('sentencePage.by_text') }
                             </div>
                             <Input
-                                placeholder={ t('sentence.searchBox') }
+                                placeholder={ t('sentencePage.searchBox') }
                                 value={ searchInput }
                                 onChange={(e) => {
 
@@ -444,7 +444,7 @@ const SentencePage = (props) => {
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                                { t('sentence.by_rating') }
+                                { t('sentencePage.by_rating') }
                             </div>
 
                             <Select
@@ -465,7 +465,7 @@ const SentencePage = (props) => {
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                                { t('sentence.by_lang_1') }
+                                { t('sentencePage.by_lang_1') }
                             </div>
 
                             <Select
@@ -485,7 +485,7 @@ const SentencePage = (props) => {
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                                { t('sentence.by_lang_2') }
+                                { t('sentencePage.by_lang_2') }
                             </div>
 
                             <Select
@@ -548,8 +548,8 @@ const SentencePage = (props) => {
                                                     marginBottom: '10px',
                                                     fontWeight: 600
                                                 }}>
-                                                { t('sentence.lastUpdate') } { t('sentence.by') }
-                                                &nbsp;{ record.editor?.id === currentUserId ? t('sentence.you') : record.editor.username }
+                                                { t('sentencePage.lastUpdate') } { t('sentencePage.by') }
+                                                &nbsp;{ record.editor?.id === currentUserId ? t('sentencePage.you') : record.editor.username }
                                             </label>
                                             
                                             <div>
@@ -564,7 +564,7 @@ const SentencePage = (props) => {
                                                     marginBottom: '10px',
                                                     fontWeight: 600
                                                 }}>
-                                                { t('sentence.createdTime') } 
+                                                { t('sentencePage.createdTime') } 
                                             </label>
                                             <div>
                                                 { formatDate(record.created_at) }
@@ -587,21 +587,21 @@ const SentencePage = (props) => {
                 </Card>
 
                 <Modal 
-                    title={ t('sentence.resultUpdateData') } 
+                    title={ t('sentencePage.resultUpdateData') } 
                     visible={ isModalImportVisible } 
                     footer={[
                         <Button 
                             key="ok"
                             type="primary"
                             onClick={() => setIsModalImportVisible(false)}>
-                            { t('sentence.ok') }
+                            { t('sentencePage.ok') }
                         </Button>
                     ]}>
                     <p>
-                        - { t('sentence.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentence.pairParaSentences') }.
+                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
                     </p>
                     <p>
-                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentence.duplicatedRecords') }.
+                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
                     </p>
                 </Modal>
             </SiteLayout>

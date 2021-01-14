@@ -1,4 +1,4 @@
-import './manage-user.module.scss';
+import './style.module.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
 import PageTitle from '../../../layout/site-layout/main/PageTitle';
@@ -327,7 +327,7 @@ const ManageUserPage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={ t('manageUser.title') }
+                    heading={ t('manageUserPage.title') }
                     // subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
@@ -335,19 +335,19 @@ const ManageUserPage = (props) => {
                 <Card className='user-table-card'>
                     <div style={{ float: 'right' }}>
                         <Button onClick={() => setIsAdding(!isAdding)}>
-                            { t('manageUser.addUser') }
+                            { t('manageUserPage.addUser') }
                         </Button>
 
                         {/* <Button 
                             onClick={() => openDeleteModal()}
                             disabled={ selectedUsersId.length == 0 } 
                             danger>
-                            { t('manageUser.deleteUser') }
+                            { t('manageUserPage.deleteUser') }
                         </Button> */}
                     </div>
 
                     <Input
-                        placeholder={ t('manageUser.searchUser') }
+                        placeholder={ t('manageUserPage.searchUser') }
                         className='search-input-box'
                         onChange={ e => setSearchInput(e.target.value) }
                         onPressEnter={ e => searchUser(e.target.value) }

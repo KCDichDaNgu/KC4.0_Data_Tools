@@ -17,7 +17,7 @@ const LoginPage = (props) => {
     let history = useHistory();
     
     useEffect(() => {
-        document.title = t('login.title');
+        document.title = t('loginPage.title');
     });
 
     const submit = credentials => { 

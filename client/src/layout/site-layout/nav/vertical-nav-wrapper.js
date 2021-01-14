@@ -14,12 +14,12 @@ const Nav = () => {
     let [ mainNav, setMainNav ] = useState([
         {
             icon: 'pe-7s-news-paper',
-            label: t('document.title'),
+            label: t('documentPage.title'),
             to: 'document',
         },
         {
             icon: 'pe-7s-copy-file',
-            label: t('sentence.title'),
+            label: t('sentencePage.title'),
             to: 'sentence',
         },
     ])
@@ -38,27 +38,32 @@ const Nav = () => {
                     setMainNav([
                         {
                             icon: 'pe-7s-home',
-                            label: t('home.title'),
+                            label: t('homePage.title'),
                             to: '/',
                         },
                         {
                             icon: 'pe-7s-users',
-                            label: t('manageUser.title'),
+                            label: t('manageUserPage.title'),
                             to: '/manage-user',
                         },
                         {
                             icon: 'pe-7s-global',
-                            label: t('domain.title'),
+                            label: t('domainPage.title'),
                             to: 'domain',
                         },
                         {
+                            icon: 'pe-7s-global',
+                            label: t('dataFieldPage.title'),
+                            to: 'data-field',
+                        },
+                        {
                             icon: 'pe-7s-news-paper',
-                            label: t('document.title'),
+                            label: t('documentPage.title'),
                             to: 'document',
                         },
                         {
                             icon: 'pe-7s-copy-file',
-                            label: t('sentence.title'),
+                            label: t('sentencePage.title'),
                             to: 'sentence',
                         },
                     ])

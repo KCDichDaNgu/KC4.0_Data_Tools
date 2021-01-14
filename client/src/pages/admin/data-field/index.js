@@ -1,7 +1,7 @@
-import './domain.module.scss';
+import './style.module.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
-import PageTitle from '../../layout/site-layout/main/PageTitle';
+import PageTitle from '../../../layout/site-layout/main/PageTitle';
 import {
     Input,
     Table,
@@ -16,20 +16,20 @@ import {
 
 import { WarningOutlined } from '@ant-design/icons';
 
-import SiteLayout from '../../layout/site-layout';
-import domainAPI from '../../api/admin/domain';
+import SiteLayout from '../../../layout/site-layout';
+import dataFieldAPI from '../../../api/admin/data-field';
 
 import { useTranslation } from 'react-i18next';
 
-import { formatDate } from '../../utils/date';
+import { formatDate } from '../../../utils/date';
 
-import { STATUS_CODES } from '../../constants';
+import { STATUS_CODES } from '../../../constants';
 
-const DomainsPage = (props) => {
+const DataFieldPage = (props) => {
     
     const { t } = useTranslation(['common']);
 
-    const [domainList, setDomainList] = useState({
+    const [dataFieldList, setDataFieldList] = useState({
         items: [],
         total: 0,
         page: 1,
@@ -38,7 +38,7 @@ const DomainsPage = (props) => {
 
     const [searchInput, setSearchInput] = useState('');
     const [isAdding, setIsAdding] = useState(false);
-    const [selectedDomainsId, setSelectedDomainsId] = useState([]);
+    const [selectedDataFieldsId, setSelectedDataFieldsId] = useState([]);
 
     const [pagination, setPagination] = useState({
         pagination__page: 1,
@@ -64,39 +64,39 @@ const DomainsPage = (props) => {
         },
 
         pageSizeOptions: [5, 10, 15, 20, 50, 100],
-        total: domainList.total,
+        total: dataFieldList.total,
         defaultPageSize: pagination.pagination__perPage,
 
         showTotal: (total, range) => `${range[0]} to ${range[1]} of ${total}`,
     };
 
     useEffect(() => {
-        searchDomain();
+        searchDataField();
     }, [ pagination.pagination__page, pagination.pagination__perPage ]);
 
-    const addDomain = async (domainName) => {
+    const addDataField = async (dataFieldName) => {
 
-        let _newDomainData = {
-            url: domainName
+        let _newDataFieldData = {
+            name: dataFieldName
         }
 
-        await domainAPI.create(_newDomainData);
+        await dataFieldAPI.create(_newDataFieldData);
         
         reload();
     };
 
-    const updateDomain = async (id, domain) => {
+    const updateDataField = async (id, dataField) => {
 
-        if (domain == '' || domain == null) {
-            message.error(t('domain.urlNotNull'));
+        if (dataField == '' || dataField == null) {
+            message.error(t('dataFieldPage.nameNotNull'));
         } else {
 
             let data = {
-                url: domain,
+                name: dataField,
                 id: id,
             };
 
-            let result = await domainAPI.update(data);
+            let result = await dataFieldAPI.update(data);
 
             if (result.code == STATUS_CODES.success) {
                 message.success(t('updateSuccess'))
@@ -105,16 +105,16 @@ const DomainsPage = (props) => {
         }
     };
 
-    const searchDomain = async () => {
+    const searchDataField = async () => {
 
         let data = {
-            url: searchInput || '',
+            name: searchInput || '',
             ...pagination
         };
 
-        let result = await domainAPI.search(data);
+        let result = await dataFieldAPI.search(data);
         
-        setDomainList({
+        setDataFieldList({
             items: result.data.items,
             total: result.data.total,
             page: result.data.page,
@@ -130,106 +130,106 @@ const DomainsPage = (props) => {
     const openDeleteModal = () => {
         Modal.confirm({
             icon: <WarningOutlined />,
-            content: <div style={{ display: 'flex' }}>{ t('modalMessages.warning.deleteDomain') }</div>,
+            content: <div style={{ display: 'flex' }}>{ t('modalMessages.warning.deleteDataField') }</div>,
             onOk() {
-                deleteDomains()
+                deleteDataFields()
             },
             onCancel() { },
         });
     }
 
-    const deleteDomains = () => {
+    const deleteDataFields = () => {
 
-        selectedDomainsId?.forEach(async (item) => await domainAPI.delete(item));
+        selectedDataFieldsId?.forEach(async (item) => await dataFieldAPI.delete(item));
         
-        searchDomain();
+        searchDataField();
     };
 
     const reload = () => {
-        searchDomain();
+        searchDataField();
     };
 
-    const crawlDomain = () => {
+    const crawlDataField = () => {
         return '';
     }
 
     const columns = [
         {
-            title: t('domain.title'),
-            dataIndex: 'url',
-            key: 'url',
-            sorter: (a, b) => a.url.localeCompare(b.url),
-            render: (url, domain) => (
+            title: t('dataFieldPage.title'),
+            dataIndex: 'name',
+            key: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            render: (name, dataField) => (
                 <Tooltip
                     trigger={ ['focus'] }
-                    title={ t('domain.inputAdd') }
+                    title={ t('dataFieldPage.inputAdd') }
                     placement='topLeft'>
                     <Input
-                        className='domain-input'
-                        defaultValue={ url }
+                        className='dataFieldPage-input'
+                        defaultValue={ name }
                         onPressEnter={ event => {
-                            updateDomain(domain.id, event.target.value)
+                            updateDataField(dataField.id, event.target.value)
                         }
                     }/> 
                 </Tooltip>
             ),
         },
         {
-            title: t('domain.lastUpdate'),
+            title: t('dataFieldPage.lastUpdate'),
             dataIndex: 'updated_at',
             key: 'updated_at',
             render: (updated_at) => formatDate(updated_at),
             // sorter: (a, b) => a.updated_at - b.updated_at,
         },
-        {
-            title: t('domain.crawledDocuments'),
-            dataIndex: 'crawled',
-            key: 'crawled',
-            sorter: (a, b) => a.crawled - b.crawled,
-        },
-        {
-            title: t('domain.crawl'),
-            dataIndex: '',
-            key: 'x',
-            render: () => (
-                <Button 
-                    type='primary' 
-                    onClick={ crawlDomain }>
-                    { t('domain.crawl') }
-                </Button>
-            ),
-        },
+        // {
+        //     title: t('dataFieldPage.crawledDocuments'),
+        //     dataIndex: 'crawled',
+        //     key: 'crawled',
+        //     sorter: (a, b) => a.crawled - b.crawled,
+        // },
+        // {
+        //     title: t('dataFieldPage.crawl'),
+        //     dataIndex: '',
+        //     key: 'x',
+        //     render: () => (
+        //         <Button 
+        //             type='primary' 
+        //             onClick={ crawlDataField }>
+        //             { t('dataFieldPage.crawl') }
+        //         </Button>
+        //     ),
+        // },
     ];
 
     return (
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={ t('domain.title' )}
+                    heading={ t('dataFieldPage.title' )}
                     // subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
-                <Card className='domain-table-card'>
+                <Card className='dataFieldPage-table-card'>
                     <div style={{ float: 'right' }}>
                         <Button onClick={() => setIsAdding(!isAdding)}>
-                            { t('domain.addDomain') }
+                            { t('dataFieldPage.addDataField') }
                         </Button>
 
-                        <Button 
+                        {/* <Button 
                             onClick={() => openDeleteModal()}
-                            disabled={ selectedDomainsId.length == 0 } 
+                            disabled={ selectedDataFieldsId.length == 0 } 
                             danger>
-                            { t('domain.deleteDomain') }
-                        </Button>
+                            { t('dataFieldPage.deleteDataField') }
+                        </Button> */}
 
                         { isAdding && (
                             <div>
                                 <Input
                                     style={{ margin: '10px 0' }}
-                                    placeholder={ t('domain.inputAdd') }
+                                    placeholder={ t('dataFieldPage.inputAdd') }
                                     onPressEnter={ event => {
-                                        addDomain(event.target.value);
+                                        addDataField(event.target.value);
                                     }}
                                 />
                                 <i className='ps-7s-plus'></i>
@@ -238,10 +238,10 @@ const DomainsPage = (props) => {
                     </div>
 
                     <Input
-                        placeholder={ t('domain.searchBox') }
+                        placeholder={ t('dataFieldPage.searchBox') }
                         className='search-input-box'
                         onChange={ (e) => { setSearchInput(e.target.value) }}
-                        onPressEnter={ event => searchDomain(event.target.value) }
+                        onPressEnter={ event => searchDataField(event.target.value) }
                     />
 
                     <Table
@@ -249,10 +249,10 @@ const DomainsPage = (props) => {
                         rowSelection={{
                             type: 'checkbox',
                             onChange: (selectedRowKeys) => {
-                                setSelectedDomainsId(selectedRowKeys)
+                                setSelectedDataFieldsId(selectedRowKeys)
                             },
                         }}
-                        dataSource={ domainList.items.map(d => ({...d, key: d.id})) }
+                        dataSource={ dataFieldList.items.map(d => ({...d, key: d.id})) }
                         columns={ columns }
                         pagination={ paginationOptions }>
                     </Table>
@@ -262,4 +262,4 @@ const DomainsPage = (props) => {
     );
 };
 
-export default DomainsPage;
+export default DataFieldPage;

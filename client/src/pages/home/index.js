@@ -1,4 +1,4 @@
-import './home.module.scss';
+import './style.module.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
 import PageTitle from '../../layout/site-layout/main/PageTitle';
@@ -20,7 +20,7 @@ function HomePage(props) {
             <SiteLayout>
 
                 <PageTitle
-                    heading={ t('home.title') }
+                    heading={ t('homePage.title') }
                     // subheading="Create new content..."
                     icon="pe-7s-home icon-gradient bg-happy-itmeo" />
 

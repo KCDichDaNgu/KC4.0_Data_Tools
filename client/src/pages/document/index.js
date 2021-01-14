@@ -1,4 +1,4 @@
-import './document.module.scss';
+import './style.module.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
 import PageTitle from '../../layout/site-layout/main/PageTitle';
@@ -26,7 +26,7 @@ const DocumentPage = (props) => {
             key: '1',
             id: 1,
             domain: 'vov.vn',
-            status: t('document.draft'),
+            status: t('documentPage.draft'),
             lang_1: 'en-US',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -39,7 +39,7 @@ const DocumentPage = (props) => {
             key: '2',
             id: 2,
             domain: 'vov.vn',
-            status: t('document.draft'),
+            status: t('documentPage.draft'),
             lang_1: 'en-US',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -53,7 +53,7 @@ const DocumentPage = (props) => {
             key: '3',
             id: 3,
             domain: 'vnexpress.net',
-            status: t('document.approved'),
+            status: t('documentPage.approved'),
             lang_1: 'en-US',
             lang_2: 'zh-CN',
             text_1_lang: 'The programme of support for arts and crafts design',
@@ -65,7 +65,7 @@ const DocumentPage = (props) => {
             key: '4',
             id: 4,
             domain: 'vtv.vn',
-            status: t('document.rejected'),
+            status: t('documentPage.rejected'),
             lang_1: 'en-US',
             lang_2: 'zh-CN',
             text_1_lang:
@@ -78,7 +78,7 @@ const DocumentPage = (props) => {
             key: '5',
             id: 5,
             domain: 'vtv.vn',
-            status: t('document.rejected'),
+            status: t('documentPage.rejected'),
             lang_1: 'vi-VI',
             lang_2: 'en-US',
             text_1_lang: 'Có lẽ do hình thái di truyền của hệ thống miễn dịch.',
@@ -91,7 +91,7 @@ const DocumentPage = (props) => {
             key: '6',
             id: 6,
             domain: 'vnexpress.net',
-            status: t('document.rejected'),
+            status: t('documentPage.rejected'),
             lang_1: 'vi-VI',
             lang_2: 'en-US',
             text_1_lang:
@@ -105,7 +105,7 @@ const DocumentPage = (props) => {
             key: '7',
             id: 7,
             domain: 'vov.vn',
-            status: t('document.approved'),
+            status: t('documentPage.approved'),
             lang_1: 'vi-VI',
             lang_2: 'pt-PT',
             text_1_lang: 'Tôi gửi kèm cái bật lửa như một món quà chia tay.',
@@ -118,7 +118,7 @@ const DocumentPage = (props) => {
             key: '8',
             id: 8,
             domain: 'vov.vn',
-            status: t('document.rejected'),
+            status: t('documentPage.rejected'),
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang:
@@ -132,7 +132,7 @@ const DocumentPage = (props) => {
             key: '9',
             id: 9,
             domain: 'vnexpress.net',
-            status: t('document.approved'),
+            status: t('documentPage.approved'),
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang: '新皇 登基 之前 别 让 宰相 接触 她',
@@ -145,7 +145,7 @@ const DocumentPage = (props) => {
             key: '10',
             id: 10,
             domain: 'vov.vn',
-            status: t('document.draft'),
+            status: t('documentPage.draft'),
             lang_1: 'zh-CN',
             lang_2: 'vi-VI',
             text_1_lang: '不過科學家仍然不清楚這些藍鯨在哪裡過冬。',
@@ -178,36 +178,36 @@ const DocumentPage = (props) => {
             sorter: (a, b) => a.id - b.id,
         },
         {
-            title: `${ t('document.text') } 1`,
+            title: `${ t('documentPage.text') } 1`,
             dataIndex: 'text_1_lang',
             key: 'text_1_lang',
         },
         {
-            title: `${ t('document.text') } 2`,
+            title: `${ t('documentPage.text') } 2`,
             dataIndex: 'text_2_lang',
             key: 'text_2_lang',
         },
         {
-            title: t('document.lastUpdate'),
+            title: t('documentPage.lastUpdate'),
             dataIndex: 'last_update',
             key: 'last_update',
             render: (last_update) => timeformat(last_update),
             sorter: (a, b) => a.last_update - b.last_update,
         },
         {
-            title: t('document.score'),
+            title: t('documentPage.score'),
             dataIndex: 'score',
             key: 'score',
             sorter: (a, b) => a.score - b.score,
         },
         {
-            title: t('document.action'),
+            title: t('documentPage.action'),
             dataIndex: '',
             key: 'action',
-            render: () => <Button type='primary'>{ t('document.senAlign') }</Button>,
+            render: () => <Button type='primary'>{ t('documentPage.senAlign') }</Button>,
         },
         {
-            title: t('document.status'),
+            title: t('documentPage.status'),
             dataIndex: 'status',
             key: 'status',
         },
@@ -225,7 +225,7 @@ const DocumentPage = (props) => {
 
     const FilterByNameInput = (
         <Input
-            placeholder={ t('document.searchBox') }
+            placeholder={ t('documentPage.searchBox') }
             className='search-input-box'
             value={value}
             onChange={(e) => {
@@ -260,9 +260,9 @@ const DocumentPage = (props) => {
     };
 
     let domainList = [...new Set(data.map((data) => data.domain))];
-    domainList = [t('document.all'), t('document.noDomain')].concat(domainList);
+    domainList = [t('documentPage.all'), t('documentPage.noDomain')].concat(domainList);
 
-    let langList = [t('document.all'), 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
+    let langList = [t('documentPage.all'), 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
 
     const domainOption = domainList.map((domain) => {
         return <Option key={domain}>{domain}</Option>;
@@ -278,9 +278,9 @@ const DocumentPage = (props) => {
 
     const statusOption = (
         <>
-            <Option key='draft'>{ t('document.draft') }</Option>
-            <Option key='approved'>{ t('document.approved') }</Option>
-            <Option key='rejected'>{ t('document.rejected') }</Option>
+            <Option key='draft'>{ t('documentPage.draft') }</Option>
+            <Option key='approved'>{ t('documentPage.approved') }</Option>
+            <Option key='rejected'>{ t('documentPage.rejected') }</Option>
         </>
     ); 
 
@@ -288,8 +288,8 @@ const DocumentPage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={ t('document.title') }
-                    // subheading={ t('document.createNewContent') }
+                    heading={ t('documentPage.title') }
+                    // subheading={ t('documentPage.createNewContent') }
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
@@ -302,11 +302,11 @@ const DocumentPage = (props) => {
                                     display: 'inline-block',
                                     marginLeft: '30px',
                                 }}>
-                                <div> { t('document.selectDomain') }:</div>
+                                <div> { t('documentPage.selectDomain') }:</div>
                                 <Select
                                     showSearch
                                     style={{ width: '300px' }}
-                                    defaultValue={ t('document.all') }
+                                    defaultValue={ t('documentPage.all') }
                                     onChange={(value) =>
                                         handleChange(value, 'domain')
                                     }>
@@ -349,11 +349,11 @@ const DocumentPage = (props) => {
                                     display: 'inline-block',
                                     marginLeft: '30px',
                                 }}>
-                                <div>{ t('document.selectStatus') }</div>
+                                <div>{ t('documentPage.selectStatus') }</div>
                                 <Select
                                     showSearch
                                     style={{ minWidth: '100px' }}
-                                    defaultValue={ t('document.draft') }
+                                    defaultValue={ t('documentPage.draft') }
                                     onChange={(value) =>
                                         handleChange(value, 'status')
                                     }>
@@ -366,21 +366,21 @@ const DocumentPage = (props) => {
                                 style={{ width: '100px', marginLeft: '30px' }}
                                 type='primary'
                                 onClick={handleFilter}>
-                                { t('document.filter') }
+                                { t('documentPage.filter') }
                             </Button>
                         </div>
 
                         <div style={{ float: 'right' }}>
                             <Button style={{ marginLeft: '12px' }}>
-                                { t('document.add') }
+                                { t('documentPage.add') }
                             </Button>
 
                             <Button style={{ marginLeft: '12px' }}>
-                                { t('document.approve') }
+                                { t('documentPage.approve') }
                             </Button>
 
                             <Button style={{ marginLeft: '12px' }}>
-                                { t('document.reject') }
+                                { t('documentPage.reject') }
                             </Button>
                         </div>
                     </div>

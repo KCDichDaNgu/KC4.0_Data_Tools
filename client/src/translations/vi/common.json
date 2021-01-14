@@ -11,7 +11,7 @@
 		"requiredField": "Trường này bắt buộc phải nhập!"
 	},
 	"loadingMessage": "Xin vui lòng chờ đến khi trang này được tải xong :)",
-	"document": {
+	"documentPage": {
 		"title": "Văn bản",
 		"draft": "Nháp",
 		"approved": "Tán thành",
@@ -32,7 +32,7 @@
 		"senAlign": "Gióng hàng",
 		"text": "Văn bản"
 	},
-	"domain": {
+	"domainPage": {
 		"addDomain": "Thêm",
 		"editDomain": "Sửa",
 		"deleteDomain": "Xóa",
@@ -44,15 +44,15 @@
 		"crawl": "Thu nhập",
 		"nameNotNull": "Tên không thể để trống"
 	},
-	"home": {
+	"homePage": {
 		"title": "Trang chủ"
 	},
-	"login": {
+	"loginPage": {
 		"title": "Đăng nhập",
 		"usernameHint": "Nhập tên tài khoản...",
 		"passwordHint": "Nhập mật khẩu..."
 	},
-	"sentence": {
+	"sentencePage": {
 		"all": "Tất cả",
 		"title": "Cặp câu",
 		"searchBox": "Tìm kiếm câu...",
@@ -93,11 +93,20 @@
 		"ok": "OK",
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa"
 	},
-	"manageUser": {
+	"manageUserPage": {
 		"title": "Quản lý người dùng",
 		"addUser": "Thêm người dùng",
 		"deleteUser": "Xóa người dùng",
 		"searchUser": "Tìm kiếm người dùng"
+	},
+	"dataFieldPage": {
+		"title": "Miền dữ liệu",
+		"searchBox": "Tìm kiếm tên miền...",
+		"inputAdd": "Nhập và nhấn Enter để sửa tên miền dữ liệu...",
+		"lastUpdate": "Cập nhật lần cuối",
+		"addDataField": "Thêm",
+		"editDataField": "Sửa",
+		"deleteDataField": "Xóa"
 	},
 	"updateSuccess": "Cập nhật thành công",
 	"originalText": "Câu gốc",
