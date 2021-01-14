@@ -84,5 +84,21 @@
 		"resultUpdateData": "Import file notification",
 		"ok": "OK",
 		"updatedByHigherRole": "This record has been editted by admin"
+	},
+	"backupDatabase": {
+		"title": "Backups management",
+		"addBackUp": "Add backup",
+		"name": "Name",
+		"type": "Type",
+		"createdAt": "Created at",
+		"createdBy": "Created by",
+		"inputAdd": "Enter backup's name then press 'Enter'...",
+		"addedSuccess": "Added backup successfully",
+		"addedFailure": "Added backup fail",
+		"by_user": "By user",
+		"by_server": "Automatic",
+		"download": "Download",
+		"url": "URL",
+		"machine": "Machine"
 	}
 }

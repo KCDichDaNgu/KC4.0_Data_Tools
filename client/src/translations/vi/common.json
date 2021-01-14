@@ -144,5 +144,21 @@
 			"deleteDomain": "Bạn có chắc chắn muốn xóa những tên miền này? Hành động này sẽ không thể  hoàn tác",
 			"deleteUser": "Bạn có chắc chắn muốn xóa những người dùng này? Hành động này sẽ không thể  hoàn tác"
 		}
+	},
+	"backupDatabase": {
+		"title": "Quản lý sao lưu",
+		"addBackUp": "Thêm sao lưu",
+		"name": "Tên",
+		"type": "Loại",
+		"createdAt": "Thời gian tạo",
+		"createdBy": "Người tạo",
+		"inputAdd": "Nhập tên sao lưu và nhấn Enter...",
+		"addedSuccess": "Thêm mới sao lưu thành công",
+		"addedFailure": "Có lỗi xảy ra khi sao lưu",
+		"by_user": "Bởi người dùng",
+		"by_server": "Tự động",
+		"download": "Tải về",
+		"url": "Đường dẫn",
+		"machine": "Máy"
 	}
 }
