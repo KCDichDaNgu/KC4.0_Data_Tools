@@ -30,33 +30,12 @@ import { clonedStore } from '../../store';
 const { TextArea } = Input;
 const { Option } = Select;
 
-const UserRole2Idx = {
-    null: 0,
-    'member': 1,
-    'reviewer': 2,
-    'admin': 2
-};
-
-const Idx2UserRole = {
-    0: null,
-    1: 'member',
-    2: 'reviewer'
-}
-
-const getHighestUserRole = (userRoles) => {
-    let userRoleValues = userRoles.map((role, idx) => {
-        return UserRole2Idx[role];
-    });
-
-    return Idx2UserRole[Math.max.apply(Math, userRoleValues)]; 
-}
-
 const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
 
     const currentUserId = clonedStore.getState().User?.profile?.id;
-    const currentUserRoles = clonedStore.getState().User?.profile?.roles;
+    const currentUserRoles = clonedStore.getState().User?.profile?.roles || [];
 
     const [dataSource, setDataSource] = useState([]);
     const [searchInput, setSearchInput] = useState("");
@@ -73,20 +52,20 @@ const SentencePage = (props) => {
     });
 
     const [uploadingFile, setUploadingFile] = useState(false);
-    const [isModalImportVisible, setIsModalImportVisible] = useState(false);
+    const [isModalImportSuccessVisible, setIsModalImportSuccessVisible] = useState(false);
     const [importStatus, setImportStatus] = useState({});
 
     const renderText = (key, paraSentence, index) => {
 
-        let lastUpdated = paraSentence.newest_para_sentence[key].content;
-        let disabled = edittedByHigherUserRole(paraSentence);
+        let lastestContent = paraSentence.newest_para_sentence[key].content;
+        let disabled = isAllowedToEdit(paraSentence);
 
         return (
             <TextArea
-                key={paraSentence['id']}
+                key={ paraSentence['id'] }
                 autoSize
                 showCount
-                defaultValue={ lastUpdated }
+                defaultValue={ lastestContent }
                 onPressEnter={ event => {
                     event.preventDefault();
                     updateParaSentence(paraSentence, key, event.target.value);
@@ -101,19 +80,19 @@ const SentencePage = (props) => {
 
     const renderRating = (rating, paraSentence, index) => {
 
-        let lastUpdated = paraSentence.newest_para_sentence.rating; // default notExist = unRated
-        let disabled = edittedByHigherUserRole(paraSentence);
+        let lastestRating = paraSentence.newest_para_sentence.rating; // default notExist = unRated
+        let disabled = isAllowedToEdit(paraSentence);
 
         return (
             <Radio.Group
                 key={ paraSentence['id'] } 
-                value={ lastUpdated }
+                value={ lastestRating }
                 onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }
                 disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
                         if (rating == 'unRated') {
-                            if (lastUpdated == 'unRated') {
+                            if (lastestRating == 'unRated') {
                                 return (
                                     <Radio.Button key={ rating } value={ rating }>?</Radio.Button>
                                 );
@@ -121,7 +100,7 @@ const SentencePage = (props) => {
                         } else {
                             return (
                                 <Radio.Button key={ rating } value={ rating }>
-                                    { t(`sentence.${rating}`) }
+                                    { t(`sentencePage.${rating}`) }
                                 </Radio.Button>
                             );
                         }
@@ -144,17 +123,6 @@ const SentencePage = (props) => {
             key: "text2",
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
         },
-        // {
-        //     title: t('sentencePage.lastUpdate'),
-        //     // dataIndex: "updated_at",
-        //     key: "updated_at",
-        //     render: (record) => {
-        //         // formatDate(updated_at)
-        //         console.log(record)
-        //     },
-        //     sorter: (a, b, sortOrder) => { },
-        //     sortDirections: ['ascend', 'descend', 'ascend']
-        // },
         {
             title: `${t('sentencePage.score')} / ${t('sentencePage.rating')}`,
             // dataIndex: "score",
@@ -182,13 +150,7 @@ const SentencePage = (props) => {
             sorter: (a, b, sortOrder) => { },
             width: '20%',
             sortDirections: ['ascend', 'descend', 'ascend']
-        },
-        // {
-        //     title: t('sentencePage.rating'),
-        //     dataIndex: "rating",
-        //     key: "rating",
-        //     render: (rating, paraSentence, index) => renderRating(rating, paraSentence, index),
-        // }
+        }
     ];
 
     const handleChange = (searchInput, key) => {
@@ -237,7 +199,7 @@ const SentencePage = (props) => {
         <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
         ratingList.map((rating) => {
-            return <Option key={rating}>{t(`sentence.${rating}`)}</Option>;
+            return <Option key={rating}>{t(`sentencePage.${rating}`)}</Option>;
         })
     );
 
@@ -261,7 +223,7 @@ const SentencePage = (props) => {
                 // let nData = info.file.response.data.n_data;
 
                 setImportStatus(info.file.response.data.data);
-                setIsModalImportVisible(true);
+                setIsModalImportSuccessVisible(true);
                 // message.success(`${t('sentencePage.imported')} ${nSuccess}/${nData} ${t('sentencePage.pairParaSentences')}`);
                 
                 // reload new results
@@ -330,30 +292,28 @@ const SentencePage = (props) => {
                     setPaginationParams(res.data.data.pagination);
                 });
             } else {
-                message.error(t(`sentence.${res.data.message}`));
+                message.error(t(`sentencePage.${res.data.message}`));
             }
         });
     }
 
-    const edittedByHigherUserRole = (paraSentence) => {
+    const isAllowedToEdit = (paraSentence) => {
         // if editted by reviewer and current user is editor -> can not edit
-        let highestUserRole = getHighestUserRole(currentUserRoles);
-        // return UserRole2Idx[highestUserRole] < UserRole2Idx[paraSentence.editor.roles];
+        
         return  (paraSentence.editor && paraSentence.editor.roles &&
             (paraSentence.editor.roles.includes('admin') || paraSentence.editor.roles.includes('reviewer')) &&
-            highestUserRole === 'member') 
+            currentUserRoles === ['member']) 
     }
 
     const getTableRowClassName = (paraSentence) => {
+
         let className = "";
 
-        if (!edittedByHigherUserRole(paraSentence)) {
+        if (!isAllowedToEdit(paraSentence)) {
             if (!paraSentence.editor?.id) className = '';
             else if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
             else if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
         }
-        
-        // if (edittedByHigherUserRole(paraSentence)) className += ' disabled-row';
 
         return className;
     }
@@ -425,6 +385,7 @@ const SentencePage = (props) => {
                                 }}>
                                 { t('sentencePage.by_text') }
                             </div>
+
                             <Input
                                 placeholder={ t('sentencePage.searchBox') }
                                 value={ searchInput }
@@ -588,12 +549,12 @@ const SentencePage = (props) => {
 
                 <Modal 
                     title={ t('sentencePage.resultUpdateData') } 
-                    visible={ isModalImportVisible } 
+                    visible={ isModalImportSuccessVisible } 
                     footer={[
                         <Button 
                             key="ok"
                             type="primary"
-                            onClick={() => setIsModalImportVisible(false)}>
+                            onClick={() => setIsModalImportSuccessVisible(false)}>
                             { t('sentencePage.ok') }
                         </Button>
                     ]}>
