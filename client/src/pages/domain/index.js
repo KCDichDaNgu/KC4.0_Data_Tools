@@ -17,7 +17,7 @@ import {
 import { WarningOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../layout/site-layout';
-import domainAPI from '../../api/domain';
+import domainAPI from '../../api/admin/domain';
 
 import { useTranslation } from 'react-i18next';
 
@@ -120,7 +120,7 @@ const DomainsPage = (props) => {
             page: result.data.page,
             perPage: result.data.perPage,
         });
-
+        
         setPagination({
             pagination__page: result.data.page,
             pagination__perPage: result.data.perPage,

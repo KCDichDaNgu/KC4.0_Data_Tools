@@ -1,4 +1,4 @@
-import { customAxios } from '../utils/customAxios';
+import { customAxios } from '../../utils/customAxios';
 import qs from 'querystring';
 
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
@@ -8,7 +8,7 @@ export default {
     create: (data) =>
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/domain/`,
+            url: `${server_endpoint}/api/admin/domain/`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export default {
     update: (data) =>
         customAxios({
             method: 'put',
-            url: `${server_endpoint}/api/domain/${data.id}`,
+            url: `${server_endpoint}/api/admin/domain/${data.id}`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
@@ -32,20 +32,20 @@ export default {
     delete: (id) =>
         customAxios({
             method: 'delete',
-            url: `${server_endpoint}/api/domain/${id}`,
+            url: `${server_endpoint}/api/admin/domain/${id}`,
         }).then(res => {
             return res.data;
         }),
 
-    search: (data) =>
+    search: (data) => 
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/domain/search`,
+            url: `${server_endpoint}/api/admin/domain/search`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
             },
         }).then(res => {
             return res.data;
-        }),
+        })
 };
