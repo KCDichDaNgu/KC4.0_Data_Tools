@@ -253,16 +253,16 @@ def setup_app(app):
     # migrate = Migrate(app, db)
 
     from api.auth.views import auth_bp
-    from api.domain.views import domain_bp
     from api.para_sentence.views import para_sentence_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
-    app.register_blueprint(domain_bp, url_prefix='/api/domain')
     app.register_blueprint(para_sentence_bp, url_prefix='/api/para_sentence') 
 
 
     from api.admin.user.views import admin_manage_user_bp
+    from api.admin.domain.views import admin_manage_domain_bp
     
+    app.register_blueprint(admin_manage_domain_bp, url_prefix='/api/admin/domain') 
     app.register_blueprint(admin_manage_user_bp, url_prefix='/api/admin/manage-user') 
 
 def has_no_empty_params(rule):

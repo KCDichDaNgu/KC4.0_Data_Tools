@@ -4,6 +4,7 @@ from database.db import db
 
 from database.models.user import User
 from database.models.para_document import ParaDocument
+from database.models.data_field import DataField
 
 RATING_TYPES = {
     'good': 'good',
@@ -59,6 +60,8 @@ class ParaSentence(db.Document):
 
     para_document_id = db.ReferenceField(ParaDocument)
     last_history_record_id = db.ReferenceField('ParaSentenceHistory')
+
+    data_field_id = db.ReferenceField(DataField)
     
     created_at = db.IntField(default=int(time.time()), required=True)
     updated_at = db.IntField(default=int(time.time()), required=True)

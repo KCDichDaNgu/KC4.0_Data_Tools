@@ -11,9 +11,9 @@ from oauth2 import authorization, require_oauth, status_required
 
 from bson import ObjectId
 
-domain_bp = Blueprint(__name__, 'domain')    
+admin_manage_domain_bp = Blueprint(__name__, 'domain')    
 
-@domain_bp.route('/', methods=['POST'])
+@admin_manage_domain_bp.route('/', methods=['POST'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
 def create():
@@ -34,7 +34,7 @@ def create():
     )
 
 
-@domain_bp.route('/<id>', methods=['DELETE'])
+@admin_manage_domain_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
 def delete(id):
@@ -48,7 +48,7 @@ def delete(id):
     )
 
 
-@domain_bp.route('/<id>', methods=['PUT'])
+@admin_manage_domain_bp.route('/<id>', methods=['PUT'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
 def update(id):
@@ -65,7 +65,7 @@ def update(id):
         message='success'
     )
 
-@domain_bp.route('/search', methods=['POST'])
+@admin_manage_domain_bp.route('/search', methods=['POST'])
 @status_required(User.USER_STATUS['active'])
 def search():
     
@@ -75,7 +75,7 @@ def search():
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)
         )
-    
+    print(result)
     return jsonify(
         code=STATUS_CODES['success'],
         data={
