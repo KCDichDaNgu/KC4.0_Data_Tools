@@ -82,7 +82,7 @@ const LoginForm = (props) => {
                                 className="Form-control"
                                 id="username"
                                 name="username"
-                                placeholder={ t('login.usernameHint') }
+                                placeholder={ t('loginPage.usernameHint') }
                                 value={ data.username }
                                 onChange={ handleChange }
                                 invalid={ !!errors.username }
@@ -98,7 +98,7 @@ const LoginForm = (props) => {
                                 className="Form-control"
                                 id="password"
                                 name="password"
-                                placeholder={ t('login.passwordHint') }
+                                placeholder={ t('loginPage.passwordHint') }
                                 value={ data.password }
                                 onChange={ handleChange }
                                 invalid={ !!errors.password }
@@ -139,7 +139,7 @@ const LoginForm = (props) => {
                                 type="submit"
                                 className="btn btn-primary btn-lg" 
                                 style={{ fontWeight: 600 }}>
-                                { t('login.title') }
+                                { t('loginPage.title') }
                             </button>
                         </div>
                     </div>

@@ -2,10 +2,12 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import LoginPage from './pages/login';
 import HomePage from './pages/home';
-import DomainsPage from './pages/domain';
+
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
 import ManageUserPage from './pages/admin/manage-user';
+import DomainPage from './pages/admin/domain';
+import DataFieldPage from './pages/admin/data-field';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -74,7 +76,14 @@ const App = ({ location, initialReduxState }) => {
                                     location={ location } 
                                     exact 
                                     path="/domain" 
-                                    component={ DomainsPage } 
+                                    component={ DomainPage } 
+                                />
+
+                                <AdminRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/data-field" 
+                                    component={ DataFieldPage } 
                                 />
 
                                 <AdminRoute 

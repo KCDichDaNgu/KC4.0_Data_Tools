@@ -261,7 +261,9 @@ def setup_app(app):
 
     from api.admin.user.views import admin_manage_user_bp
     from api.admin.domain.views import admin_manage_domain_bp
+    from api.admin.data_field.views import admin_manage_data_field_bp
     
+    app.register_blueprint(admin_manage_data_field_bp, url_prefix='/api/admin/data-field') 
     app.register_blueprint(admin_manage_domain_bp, url_prefix='/api/admin/domain') 
     app.register_blueprint(admin_manage_user_bp, url_prefix='/api/admin/manage-user') 
 

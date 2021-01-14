@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 
-import Nav from '../nav/VerticalNavWrapper';
+import Nav from '../nav/vertical-nav-wrapper';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import PerfectScrollbar from 'react-perfect-scrollbar';
