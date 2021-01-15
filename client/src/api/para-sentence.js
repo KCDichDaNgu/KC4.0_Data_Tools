@@ -57,35 +57,21 @@ export default {
             data: params
         }),
 
-	revokeToken: (token) =>
-		axios({
-			method: "post",
-			url: `${server_endpoint}/api/oauth/revoke`,
-			data: `token=${token}`,
-			headers: {
-				Authorization: `Basic ${toUnicode(toBase64("12345678:12345678"))}`,
-			},
-		}).then((res) => {
-			return res.data;
-		}),
-
-	importFromFileUrl: () => {
-		return `${server_endpoint}/api/${module_api}/import_from_file`
-	},
-
-	importFromFile: (onProgress, onSuccess, onError, file) => {
+	importFromFile: (data) => {
 		const formData = new FormData();
-		formData.append('file', file);
-
+		console.log(data.file)
+		formData.append('file', data.file);
+		// formData.append('dataFieldId', data.dataFieldId);
+		// formData.append('lang1', data.lang1);
+		// formData.append('lang2', data.lang2);
+		console.log(formData)
 		return customAxios({
             method: 'post',
 			url: `${server_endpoint}/api/${module_api}/import-from-file`,
 			data: formData,
             headers: {
 				'content-type': 'multipart/form-data'
-			},
-			onUploadProgress: onProgress,
-        }).then(res => onSuccess(res)).catch(res => onError(res));
-	},
-        
+			}
+        })
+	}, 
 };

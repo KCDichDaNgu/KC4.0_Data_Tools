@@ -18,7 +18,16 @@ IDX2ROLE = {
     2: 'reviewer'
 }
 
-def import_parasentences_from_file(text_file, creator_id):
+def import_parasentences_from_file(data):
+
+    text_file = data['filepath']
+    creator_id = data['creator_id']
+
+    lang1 = data['lang1']
+    lang2 = data['lang2']
+
+    dataFieldId = data['dataFieldId']
+
     count = 0
     n_rows = 0
     n_error_hash_exists = 0
@@ -30,10 +39,10 @@ def import_parasentences_from_file(text_file, creator_id):
 
     for line in lines:
         elms = line.strip('\n').split('\t')
+
         if len(elms) != 3: continue
+
         score, text1, text2 = elms
-        lang1 = 'vi'
-        lang2 = 'khm'
 
         try:
             hash = hash_para_sentence(text1, text2, lang1, lang2)
@@ -62,7 +71,9 @@ def import_parasentences_from_file(text_file, creator_id):
                     hash_content=hash
                 ),
                 score={"senAlign": score},
-                creator_id=creator_id)
+                creator_id=creator_id,
+                data_field_id=dataFieldId
+            )
 
             para_sentence.save()
 

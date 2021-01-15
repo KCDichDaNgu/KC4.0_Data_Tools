@@ -27,6 +27,8 @@ import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 
+import ImportFileModal from './import-file-modal';
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -51,10 +53,8 @@ const SentencePage = (props) => {
         page: ""
     });
 
-    const [uploadingFile, setUploadingFile] = useState(false);
-    const [isModalImportSuccessVisible, setIsModalImportSuccessVisible] = useState(false);
+    
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
-    const [importStatus, setImportStatus] = useState({});
 
     const renderText = (key, paraSentence, index) => {
 
@@ -205,42 +205,6 @@ const SentencePage = (props) => {
         })
     );
 
-    const uploadFile = {
-        name: 'file',
-        customRequest: ({onProgress, onSuccess, onError, file}) => {
-            paraSentenceAPI.importFromFile(onProgress, onSuccess, onError, file)
-        },
-        showUploadList: false,
-        headers: {
-            authorization: 'authorization-text',
-        },
-        onChange(info) {
-
-            if (info.file.status !== 'uploading') setUploadingFile(true);
-
-            if (info.file.status === 'done') {
-                setUploadingFile(false);
-
-                // let nSuccess = info.file.response.data.n_success;
-                // let nData = info.file.response.data.n_data;
-
-                setImportStatus(info.file.response.data.data);
-                setIsModalImportSuccessVisible(true);
-                // message.success(`${t('sentencePage.imported')} ${nSuccess}/${nData} ${t('sentencePage.pairParaSentences')}`);
-                
-                // reload new results
-                paraSentenceAPI.getSentences(filter).then((res) => {
-                    setDataSource(res.data.data.para_sentences);
-                    setPaginationParams(res.data.data.pagination);
-                });
-            } else if (info.file.status === 'error') {
-                setUploadingFile(false);
-
-                message.error(`${info.file.name} ${t('sentencePage.uploadFailed')}`);
-            }
-        },
-    };
-
     useEffect(() => {
         paraSentenceAPI.getSentences(filter).then((res) => {
             setDataSource(res.data.data.para_sentences);
@@ -324,21 +288,16 @@ const SentencePage = (props) => {
         <React.Fragment>
             <SiteLayout>
                 <PageTitle
-                    heading={t('sentencePage.title')}
+                    heading={ t('sentencePage.title') }
                     icon="pe-7s-home icon-gradient bg-happy-itmeo"
                     customComponent={
                         (
                             <div>
-                                {
-                                    uploadingFile ? (
-                                        <Spin />
-                                    ) : ''
-                                }
-                                <Upload {...uploadFile}>
-                                    <Button icon={<UploadOutlined />}>
-                                        {t('sentencePage.uploadFile')}
-                                    </Button>
-                                </Upload>
+                                <Button 
+                                    onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                    icon={ <UploadOutlined /> }>
+                                    { t('sentencePage.uploadFile') }
+                                </Button>
                             </div>
                         )
                     }
@@ -418,7 +377,7 @@ const SentencePage = (props) => {
                                 defaultValue={ filter.rating }
                                 onChange={ value => handleChange(value, "rating") }
                             >
-                                {ratingOption}
+                                { ratingOption }
                             </Select>
                         </Col>
 
@@ -549,38 +508,13 @@ const SentencePage = (props) => {
                     </Table>
                 </Card>
 
-                <Modal 
-                    title={ t('sentencePage.resultUpdateData') } 
-                    visible={ isModalImportVisible } 
-                    footer={[
-                        <Button 
-                            key="ok"
-                            type="primary"
-                            onClick={() => setIsModalImportVisible(false)}>
-                            { t('sentencePage.ok') }
-                        </Button>
-                    ]}>
-                    
-                </Modal>
-
-                <Modal 
-                    title={ t('sentencePage.resultUpdateData') } 
-                    visible={ isModalImportSuccessVisible } 
-                    footer={[
-                        <Button 
-                            key="ok"
-                            type="primary"
-                            onClick={() => setIsModalImportSuccessVisible(false)}>
-                            { t('sentencePage.ok') }
-                        </Button>
-                    ]}>
-                    <p>
-                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
-                    </p>
-                    <p>
-                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
-                    </p>
-                </Modal>
+                <ImportFileModal 
+                    isModalImportVisible={ isModalImportVisible }
+                    setIsModalImportVisible={ setIsModalImportVisible }
+                    reloadSentenceData={ setDataSource }
+                    reloadSentencePaginationParams={ setPaginationParams }
+                    currentFilter={ filter }>
+                </ImportFileModal>
             </SiteLayout>
         </React.Fragment>
     );

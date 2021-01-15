@@ -16,6 +16,17 @@ export const USER_ROLES = {
     reviewer: 'reviewer'
 }
 
+export const LANGS = [
+    {
+        value: 'vi',
+        label: 'vi'
+    },
+    {
+        value: 'khm',
+        label: 'khm'
+    }
+]
+
 export const defaultThemeOption = {
     backgroundColor: 'bg-royal sidebar-text-light',
     headerBackgroundColor: 'bg-strong-bliss header-text-light',

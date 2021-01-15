@@ -189,8 +189,13 @@ def import_from_file():
     """
     Create new ParaSentences from files
     """
+
+    print(request.form.to_dict())
+    
     file = request.files['file']
+    
     file_content = file.read()
+
     user = current_token.user
 
     if not os.path.isdir(IMPORT_FROM_FILE_DIR):
@@ -201,7 +206,13 @@ def import_from_file():
     with open(filepath, 'wb') as fp: # save uploaded file
         fp.write(file_content)
 
-    status = import_parasentences_from_file(filepath, user.id)
+    status = import_parasentences_from_file(**{
+        'filepath': filepath,
+        'creator_id': user.id,
+        'lang1': request.form['lang1'],
+        'lang2': request.form['lang2'],
+        'dataFieldId': request.form['dataFieldId']
+    })
     
     return jsonify(
         code=STATUS_CODES['success'],
