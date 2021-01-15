@@ -8,6 +8,7 @@ import SentencePage from './pages/sentence';
 import ManageUserPage from './pages/admin/manage-user';
 import DomainPage from './pages/admin/domain';
 import DataFieldPage from './pages/admin/data-field';
+import ManageBackupPage from './pages/admin/manage-backup';
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -91,6 +92,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/manage-user" 
                                     component={ ManageUserPage } 
+                                />
+
+                                <AdminRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/manage-backup" 
+                                    component={ ManageBackupPage } 
                                 />
 
                                 <AuthRoute 

@@ -30,6 +30,9 @@ from decouple import config
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_cors import CORS
+from apscheduler.schedulers.background import BackgroundScheduler
+from database.models.backup import create_backup
+from constants.common import BACKUP_SCHEDULE_HOURS
 
 # import entrypoints
 
@@ -262,10 +265,16 @@ def setup_app(app):
     from api.admin.user.views import admin_manage_user_bp
     from api.admin.domain.views import admin_manage_domain_bp
     from api.admin.data_field.views import admin_manage_data_field_bp
+    from api.admin.backup.views import admin_manage_backup_bp
     
     app.register_blueprint(admin_manage_data_field_bp, url_prefix='/api/admin/data-field') 
     app.register_blueprint(admin_manage_domain_bp, url_prefix='/api/admin/domain') 
     app.register_blueprint(admin_manage_user_bp, url_prefix='/api/admin/manage-user') 
+    app.register_blueprint(admin_manage_backup_bp, url_prefix='/api/admin/manage-backup') 
+
+    public_bp = Blueprint('public', 'public', static_folder='public', 
+        static_url_path='public')
+    app.register_blueprint(public_bp, url_prefix='')
 
 def has_no_empty_params(rule):
 
@@ -284,6 +293,11 @@ def site_map(app):
         links.append((rule.endpoint, rule.methods))
 
     return links
+
+# cronjob backup databases
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(create_backup, 'interval', hours=BACKUP_SCHEDULE_HOURS)
+sched.start()
 
 app = create_app()
 

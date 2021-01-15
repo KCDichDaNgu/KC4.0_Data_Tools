@@ -47,6 +47,11 @@ const Nav = () => {
                             to: '/manage-user',
                         },
                         {
+                            icon: 'pe-7s-server',
+                            label: t('backupDatabase.title'),
+                            to: '/manage-backup',
+                        },
+                        {
                             icon: 'pe-7s-global',
                             label: t('domainPage.title'),
                             to: 'domain',
