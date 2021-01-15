@@ -53,6 +53,7 @@ const SentencePage = (props) => {
 
     const [uploadingFile, setUploadingFile] = useState(false);
     const [isModalImportSuccessVisible, setIsModalImportSuccessVisible] = useState(false);
+    const [isModalImportVisible, setIsModalImportVisible] = useState(false);
     const [importStatus, setImportStatus] = useState({});
 
     const renderText = (key, paraSentence, index) => {
@@ -62,6 +63,7 @@ const SentencePage = (props) => {
 
         return (
             <TextArea
+                style={{ border: 'none' }}
                 key={ paraSentence['id'] }
                 autoSize
                 showCount
@@ -546,6 +548,20 @@ const SentencePage = (props) => {
                         }}>
                     </Table>
                 </Card>
+
+                <Modal 
+                    title={ t('sentencePage.resultUpdateData') } 
+                    visible={ isModalImportVisible } 
+                    footer={[
+                        <Button 
+                            key="ok"
+                            type="primary"
+                            onClick={() => setIsModalImportVisible(false)}>
+                            { t('sentencePage.ok') }
+                        </Button>
+                    ]}>
+                    
+                </Modal>
 
                 <Modal 
                     title={ t('sentencePage.resultUpdateData') } 
