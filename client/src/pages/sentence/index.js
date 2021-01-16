@@ -121,7 +121,7 @@ const SentencePage = (props) => {
                         } else {
                             return (
                                 <Radio.Button key={ rating } value={ rating }>
-                                    { t(`sentence.${rating}`) }
+                                    { t(`sentencePage.${rating}`) }
                                 </Radio.Button>
                             );
                         }
@@ -237,7 +237,7 @@ const SentencePage = (props) => {
         <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
         ratingList.map((rating) => {
-            return <Option key={rating}>{t(`sentence.${rating}`)}</Option>;
+            return <Option key={rating}>{t(`sentencePage.${rating}`)}</Option>;
         })
     );
 
@@ -330,7 +330,7 @@ const SentencePage = (props) => {
                     setPaginationParams(res.data.data.pagination);
                 });
             } else {
-                message.error(t(`sentence.${res.data.message}`));
+                message.error(t(`sentencePage.${res.data.message}`));
             }
         });
     }
