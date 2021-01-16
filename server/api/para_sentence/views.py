@@ -205,8 +205,8 @@ def import_from_file():
     
     with open(filepath, 'wb') as fp: # save uploaded file
         fp.write(file_content)
-
-    status = import_parasentences_from_file(**{
+        
+    status = import_parasentences_from_file({
         'filepath': filepath,
         'creator_id': user.id,
         'lang1': request.form['lang1'],

@@ -59,12 +59,12 @@ export default {
 
 	importFromFile: (data) => {
 		const formData = new FormData();
-		console.log(data.file)
+		
 		formData.append('file', data.file);
-		// formData.append('dataFieldId', data.dataFieldId);
-		// formData.append('lang1', data.lang1);
-		// formData.append('lang2', data.lang2);
-		console.log(formData)
+		formData.append('dataFieldId', data.dataFieldId);
+		formData.append('lang1', data.lang1);
+		formData.append('lang2', data.lang2);
+		
 		return customAxios({
             method: 'post',
 			url: `${server_endpoint}/api/${module_api}/import-from-file`,

@@ -118,31 +118,38 @@ const ImportFileModal = (props) => {
         })
     };
 
+    const [files, setFiles] = useState([])
+
     useEffect(() => {
         searchDataField();
     }, [ dataFieldPagination.pagination__page, dataFieldPagination.pagination__perPage ]);
 
     const submitImportFile = async () => {
 
-        setUploadingFile(true);
-
         try {
             await form.validateFields();
 
             let _formData = form.getFieldsValue();
             
-            for (const f of _formData.fileList.fileList) {
+            if (files.length == 0) {
+                message.error(t('formMessages.errors.filesFieldCannotBeEmpty'))
+                return;
+            }
+
+            setUploadingFile(true);
+
+            for (const f of files) {
                 
                 try {
                     let result = await paraSentenceAPI.importFromFile({
                         dataFieldId: _formData.dataFieldId,
                         lang1: _formData.lang1,
                         lang2: _formData.lang2,
-                        file: f
+                        file: f.originFileObj
                     })
-
-                    if (result.code == STATUS_CODES.success) {
-                        createImportSuccessModal('', result.data)
+                    
+                    if (result.data.code == STATUS_CODES.success) {
+                        createImportSuccessModal('', result.data.data)
                     }
                 } catch(err) {
                     createImportErrorModal(
@@ -275,25 +282,20 @@ const ImportFileModal = (props) => {
                         </Row>
 
 
-                        <Form.Item
-                            name='fileList'
-                            rules={ rules.fileList }>
+                        <Form.Item>
                             <Upload
-                                // beforeUpload={ file => {
-
-                                //     // form.setFieldsValue({ fileList: [...form.getFieldsValue()['fileList'], file] })
-
-                                //     return false;
-                                // }}
-                                onChange={ () => {
-                                    
+                                beforeUpload={ file => {
+                                    return false;
                                 }}
                                 // fileList={ form.getFieldValue('fileList') }
                                 name='file'
                                 headers={{
                                     authorization: 'authorization-text',
                                 }}
-                                showUploadList={ true }>
+                                showUploadList={ true }
+                                onChange={ ({ fileList }) => {
+                                    setFiles(fileList);
+                                }}>
                                 <Button icon={ <UploadOutlined /> }>
                                     { t('chooseFile') }
                                 </Button>

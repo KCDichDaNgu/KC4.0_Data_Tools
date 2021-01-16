@@ -128,7 +128,8 @@
 	"changeInput": "Chỉnh sửa thông tin",
 	"formMessages": {
 		"errors": {
-			"fieldRequired": "Trường dữ liệu này là bắt buộc"
+			"fieldRequired": "Trường dữ liệu này là bắt buộc",
+			"filesFieldCannotBeEmpty": "Danh sách tệp không được bỏ trống"
 		}
 	},
 	"create": "Tạo",
