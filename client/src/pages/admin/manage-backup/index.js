@@ -9,17 +9,16 @@ import {
     message,
     Card,
     Anchor,
-    Spin
+    Spin,
+    Modal,
 } from "antd";
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../../layout/site-layout';
 import backupAPI from '../../../api/admin/backup';
 import { formatDateTime } from '../../../utils/date';
 import { useTranslation } from 'react-i18next';
 import { relativeTimeRounding, localeData } from 'moment';
-
-const { Link } = Anchor;
 
 const ManageBackUpPage = (props) => {
     
@@ -72,11 +71,67 @@ const ManageBackUpPage = (props) => {
         });
     }
 
+    const openModelConfirmDelete = (backup) => {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <>
+                    <p>
+                        {t('backupDatabase.confirmDeleteContent')}
+                    </p>
+                    <p>
+                        {backup.name} - {t('backupDatabase.createdAt')} {formatDateTime(backup.created_at)}
+                    </p>
+                </>
+            ),
+            onOk() {
+                deleteBackup(backup);
+            },
+            // onCancel() {},
+        });
+    }
+
+    const deleteBackup = (backup) => {
+        backupAPI.delete(backup['id']).then(res => {
+            if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                message.success(t('backupDatabase.deletedSuccess'));
+                searchBackups();
+            } else {
+                message.error(t('backupDatabase.deletedFailure'));
+            }
+        })
+    }
+
+    const updateBackup = (backup, key, value) => {
+        let updateData = {};
+        updateData[key] = value;
+
+        backupAPI.update(backup['id'], updateData).then(res => {
+            if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                message.success(t('backupDatabase.editedSuccess'));
+            } else {
+                message.error(t(`backupDatabase.${res.data.message}`));
+            }
+        });
+    }
+
     const columns = [
         {
             title: t('backupDatabase.name'),
             dataIndex: "name",
-            key: "name"
+            key: "name",
+            render: (name, backup) => (
+                backup['type'] == 'by_user' ? 
+                    <Input
+                        key={ backup['id'] }
+                        className='domain-input'
+                        defaultValue={ name }
+                        onPressEnter={ event => {
+                            event.preventDefault();
+                            updateBackup(backup, "name", event.target.value);
+                        }}
+                    /> : name
+            )
         },
         {
             title: t('backupDatabase.createdAt'),
@@ -113,6 +168,21 @@ const ManageBackUpPage = (props) => {
                         { t('backupDatabase.download') }
                     </Button>
                 </a>
+            )
+        },
+        {
+            title: t('backupDatabase.delete'),
+            dataIndex: "delete",
+            key: "delete",
+            render: (row_value, backup) => (
+                <Button 
+                    type="link" 
+                    icon={<DeleteOutlined />} 
+                    size='small'
+                    onClick={() => openModelConfirmDelete(backup)}
+                    block>
+                </Button>
+                
             )
         },
     ];

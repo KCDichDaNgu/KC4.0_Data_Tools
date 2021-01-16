@@ -99,6 +99,14 @@
 		"by_server": "Automatic",
 		"download": "Download",
 		"url": "URL",
-		"machine": "Machine"
+		"machine": "Machine",
+		"delete": "Delete",
+		"confirmDeleteContent": "Are you sure to delete this backup?",
+		"deletedSuccess": "Deleted backup successfully",
+		"deletedFailure": "Deleted backup fail",
+		"notFound": "Not found record in the database",
+		"editedSuccess": "Edited successfully",
+		"errorUpdate": "Edited failure",
+		"notAllowed": "Can not edit this record"
 	}
 }
