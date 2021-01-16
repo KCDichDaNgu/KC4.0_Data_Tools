@@ -25,6 +25,25 @@ export default {
             },
         }),
 
+    delete: (backupId) => 
+        customAxios({
+            method: 'delete',
+            url: `${server_endpoint}/api/admin/manage-backup/${backupId}`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }),
+
+    update: (backupId, data) => 
+        customAxios({
+            method: 'put',
+            url: `${server_endpoint}/api/admin/manage-backup/${backupId}`,
+            data: data,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }),
+
     downloadBackupURL: (type, hash_name) => 
         `${server_endpoint}/public/backups/${type}/${hash_name}`,
 };

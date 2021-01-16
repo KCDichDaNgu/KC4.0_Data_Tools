@@ -74,4 +74,12 @@ export default {
 			}
         })
 	}, 
+
+	exportFile: (data) => 
+		customAxios({
+			method: 'get',
+			url: `${server_endpoint}/api/${module_api}/export`,
+			params: data,
+			responseType: 'blob'
+		}),
 };

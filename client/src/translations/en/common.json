@@ -53,7 +53,7 @@
 		"usernameHint": "Username here...",
 		"passwordHint": "Password here..."
 	},
-	"sentence": {
+	"sentencePage": {
 		"all": "All",
 		"title": "Sentence",
 		"searchBox": "Search text...",
@@ -83,7 +83,14 @@
 		"duplicatedRecords": "duplicated records which will not be added",
 		"resultUpdateData": "Import file notification",
 		"ok": "OK",
-		"updatedByHigherRole": "This record has been editted by admin"
+		"updatedByHigherRole": "This record has been editted by admin",
+		"exportTab": {
+			"title": "Export data"
+		},
+		"reviewTab": {
+			"title": "Sentence"
+		},
+		"exportFailure": "Export file error"
 	},
 	"backupDatabase": {
 		"title": "Backups management",
@@ -99,6 +106,14 @@
 		"by_server": "Automatic",
 		"download": "Download",
 		"url": "URL",
-		"machine": "Machine"
+		"machine": "Machine",
+		"delete": "Delete",
+		"confirmDeleteContent": "Are you sure to delete this backup?",
+		"deletedSuccess": "Deleted backup successfully",
+		"deletedFailure": "Deleted backup fail",
+		"notFound": "Not found record in the database",
+		"editedSuccess": "Edited successfully",
+		"errorUpdate": "Edited failure",
+		"notAllowed": "Can not edit this record"
 	}
 }

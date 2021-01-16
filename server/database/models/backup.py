@@ -8,17 +8,47 @@ from constants.common import STATUS_CODES, BACKUP_USER_DIR, BACKUP_SERVER_DIR
 import subprocess
 import os
 
-from mongoengine.signals import pre_save, post_save
+from mongoengine.signals import pre_save, post_save, post_delete
 
 def create_backup(name='auto-backup', user_id=None, type='by_server'):
-    backup = Backup(
-        name=name,
-        type=Backup.BACKUP_TYPES[type],
-        creator_id=user_id,
-        hash_name=str(time.time()),
-        created_at=time.time()
-    )
-    backup.save()
+    created_at = time.time()
+
+    if type == Backup.BACKUP_TYPES['by_server']:
+        backup = Backup(
+            name=name,
+            type=Backup.BACKUP_TYPES['by_server'],
+            hash_name=str(created_at),
+            created_at=created_at
+        )
+        backup.save()
+
+        # find old backups and delete
+        # make sure new backup was created
+        backup_path = f"{BACKUP_SERVER_DIR}/{backup.hash_name}"
+        if not backup_path.endswith(".gz"):
+            backup_path = backup_path + ".gz"
+
+        if os.path.isfile(backup_path):
+            old_backups = Backup.objects.filter(__raw__={
+                'type': Backup.BACKUP_TYPES['by_server'],
+                'created_at': {
+                    '$lt': created_at
+                }
+            })
+            old_backups.delete()
+        else:
+            print('file not created!!!')
+    else:
+        
+        backup = Backup(
+            name=name,
+            type=Backup.BACKUP_TYPES[type],
+            creator_id=user_id,
+            hash_name=str(created_at),
+            created_at=created_at
+        )
+        backup.save()
+
     return backup
 
 class Backup(db.Document):
@@ -36,6 +66,7 @@ class Backup(db.Document):
     created_at = db.FloatField(default=time.time(), required=True)
 
     before_save = Signal()
+    after_delete = Signal()
 
     @property
     def serialize(self):
@@ -54,7 +85,8 @@ class Backup(db.Document):
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
-        document.hash_name = f"{document.hash_name}.gz" # add extension
+        if not document.hash_name.endswith(".gz"):
+            document.hash_name = f"{document.hash_name}.gz" # add extension
 
         if document.creator_id is None:
             backup_dir = BACKUP_SERVER_DIR
@@ -77,4 +109,18 @@ class Backup(db.Document):
 
         cls.before_save.send(document)
 
+    @classmethod
+    def post_delete(cls, sender, document, **kwargs):
+        if document.creator_id is None:
+            backup_dir = BACKUP_SERVER_DIR
+        else:
+            backup_dir = BACKUP_USER_DIR
+
+        backup_path = f"{backup_dir}/{document.hash_name}"
+
+        os.remove(backup_path)
+
+        cls.after_delete.send(document)
+
 pre_save.connect(Backup.pre_save, sender=Backup)
+post_delete.connect(Backup.post_delete, sender=Backup)

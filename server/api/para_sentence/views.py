@@ -1,8 +1,8 @@
 import time
 from flask import Blueprint, request, session
-from flask import jsonify
+from flask import jsonify, send_file
 from authlib.integrations.flask_oauth2 import current_token
-from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR
+from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR, EXPORT_FILE_DIR
 from oauth2 import authorization, require_oauth, status_required
 
 from database.models.para_sentence import ParaSentence, Editor, NewestParaSentence, ParaSentenceText
@@ -286,3 +286,37 @@ def update(_id):
             'code': STATUS_CODES['failure'], 
             'message': 'errorUpdate'
         })
+
+@para_sentence_bp.route('/export', methods=['GET'])
+@require_oauth()
+@status_required(User.USER_STATUS['active'])
+def export():
+    current_user = current_token.user
+    if not User.USER_ROLES['admin'] in current_user.roles:
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='notAllow'
+        )
+    
+    args = request.args
+    query = build_query_params(args)
+
+    para_sentences = ParaSentence.objects.filter(__raw__=query)
+
+    # sort
+    if 'sort_by' in args:
+        sort_by = args['sort_by']
+        sort_mark = ''
+        
+        if args['sort_order'] == 'descend':
+            sort_mark = '-'
+            
+        para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')
+
+    if not os.path.isdir(EXPORT_FILE_DIR):
+        os.makedirs(EXPORT_FILE_DIR)
+    filepath = f"{EXPORT_FILE_DIR}/{time.time()}.csv"
+
+    export_csv_file(para_sentences, filepath)
+
+    return send_file(filepath)

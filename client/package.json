@@ -20,6 +20,7 @@
     "font-awesome": "4.7.0",
     "i18next": "19.8.4",
     "jquery": "3.5.1",
+    "js-file-download": "0.4.12",
     "jw-react-pagination": "1.1.0",
     "moment": "2.29.1",
     "numeral": "2.0.6",

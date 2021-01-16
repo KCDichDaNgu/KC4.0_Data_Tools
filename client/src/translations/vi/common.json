@@ -97,7 +97,14 @@
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa",
 		"uploadFileModal": {
 			"title": "Tải lên dữ liệu"
-		}
+		},
+		"exportTab": {
+			"title": "Xuất dữ liệu"
+		},
+		"reviewTab": {
+			"title": "Cặp câu"
+		},
+		"exportFailure": "Xuất file lỗi"
 	},
 	"manageUserPage": {
 		"title": "Quản lý người dùng",
@@ -166,7 +173,15 @@
 		"by_server": "Tự động",
 		"download": "Tải về",
 		"url": "Đường dẫn",
-		"machine": "Máy"
+		"machine": "Máy",
+		"delete": "Xóa",
+		"confirmDeleteContent": "Bạn có chắc chắn muốn xóa bản sao lưu này?",
+		"deletedSuccess": "Xóa sao lưu thành công",
+		"deletedFailure": "Xóa sao lưu thất bại",
+		"notFound": "Không tìm thấy bản ghi dữ liệu",
+		"editedSuccess": "Đã chỉnh sửa thành công",
+		"editedFailure": "Chỉnh sửa thất bại",
+		"notAllowed": "Không thể chỉnh sửa bản ghi này"
 	},
 	"fieldRequired": "Trường dữ liệu này là bắt buộc",
 	"lang": "Ngôn ngữ",

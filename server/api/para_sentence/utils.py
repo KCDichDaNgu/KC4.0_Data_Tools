@@ -4,6 +4,8 @@ import hashlib
 from database.models.para_sentence import ParaSentence, NewestParaSentence, OriginalParaSentence, ParaSentenceText
 from database.models.user import User
 from datetime import timedelta, datetime
+import pandas as pd
+import re
 
 ROLE2IDX = {
     None: 0,
@@ -16,6 +18,12 @@ IDX2ROLE = {
     0: None,
     1: 'member',
     2: 'reviewer'
+}
+
+RATING_KEY2TEXT = {
+    'good': 'Tốt',
+    'notGood': 'Kém',
+    'unRated': 'Chưa đánh giá'
 }
 
 def import_parasentences_from_file(data):
@@ -72,7 +80,8 @@ def import_parasentences_from_file(data):
                 ),
                 score={"senAlign": score},
                 creator_id=creator_id,
-                data_field_id=dataFieldId
+                data_field_id=dataFieldId,
+                created_at=time.time()
             )
 
             para_sentence.save()
@@ -120,3 +129,97 @@ def get_highest_user_role(user_roles):
 
 def is_member_only(user_roles):
     return len(user_roles) == 1 and user_roles[0] == User.USER_ROLES['member']
+
+def build_query_params(args):
+    query = {
+        '$and': []
+    }
+
+    # filter params send by request
+    if 'rating' in args and args['rating'] != 'all':
+        query['$and'].append({
+            'newest_para_sentence.rating': args['rating']
+        })
+        
+    if 'lang1' in args and args['lang1'] != 'all':
+        query['$and'].append({
+            'newest_para_sentence.text1.lang': args['lang1']
+        })
+
+    if 'lang2' in args and args['lang2'] != 'all':
+        query['$and'].append({
+            'newest_para_sentence.text2.lang': args['lang2']
+        })
+
+    # query string contains
+    append_or = False
+
+    if 'text1' in args:
+        pattern = re.compile(f".*{args['text1']}.*", re.IGNORECASE)
+
+        query['$and'].append({
+            '$or': [
+                {
+                    'newest_para_sentence.text1.content': {'$regex': pattern}
+                }
+            ]
+        })
+
+        append_or = True
+
+    if 'text2' in args:
+        pattern = re.compile(f".*{args['text2']}.*", re.IGNORECASE)
+
+        if append_or:
+            query['$and'][-1]['$or'].append(
+                {
+                    'newest_para_sentence.text2.content': {'$regex': pattern}
+                }
+            )
+        else:
+            query['$and'].append({
+                '$or': [
+                    {
+                        'newest_para_sentence.text2.content': {'$regex': pattern}
+                    }
+                ]
+            })
+
+    if len(query['$and']) == 0:
+        del query['$and']
+
+    return query
+
+def export_csv_file(para_sentences, out_path):
+    columns = [
+        'Văn bản 1',
+        'Văn bản 2',
+        'Điểm',
+        'Đánh giá',
+        'Ngôn ngữ 1',
+        'Ngôn ngữ 2',
+        'Cập nhật lần cuối lúc',
+        'Cập nhật lần cuối bởi'
+    ]
+
+    data_list = []
+
+    for para_sentence in para_sentences:
+        para_sentence = para_sentence.serialize
+        data_row = [
+            para_sentence['newest_para_sentence'].text1.content,
+            para_sentence['newest_para_sentence'].text2.content,
+            para_sentence['score']['senAlign'],
+            RATING_KEY2TEXT[para_sentence['newest_para_sentence'].rating],
+            para_sentence['newest_para_sentence'].text1.lang,
+            para_sentence['newest_para_sentence'].text2.lang,
+            datetime.utcfromtimestamp(para_sentence['updated_at']).strftime('%d/%m/%Y %H:%M'),
+            para_sentence['editor']['username']
+        ]
+        data_list.append(data_row)
+
+    df = pd.DataFrame(
+        data_list, 
+        columns=columns)
+
+    df.to_csv(out_path, index=False)
