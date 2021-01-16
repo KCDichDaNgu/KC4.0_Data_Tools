@@ -5,7 +5,8 @@
 	"Homepage": "Trang chủ",
 	"Language": {
 		"en": "Tiếng Anh",
-		"vi": "Tiếng Việt"
+		"vi": "Tiếng Việt",
+		"khm": "Tiếng Khmer"
 	},
 	"Input": {
 		"requiredField": "Trường này bắt buộc phải nhập!"
@@ -79,6 +80,7 @@
 		"uploadFile": "Tải lên",
 		"uploadSuccess": "đã được tải lên thành công",
 		"uploadFailed": "đã xảy ra lỗi khi tải lên",
+		"pleaseCheckYourFile": "Vui lòng kiểm tra tệp của bạn",
 		"imported": "Đã thêm vào",
 		"pairParaSentences": "cặp câu",
 		"editedSuccess": "Đã chỉnh sửa thành công",
@@ -91,7 +93,10 @@
 		"duplicatedRecords": "bản ghi trùng lặp không được thêm vào",
 		"resultUpdateData": "Kết quả cập nhật dữ liệu",
 		"ok": "OK",
-		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa"
+		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa",
+		"uploadFileModal": {
+			"title": "Tải lên dữ liệu"
+		}
 	},
 	"manageUserPage": {
 		"title": "Quản lý người dùng",
@@ -123,7 +128,8 @@
 	"changeInput": "Chỉnh sửa thông tin",
 	"formMessages": {
 		"errors": {
-			"fieldRequired": "Trường dữ liệu này là bắt buộc"
+			"fieldRequired": "Trường dữ liệu này là bắt buộc",
+			"filesFieldCannotBeEmpty": "Danh sách tệp không được bỏ trống"
 		}
 	},
 	"create": "Tạo",
@@ -160,5 +166,11 @@
 		"download": "Tải về",
 		"url": "Đường dẫn",
 		"machine": "Máy"
-	}
+	},
+	"fieldRequired": "Trường dữ liệu này là bắt buộc",
+	"lang": "Ngôn ngữ",
+	"dataField": "Miền dữ liệu",
+	"cancel": "Huỷ",
+	"submit": "Tải lên",
+	"chooseFile": "Chọn tệp"
 }
