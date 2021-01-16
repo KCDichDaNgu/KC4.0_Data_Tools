@@ -97,7 +97,14 @@
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa",
 		"uploadFileModal": {
 			"title": "Tải lên dữ liệu"
-		}
+		},
+		"exportTab": {
+			"title": "Xuất dữ liệu"
+		},
+		"reviewTab": {
+			"title": "Cặp câu"
+		},
+		"exportFailure": "Xuất file lỗi"
 	},
 	"manageUserPage": {
 		"title": "Quản lý người dùng",
