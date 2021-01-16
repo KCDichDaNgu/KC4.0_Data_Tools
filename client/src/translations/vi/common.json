@@ -92,6 +92,7 @@
 		"you": "bạn",
 		"duplicatedRecords": "bản ghi trùng lặp không được thêm vào",
 		"resultUpdateData": "Kết quả cập nhật dữ liệu",
+		"addDataFromFields": "Thêm dữ liệu từ các tệp",
 		"ok": "OK",
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa",
 		"uploadFileModal": {

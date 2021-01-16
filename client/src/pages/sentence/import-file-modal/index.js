@@ -201,7 +201,7 @@ const ImportFileModal = (props) => {
         <React.Fragment>
 
             <Modal 
-                title={ t('sentencePage.resultUpdateData') } 
+                title={ t('sentencePage.addDataFromFields') } 
                 visible={ isModalImportVisible } 
                 onCancel={ () => setIsModalImportVisible(false)}
                 cancelText={ t('cancel') }
