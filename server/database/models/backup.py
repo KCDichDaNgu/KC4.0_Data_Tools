@@ -15,7 +15,8 @@ def create_backup(name='auto-backup', user_id=None, type='by_server'):
         name=name,
         type=Backup.BACKUP_TYPES[type],
         creator_id=user_id,
-        hash_name=str(time.time())
+        hash_name=str(time.time()),
+        created_at=time.time()
     )
     backup.save()
     return backup
