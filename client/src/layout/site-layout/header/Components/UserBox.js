@@ -1,56 +1,52 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Link } from "react-router-dom";
 
-import {
-    DropdownToggle, DropdownMenu,
-    Nav, Button, NavItem, NavLink,
-    UncontrolledTooltip, UncontrolledButtonDropdown
-} from 'reactstrap';
-import { useHistory } from "react-router-dom";
-import { connect } from 'react-redux';
+import { 
+    UncontrolledButtonDropdown, 
+    DropdownToggle,
+    DropdownMenu,
+    Nav,
+    NavItem,
+    NavLink
+} from 'reactstrap'
 
-import {
-    faAngleDown
-} from '@fortawesome/free-solid-svg-icons';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import avatar1 from '../../../../../public/images/avatars/1.jpg';
-
-import * as actions from "../../../../store/user/action";
-import userAPI from '../../../../api/user';
-import { isAuthenticatedUser } from '../../../../utils/auth';
 import { clonedStore } from '../../../../store';
 
-const UserBox = (props) => {
+import { userLogout } from '../../../../store/user/action';
 
-    let [ active, setActive ] = useState(false);
-    let [ user_details, setUserDetails ] = useState({});
+import { asyncDispatch } from '../../../../store';
 
-    let history = useHistory();
+import watch from 'redux-watch';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
+
+import { useMountedState } from 'react-use';
+
+const UserBox = () => {
+    
+    const [userDetail, setUserDetail] = useState(clonedStore.getState().User.profile || {});
+
+    const profileWatcher = watch(clonedStore.getState, 'User.profile');
+
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const isMounted = useMountedState();
 
     useEffect(() => {
 
-        const getCurrentUser = async () => {
-            props.getCurrentUser()
-            
-            let check = setInterval(() => {
-
-                let profile = clonedStore.getState().User.profile
-                
-                if (typeof profile !== 'undefined') {
-                    setUserDetails(profile)
-    
-                    clearInterval(check)
-                }
-
-            }, 100)
-        }
-        
-        if (isAuthenticatedUser()) {
-            getCurrentUser();
-        }
+        clonedStore.subscribe(
+            profileWatcher((newVal, oldVal, objectPath) => {
+                if (isMounted()) setUserDetail(newVal || {})
+            })
+        );
 
     }, []);
+
+    const logout = async () => {
+        await asyncDispatch(dispatch, userLogout());
+
+        history.push('/login')
+    }
 
     return (
         <Fragment>
@@ -64,9 +60,9 @@ const UserBox = (props) => {
                                     className="p-0">
                                         
                                     <img 
-                                        width={42} 
+                                        width={ 42 } 
                                         className="rounded-circle" 
-                                        src={ user_details.profile_picture || avatar1 } alt=""
+                                        src={ userDetail.profile_picture || avatar1 } alt=""
                                     />
                                         
                                     {/* <FontAwesomeIcon 
@@ -97,7 +93,7 @@ const UserBox = (props) => {
                                             My Account
                                         </NavItem>
                                         {/* <NavItem>
-                                            <NavLink href="#" to={`/u/${user_details.username}`}>
+                                            <NavLink href="#" to={`/u/${userDetail.username}`}>
                                                 { t('viewProfile') }
                                             </NavLink>
                                         </NavItem>
@@ -112,9 +108,8 @@ const UserBox = (props) => {
                                             </NavLink>
                                         </NavItem> */}
                                         <NavItem>
-                                            <NavLink href="#" onClick={() => {
-                                                props.logout();
-                                                history.push('/login')
+                                            <NavLink href="#" onClick={async () => { 
+                                                await logout()
                                             }}>
                                                 Signout
                                             </NavLink>
@@ -129,7 +124,7 @@ const UserBox = (props) => {
                                 <div 
                                     className="widget-heading"
                                     style={{ textDecoration: "none", color: 'white' }}>
-                                    { user_details.username }
+                                    { userDetail.username }
                                 </div>
                             </div>
                             {/* <div className="widget-subheading">
@@ -143,16 +138,4 @@ const UserBox = (props) => {
     )
 }
 
-function mapDispatch(dispatch) {
-    return {
-        userLogin: (credentials) => dispatch(userLogin(credentials))
-    }
-}
-
-export default connect(
-    null, 
-    (dispatch) => ({ 
-        logout: () => dispatch(actions.userLogout()), 
-        getCurrentUser: () => dispatch(actions.getCurrentUser())  
-    })
-)(UserBox);
+export default UserBox;

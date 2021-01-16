@@ -56,6 +56,13 @@ const initializeStore = (preloadedState) => {
     return _store;
 }
 
+const asyncDispatch = (dispatch, callback) => {
+    return new Promise((resolve, reject) => {
+        dispatch(callback);
+        resolve();
+    })  
+} 
+
 const useStore = (initialState) => {
     const store = useMemo(() => initializeStore(initialState), [initialState])
 
@@ -72,5 +79,6 @@ export {
     initializeStore,
     useStore,
     cloneStore,
-    clonedStore
+    clonedStore,
+    asyncDispatch
 }

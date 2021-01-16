@@ -1,37 +1,58 @@
 import React, { useEffect } from "react";
 
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 
 import LoginForm from "./form";
 
-import { userLogin } from "../../store/user/action";
+import { userLogin, getCurrentUser } from "../../store/user/action";
 import { Row } from 'reactstrap';
 import { useHistory } from "react-router-dom";
 import { isAuthenticatedUser, isAdmin } from '../../utils/auth';
 
 import { useTranslation } from 'react-i18next';
 
+import { asyncDispatch, clonedStore } from '../../store';
+
+import watch from 'redux-watch';
+
+import { useMountedState } from 'react-use';
+
 const LoginPage = (props) => {
     const { t, i18n } = useTranslation(['common']);
 
-    let history = useHistory();
+    const history = useHistory();
+    const dispatch = useDispatch();
+
+    const isMounted = useMountedState();
+
+    const authInfoWatcher = watch(clonedStore.getState, 'User.auth_info');
+    const userProfileWatcher = watch(clonedStore.getState, 'User.profile');
     
     useEffect(() => {
         document.title = t('loginPage.title');
-    });
 
-    const submit = credentials => { 
-        props.userLogin(credentials);
-
-        let check = setInterval(() => {
-            if (isAuthenticatedUser()) {
+        clonedStore.subscribe(
+            authInfoWatcher(async (newVal, oldVal, objectPath) => {
                 
-                if (isAdmin()) history.push('/')
-                else history.push('/sentence')
+                if (isMounted() && isAuthenticatedUser()) {
+                    await asyncDispatch(dispatch, getCurrentUser())
+                }
+            })
+        );
 
-                clearInterval(check)
-            }
-        }, 100)
+        clonedStore.subscribe(
+            userProfileWatcher(async (newVal, oldVal, objectPath) => {
+                
+                if (isMounted()) {
+                    if (isAdmin()) history.push('/sentence')
+                    else history.push('/sentence')
+                }
+            })
+        );
+    }, []);
+
+    const submit = async credentials => { 
+        await asyncDispatch(dispatch, userLogin(credentials));
     };
 
     return (
@@ -52,10 +73,4 @@ const LoginPage = (props) => {
     );
 }
 
-function mapDispatch(dispatch) {
-    return {
-        userLogin: (credentials) => dispatch(userLogin(credentials))
-    }
-}
-
-export default connect(null, mapDispatch)(LoginPage);
+export default LoginPage;
