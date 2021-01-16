@@ -67,6 +67,7 @@ const SentencePage = (props) => {
                 key={ paraSentence['id'] }
                 autoSize
                 showCount
+                count={ 1 }
                 defaultValue={ lastestContent }
                 onPressEnter={ event => {
                     event.preventDefault();
