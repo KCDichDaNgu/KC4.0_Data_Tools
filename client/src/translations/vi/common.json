@@ -100,13 +100,14 @@
 		"uploadFileModal": {
 			"title": "Tải lên dữ liệu"
 		},
-		"exportTab": {
-			"title": "Xuất dữ liệu"
+		"reportTab": {
+			"title": "Thống kê"
 		},
 		"reviewTab": {
 			"title": "Cặp câu"
 		},
-		"exportFailure": "Xuất file lỗi"
+		"exportFailure": "Xuất file lỗi",
+		"exportData": "Xuất dữ liệu"
 	},
 	"manageUserPage": {
 		"title": "Quản lý người dùng",

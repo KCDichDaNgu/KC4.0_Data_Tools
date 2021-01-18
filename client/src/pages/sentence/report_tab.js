@@ -20,7 +20,7 @@ const FileDownload = require('js-file-download');
 
 const { Option } = Select;
 
-const SentenceExport = (props) => {
+const SentenceReport = (props) => {
 
     const { t } = useTranslation(['common']);
 
@@ -195,7 +195,7 @@ const SentenceExport = (props) => {
                             }}
                             type="primary"
                             onClick={ exportData }>
-                            { t('sentencePage.exportTab.title') }
+                            { t('sentencePage.exportData') }
                         </Button> 
                     </Col>
                 </Row>
@@ -204,4 +204,4 @@ const SentenceExport = (props) => {
     );
 };
 
-export default SentenceExport;
+export default SentenceReport;

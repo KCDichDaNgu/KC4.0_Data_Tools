@@ -59,3 +59,7 @@
 textarea.ant-input {
     border: none;
 }
+
+.input-admin-disable > .ant-input {
+    color: black !important;
+}

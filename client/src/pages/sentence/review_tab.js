@@ -21,7 +21,7 @@ import {
 } from "antd";
 
 import { UploadOutlined } from '@ant-design/icons';
-import SiteLayout from "../../layout/site-layout";
+const FileDownload = require('js-file-download');
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
@@ -60,10 +60,11 @@ const SentenceReview = (props) => {
     const renderText = (key, paraSentence, index) => {
 
         let lastestContent = paraSentence.newest_para_sentence[key].content;
-        let disabled = isAllowedToEdit(paraSentence);
+        let disabled = !isAllowedToEdit(paraSentence);
 
         return (
             <TextArea
+                className={ disabled && isAdminOnly() ? 'input-admin-disable' : '' }
                 style={{ border: 'none' }}
                 key={ paraSentence['id'] }
                 autoSize
@@ -85,8 +86,8 @@ const SentenceReview = (props) => {
     const renderRating = (rating, paraSentence, index) => {
 
         let lastestRating = paraSentence.newest_para_sentence.rating; // default notExist = unRated
-        let disabled = isAllowedToEdit(paraSentence);
-
+        let disabled = !isAllowedToEdit(paraSentence);
+        
         return (
             <Radio.Group
                 key={ paraSentence['id'] } 
@@ -266,24 +267,36 @@ const SentenceReview = (props) => {
     }
 
     const isAllowedToEdit = (paraSentence) => {
+        // if current user roles contains admin only -> can not edit
+        if (isAdminOnly()) return false;
+
         // if editted by reviewer and current user is editor -> can not edit
-        
-        return  (paraSentence.editor && paraSentence.editor.roles &&
+        return  !(paraSentence.editor && paraSentence.editor.roles &&
             (paraSentence.editor.roles.includes('admin') || paraSentence.editor.roles.includes('reviewer')) &&
-            currentUserRoles === ['member']) 
+            currentUserRoles.includes('member')) 
+    }
+    
+    const isAdminOnly = () => {
+        return currentUserRoles.length == 1 && currentUserRoles.includes('admin');
     }
 
     const getTableRowClassName = (paraSentence) => {
 
         let className = "";
 
-        if (!isAllowedToEdit(paraSentence)) {
+        if (isAllowedToEdit(paraSentence)) {
             if (!paraSentence.editor?.id) className = '';
             else if (paraSentence.editor.id === currentUserId) className = 'edited-by-my-self';
             else if (paraSentence.editor.id !== currentUserId) className = 'edited-by-someone';
         }
 
         return className;
+    }
+
+    const exportData = () => {
+        paraSentenceAPI.exportFile(filter).then(res => {
+            FileDownload(res.data, 'report.csv');
+        });
     }
 
     return (
@@ -321,12 +334,22 @@ const SentenceReview = (props) => {
                             
                             {
                                 currentUserRoles.includes('admin') ? (
-                                    <Button 
-                                        style={{ marginLeft: '10px' }}
-                                        onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                        icon={ <UploadOutlined /> }>
-                                        { t('sentencePage.uploadFile') }
-                                    </Button>
+                                    <>
+                                        <Button 
+                                            style={{ marginLeft: '10px' }}
+                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                            icon={ <UploadOutlined /> }>
+                                            { t('sentencePage.uploadFile') }
+                                        </Button>
+
+                                        <Button
+                                            style={{ 
+                                                marginLeft: "10px", 
+                                            }}
+                                            onClick={ exportData }>
+                                            { t('sentencePage.exportData') }
+                                        </Button>
+                                    </>
                                 ) : ''
                             }
                         </div>

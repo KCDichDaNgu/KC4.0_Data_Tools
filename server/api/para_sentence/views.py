@@ -25,78 +25,29 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 def get():
     args = request.args
 
-    # delete old records which has current user id
+    # xoá các bản ghi cũ mà user đã xem
     user = current_token.user
-    remove_viewer_from_old_parasentences(user.id)
+    if User.USER_ROLES['admin'] not in user.roles:
+        remove_viewer_from_old_parasentences(user.id)
 
     # request new records
-    query = {
-        '$and': []
-    }
-
-    # filter params send by request
-    if 'rating' in args and args['rating'] != 'all':
-        query['$and'].append({
-            'newest_para_sentence.rating': args['rating']
-        })
-        
-    if 'lang1' in args and args['lang1'] != 'all':
-        query['$and'].append({
-            'newest_para_sentence.text1.lang': args['lang1']
-        })
-
-    if 'lang2' in args and args['lang2'] != 'all':
-        query['$and'].append({
-            'newest_para_sentence.text2.lang': args['lang2']
-        })
-
-    # query string contains
-    append_or = False
-
-    if 'text1' in args:
-        pattern = re.compile(f".*{args['text1']}.*", re.IGNORECASE)
-
-        query['$and'].append({
-            '$or': [
-                {
-                    'newest_para_sentence.text1.content': {'$regex': pattern}
-                }
-            ]
-        })
-
-        append_or = True
-
-    if 'text2' in args:
-        pattern = re.compile(f".*{args['text2']}.*", re.IGNORECASE)
-
-        if append_or:
-            query['$and'][-1]['$or'].append(
-                {
-                    'newest_para_sentence.text2.content': {'$regex': pattern}
-                }
-            )
-        else:
-            query['$and'].append({
-                '$or': [
-                    {
-                        'newest_para_sentence.text2.content': {'$regex': pattern}
-                    }
-                ]
-            })
+    query = build_query_params(args)
 
     # get records has current_user_id and not expired yet or without viewer_id or expired view_due_date
     current_timestamp = time.time()
 
-    query['$and'].append({
-        '$or': [
-            {'$and': [
-                {'viewer_id': user.id},
-                {'view_due_date': {'$gte': current_timestamp}}
-            ]},
-            {'viewer_id': None},
-            {'view_due_date': {'$lt': current_timestamp}}
-        ]
-    })
+    # nếu current user là admin -> view được hết
+    if User.USER_ROLES['admin'] not in user.roles:
+        query['$and'].append({
+            '$or': [
+                {'$and': [
+                    {'viewer_id': user.id},
+                    {'view_due_date': {'$gte': current_timestamp}}
+                ]},
+                {'viewer_id': None},
+                {'view_due_date': {'$lt': current_timestamp}}
+            ]
+        })
 
     para_sentences = ParaSentence.objects.filter(__raw__=query)
 
@@ -118,8 +69,10 @@ def get():
     # update viewer_id, and view_due_date
     view_due_date = get_view_due_date()
 
-    for para_sentence in para_sentences.items:
-        para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
+    # nếu current user không phải admin, cập nhật view_id
+    if User.USER_ROLES['admin'] not in user.roles:
+        for para_sentence in para_sentences.items:
+            para_sentence.update(viewer_id=user.id, view_due_date=view_due_date)
     
     # assert ParaSentence.objects(viewer_id=user.id).count() == PaginationParameters.page_size, "viewer has too many parasentences"
 
@@ -224,6 +177,15 @@ def import_from_file():
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
 def update(_id):
+    # người quản trị chỉ được xem không được sửa
+    # nếu user chỉ có roles 'admin' => ko được sửa
+    user = current_token.user
+    if set(User.USER_ROLES['admin']) == set(user.roles): 
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='notAllowed'
+        )
+
     try:
         para_sentence = ParaSentence.objects.get(id=ObjectId(_id))
     except:
@@ -232,7 +194,6 @@ def update(_id):
             'message': 'notFound', 
         })
 
-    user = current_token.user
     if para_sentence.viewer_id != user.id:
         return jsonify({
             'code': STATUS_CODES['failure'], 
