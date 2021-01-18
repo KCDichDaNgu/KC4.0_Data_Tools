@@ -33,6 +33,48 @@ import { LANGS } from "../../constants";
 const { TextArea } = Input;
 const { Option } = Select;
 
+const ControlledTextArea = ({ defaultValue, ...props }) => {
+    const [state, setState] = useState({ 
+        value: defaultValue,
+        typingTimeOut: 0 
+    });
+
+    useEffect(() => {
+        return () => clearTimeout(state.typingTimeOut)
+    }, [state.typingTimeOut])
+
+    const trimmedValue = state.value.trim();
+    const wordsCount = trimmedValue.length == 0 ? 0 : trimmedValue.split(/\s+/).length;
+
+    function trimOnChange(e) {
+        if (state.typingTimeOut) {
+            clearTimeout(state.typingTimeOut);
+        }
+        
+        const currValue = e.target.value;
+
+        setState({
+            value: currValue,
+            typingTimeOut: setTimeout(() => {
+                setState({ ...state, value: currValue.trim() });
+            }, 650)
+        });
+    }
+
+    return (
+        <React.Fragment>
+            <TextArea
+                {...props}
+                value={state.value}
+                onChange={trimOnChange}
+            />
+            <div style={{ color: "rgba(0, 0, 0, 0.45)", textAlign: "right"}}>
+                {wordsCount}
+            </div>
+        </React.Fragment>
+    );
+}
+
 const SentenceReview = (props) => {
 
     const { t } = useTranslation(['common']);
@@ -63,13 +105,11 @@ const SentenceReview = (props) => {
         let disabled = !isAllowedToEdit(paraSentence);
 
         return (
-            <TextArea
+            <ControlledTextArea
                 className={ disabled && isAdminOnly() ? 'input-admin-disable' : '' }
                 style={{ border: 'none' }}
                 key={ paraSentence['id'] }
                 autoSize
-                showCount
-                count={ 1 }
                 defaultValue={ lastestContent }
                 onPressEnter={ event => {
                     event.preventDefault();
