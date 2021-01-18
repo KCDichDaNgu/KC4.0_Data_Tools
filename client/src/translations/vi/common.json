@@ -7,8 +7,8 @@
 		"en": "Tiếng Anh",
 		"vi": "Tiếng Việt",
 		"khm": "Tiếng Khmer",
-		"cn": "Tiếng Trung",
-		"kh": "Tiếng Campuchia"
+		"zh": "Tiếng Trung",
+		"lo": "Tiếng Lào"
 	},
 	"Input": {
 		"requiredField": "Trường này bắt buộc phải nhập!"

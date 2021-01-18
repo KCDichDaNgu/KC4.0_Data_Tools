@@ -26,12 +26,12 @@ export const LANGS = [
         label: 'khm'
     },
     {
-        value: 'cn',
-        label: 'cn'
+        value: 'zh',
+        label: 'zh'
     },
     {
-        value: 'kh',
-        label: 'kh'
+        value: 'lo',
+        label: 'lo'
     }
 ]
 
