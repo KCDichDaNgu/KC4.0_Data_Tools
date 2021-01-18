@@ -28,6 +28,7 @@ import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 
 import ImportFileModal from './import-file-modal';
+import { LANGS } from "../../constants";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -185,24 +186,24 @@ const SentenceReview = (props) => {
     const lang1Option = [
         <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
-        langList1.map((lang) => {
-            return <Option key={lang}>{lang}</Option>;
+        LANGS.map((lang) => {
+            return <Option key={ lang.value }>{ t(`Language.${lang.label}`) }</Option>;
         })
     );
 
     const lang2Option = [
         <Option key='all'>{t('sentencePage.all')}</Option>
     ].concat(
-        langList2.map((lang) => {
-            return <Option key={lang}>{lang}</Option>;
+        LANGS.map((lang) => {
+            return <Option key={ lang.value }>{ t(`Language.${lang.label}`) }</Option>;
         })
     );
 
     const ratingOption = [
-        <Option key='all'>{t('sentencePage.all')}</Option>
+        <Option key='all'>{ t('sentencePage.all') }</Option>
     ].concat(
         ratingList.map((rating) => {
-            return <Option key={rating}>{t(`sentencePage.${rating}`)}</Option>;
+            return <Option key={rating}>{ t(`sentencePage.${rating}`) }</Option>;
         })
     );
 
