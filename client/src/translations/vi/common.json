@@ -6,7 +6,9 @@
 	"Language": {
 		"en": "Tiếng Anh",
 		"vi": "Tiếng Việt",
-		"khm": "Tiếng Khmer"
+		"khm": "Tiếng Khmer",
+		"cn": "Tiếng Trung",
+		"kh": "Tiếng Campuchia"
 	},
 	"Input": {
 		"requiredField": "Trường này bắt buộc phải nhập!"

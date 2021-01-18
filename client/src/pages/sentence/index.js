@@ -16,6 +16,8 @@ import {
 import SiteLayout from "../../layout/site-layout";
 import { clonedStore } from '../../store';
 
+import { LANGS } from '../../constants';
+
 import { useTranslation } from 'react-i18next';
 
 const { TabPane } = Tabs;
@@ -24,7 +26,7 @@ const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
 
-    const currentUserRoles = clonedStore.getState().User?.profile?.roles || []; // bug here, slow
+    const currentUserRoles = clonedStore.getState().User?.profile?.roles || [];
 
     let [ activeTab, setActiveTab ] = useState('reviewTab'); // review, export
     
@@ -49,6 +51,7 @@ const SentencePage = (props) => {
                                 type={ activeTab == 'reviewTab' ? "primary" : "" }>
                                 { t('sentencePage.title') }
                             </Button>
+
                             <Button 
                                 onClick={ () => toggleTab('exportTab') }
                                 type={ activeTab == 'exportTab' ? "primary" : "" }>
