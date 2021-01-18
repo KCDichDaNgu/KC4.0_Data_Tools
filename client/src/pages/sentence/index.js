@@ -3,7 +3,7 @@ import "./style.module.scss";
 import React, { useEffect, useState, useRef } from "react";
 import PageTitle from "../../layout/site-layout/main/PageTitle";
 import paraSentenceAPI from "../../api/para-sentence";
-import SentenceExport from "./export_tab";
+import SentenceReport from "./report_tab";
 import SentenceReview from "./review_tab";
 
 import {
@@ -53,9 +53,9 @@ const SentencePage = (props) => {
                             </Button>
 
                             <Button 
-                                onClick={ () => toggleTab('exportTab') }
-                                type={ activeTab == 'exportTab' ? "primary" : "" }>
-                                { t('sentencePage.exportTab.title') }
+                                onClick={ () => toggleTab('reportTab') }
+                                type={ activeTab == 'reportTab' ? "primary" : "" }>
+                                { t('sentencePage.reportTab.title') }
                             </Button>
                         </div>
                     ) : ''
@@ -72,8 +72,8 @@ const SentencePage = (props) => {
                     </TabPane>
                     {
                         currentUserRoles.includes('admin') ? (
-                            <TabPane key="exportTab">
-                                <SentenceExport />
+                            <TabPane key="reportTab">
+                                <SentenceReport />
                             </TabPane>
                         ) : ''
                     }

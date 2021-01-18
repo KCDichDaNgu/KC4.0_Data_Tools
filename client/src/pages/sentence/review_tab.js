@@ -21,7 +21,7 @@ import {
 } from "antd";
 
 import { UploadOutlined } from '@ant-design/icons';
-import SiteLayout from "../../layout/site-layout";
+const FileDownload = require('js-file-download');
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
@@ -293,6 +293,12 @@ const SentenceReview = (props) => {
         return className;
     }
 
+    const exportData = () => {
+        paraSentenceAPI.exportFile(filter).then(res => {
+            FileDownload(res.data, 'report.csv');
+        });
+    }
+
     return (
         <React.Fragment>
             <Card 
@@ -328,12 +334,22 @@ const SentenceReview = (props) => {
                             
                             {
                                 currentUserRoles.includes('admin') ? (
-                                    <Button 
-                                        style={{ marginLeft: '10px' }}
-                                        onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                        icon={ <UploadOutlined /> }>
-                                        { t('sentencePage.uploadFile') }
-                                    </Button>
+                                    <>
+                                        <Button 
+                                            style={{ marginLeft: '10px' }}
+                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                            icon={ <UploadOutlined /> }>
+                                            { t('sentencePage.uploadFile') }
+                                        </Button>
+
+                                        <Button
+                                            style={{ 
+                                                marginLeft: "10px", 
+                                            }}
+                                            onClick={ exportData }>
+                                            { t('sentencePage.exportData') }
+                                        </Button>
+                                    </>
                                 ) : ''
                             }
                         </div>

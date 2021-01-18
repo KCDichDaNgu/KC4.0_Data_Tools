@@ -21,9 +21,9 @@ IDX2ROLE = {
 }
 
 RATING_KEY2TEXT = {
-    'good': 'Tốt',
-    'notGood': 'Kém',
-    'unRated': 'Chưa đánh giá'
+    ParaSentence.RATING_TYPES['good']: 'Tốt',
+    ParaSentence.RATING_TYPES['bad']: 'Kém',
+    ParaSentence.RATING_TYPES['unRated']: 'Chưa đánh giá'
 }
 
 def import_parasentences_from_file(data):
@@ -131,6 +131,9 @@ def is_member_only(user_roles):
     return len(user_roles) == 1 and user_roles[0] == User.USER_ROLES['member']
 
 def build_query_params(args):
+    # delete null in args
+    args = {key: value for key, value in args.items() if len(str(value).strip()) > 0}
+
     query = {
         '$and': []
     }

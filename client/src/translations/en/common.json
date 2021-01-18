@@ -84,13 +84,14 @@
 		"resultUpdateData": "Import file notification",
 		"ok": "OK",
 		"updatedByHigherRole": "This record has been editted by admin",
-		"exportTab": {
-			"title": "Export data"
+		"reportTab": {
+			"title": "Report"
 		},
 		"reviewTab": {
 			"title": "Sentence"
 		},
-		"exportFailure": "Export file error"
+		"exportFailure": "Export file error",
+		"exportData": "Export data"
 	},
 	"backupDatabase": {
 		"title": "Backups management",
