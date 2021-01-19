@@ -1,7 +1,6 @@
 import "./style.module.scss";
 
 import React, { useEffect, useState, useRef } from "react";
-import PageTitle from "../../layout/site-layout/main/PageTitle";
 import paraSentenceAPI from "../../api/para-sentence";
 
 import {
@@ -21,6 +20,7 @@ import {
 } from "antd";
 
 import { UploadOutlined } from '@ant-design/icons';
+
 const FileDownload = require('js-file-download');
 
 import { useTranslation } from 'react-i18next';
@@ -301,8 +301,8 @@ const SentenceReview = (props) => {
 
     return (
         <React.Fragment>
-            <Card 
-                title={ 
+            <Card
+                title={
                     <div
                         style={{ 
                             display: 'flex',
@@ -315,43 +315,6 @@ const SentenceReview = (props) => {
                                 fontWeight: 600
                             }}>
                             { t('sentencePage.filter') }
-                        </div>
-
-
-                        <div style={{ float: 'right' }}>
-                            <Button
-                                showsearchshowsearch="true"
-                                style={{ 
-                                    width: "100px", 
-                                    marginLeft: "30px", 
-                                    background: '#384AD7', 
-                                    borderColor: '#384AD7'
-                                }}
-                                type="primary"
-                                onClick={ handleFilter }>
-                                { t('sentencePage.search') }
-                            </Button> 
-                            
-                            {
-                                currentUserRoles.includes('admin') ? (
-                                    <>
-                                        <Button 
-                                            style={{ marginLeft: '10px' }}
-                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                            icon={ <UploadOutlined /> }>
-                                            { t('sentencePage.uploadFile') }
-                                        </Button>
-
-                                        <Button
-                                            style={{ 
-                                                marginLeft: "10px", 
-                                            }}
-                                            onClick={ exportData }>
-                                            { t('sentencePage.exportData') }
-                                        </Button>
-                                    </>
-                                ) : ''
-                            }
                         </div>
                     </div>
                 } 
@@ -443,6 +406,47 @@ const SentenceReview = (props) => {
                         </Select>
                     </Col>
                 </Row>
+
+                <div
+                    style={{ 
+                        display: 'flex',
+                        alignItems: 'center',
+                        float: 'right'
+                    }}>
+                        
+                    <Button
+                        showsearchshowsearch="true"
+                        style={{ 
+                            width: "100px", 
+                            background: '#384AD7', 
+                            borderColor: '#384AD7'
+                        }}
+                        type="primary"
+                        onClick={ handleFilter }>
+                        { t('sentencePage.search') }
+                    </Button> 
+                    
+                    {
+                        currentUserRoles.includes('admin') ? (
+                            <>
+                                <Button 
+                                    style={{ marginLeft: '10px' }}
+                                    onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                    icon={ <UploadOutlined /> }>
+                                    { t('sentencePage.uploadFile') }
+                                </Button>
+
+                                <Button
+                                    style={{ 
+                                        marginLeft: "10px", 
+                                    }}
+                                    onClick={ exportData }>
+                                    { t('sentencePage.exportData') }
+                                </Button>
+                            </>
+                        ) : ''
+                    }
+                </div>
             </Card>
 
             <Card className='card-body-padding-0'>
