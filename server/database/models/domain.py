@@ -13,8 +13,8 @@ class Domain(db.Document):
     creator_id = db.ReferenceField(User)
     editor_id = db.ReferenceField(User)
 
-    created_at = db.IntField(default=int(time.time()), required=True)
-    updated_at = db.IntField(default=int(time.time()), required=True)
+    created_at = db.IntField(default=time.time, required=True)
+    updated_at = db.IntField(default=time.time, required=True)
 
     before_save = Signal()
     after_save = Signal()
@@ -38,6 +38,9 @@ class Domain(db.Document):
 
     @classmethod
     def pre_save(cls, sender, document, **kwargs):
+        
+        document.updated_at = int(time.time())
+
         cls.after_save.send(document)
 
         if kwargs.get('created'):

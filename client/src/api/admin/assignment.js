@@ -8,7 +8,7 @@ export default {
     create: (data) =>
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/admin/user/`,
+            url: `${server_endpoint}/api/admin/assignment/`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
@@ -17,10 +17,10 @@ export default {
             return res.data;
         }),
 
-    update: (id, data) =>
+    update: (data) =>
         customAxios({
             method: 'put',
-            url: `${server_endpoint}/api/admin/user/${id}`,
+            url: `${server_endpoint}/api/admin/assignment/${data.id}`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
@@ -32,19 +32,7 @@ export default {
     delete: (id) =>
         customAxios({
             method: 'delete',
-            url: `${server_endpoint}/api/admin/user/${id}`,
-        }).then(res => {
-            return res.data;
-        }),
-
-    search: (data) =>
-        customAxios({
-            method: 'post',
-            url: `${server_endpoint}/api/admin/user/search`,
-            data: data,
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            url: `${server_endpoint}/api/admin/assignment/${id}`,
         }).then(res => {
             return res.data;
         }),

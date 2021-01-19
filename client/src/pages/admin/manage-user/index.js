@@ -23,13 +23,17 @@ import { WarningOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../../layout/site-layout';
 import userAPI from '../../../api/admin/user';
+import assignmentAPI from '../../../api/admin/assignment';
 
 import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '../../../utils/date';
 import { clonedStore } from '../../../store';
 
-import { STATUS_CODES, USER_STATUS, USER_ROLES } from '../../../constants';
+import { hasRole } from '../../../utils/auth';
+
+import { STATUS_CODES, USER_STATUS, USER_ROLES, LANGS } from '../../../constants';
+import { useForm } from 'antd/lib/form/Form';
 
 const ManageUserPage = (props) => {
     
@@ -42,6 +46,8 @@ const ManageUserPage = (props) => {
         perPage: 5,
     });
 
+    const [form] = useForm();
+    
     const [selectedUsersId, setSelectedUsersId] = useState([]);
 
     const currentUserId = clonedStore.getState().User?.profile?.id;
@@ -51,7 +57,8 @@ const ManageUserPage = (props) => {
         email: '',
         password: '',
         status: USER_STATUS.inactive,
-        roles: ['member']
+        roles: ['member'],
+        langScope: null
     };
 
     const addingFormRules = {
@@ -84,6 +91,12 @@ const ManageUserPage = (props) => {
                 required: true,
                 message: t('formMessages.errors.fieldRequired'),
             },
+        ],
+        langScope: [
+            // {
+            //     required: true,
+            //     message: t('formMessages.errors.fieldRequired'),
+            // },
         ]
     } 
 
@@ -134,12 +147,29 @@ const ManageUserPage = (props) => {
             email: data.email,
             password: data.password,
             status: data.status,
-            roles: data.roles
+            roles: data.roles,
         }
 
         let result = await userAPI.create(_newUserData);
 
         if (result.code == STATUS_CODES.success) {
+
+            if (data.langScope) {
+                let result2 = await assignmentAPI.create({
+                    userId: result.data,
+                    langScope: [{
+                        lang1: 'vi',
+                        lang2: data.langScope
+                    }]
+                })
+
+                if (result2.code == STATUS_CODES.success) {
+                    message.success(t('serverMessages.success.createUserSuccess'))
+
+                    return
+                }
+            }
+
             message.success(t('serverMessages.success.createUserSuccess'))
         }
         
@@ -166,10 +196,23 @@ const ManageUserPage = (props) => {
         let data = {
             username: searchInput || '',
             email: searchInput || '',
+            extraData: {
+                assignment: 1
+            },
             ...pagination
         };
 
         let result = await userAPI.search(data);
+        
+        result.data.items = result.data.items.map(i => ({
+            ...i,
+            extraData: {
+                assignment: Object.keys(i.extraData.assignment).length > 0 ? {
+                    id: i.extraData.assignment.id,
+                    langScope: i.extraData.assignment.lang_scope[0]
+                } : {}
+            }
+        }))
         
         setUserList({
             items: result.data.items,
@@ -280,6 +323,33 @@ const ManageUserPage = (props) => {
             }
         },
         {
+            title: t('assignedLanguage'),
+            dataIndex: 'extraData',
+            key: 'assignment',
+            render: (extraData, record) => {
+                return (
+                    <Select
+                        defaultValue={ extraData.assignment?.langScope?.lang2 }
+                        options={
+                            LANGS
+                                .filter(e => e.value != 'vi')
+                                .map(l => ({label: t(`Language.${l.label}`), value: l.value}))
+                        }
+                        onChange={ (value) => { 
+                            updateAssignedLang(
+                                {
+                                    ...extraData.assignment,
+                                    userId: record.id
+                                }, 
+                                value
+                            )
+                        }}
+                        style={{ width: '100%' }}>
+                    </Select>
+                )
+            }
+        },
+        {
             title: t('role'),
             dataIndex: 'roles',
             key: 'roles',
@@ -302,6 +372,44 @@ const ManageUserPage = (props) => {
             }
         },
     ];
+
+    const updateAssignedLang = async (assignment, lang) => {
+
+        if (assignment.id) {
+            let _data = {
+                id: assignment.id,
+                langScope: [{
+                    lang1: 'vi',
+                    lang2: lang
+                }]
+            }
+    
+            let result = await assignmentAPI.update(_data);
+    
+            if (result.code == STATUS_CODES.success) {
+                message.success(t('serverMessages.success.updateSuccess'))
+    
+                reload();
+            }
+        } else {
+
+            let _data = {
+                userId: assignment.userId,
+                langScope: [{
+                    lang1: 'vi',
+                    lang2: lang
+                }]
+            }
+    
+            let result = await assignmentAPI.create(_data);
+    
+            if (result.code == STATUS_CODES.success) {
+                message.success(t('serverMessages.success.updateSuccess'))
+    
+                reload();
+            }
+        }
+    }
 
     const renderStatus = (curentStatus, record) => {
         
@@ -360,6 +468,7 @@ const ManageUserPage = (props) => {
                                 background: '#eee'
                             }}>
                                 <Form 
+                                    form={ form }
                                     initialValues={ initialUserValues }
                                     onFinish={ createUser }
                                     onFinishFailed={ createUserFailed }>
@@ -451,23 +560,44 @@ const ManageUserPage = (props) => {
 
                                         <Col xs={ 24 } md={ 12 }>
 
-                                            <label>{ t('status') }</label>
-                                                <Form.Item 
-                                                    name='roles'
-                                                    rules={ addingFormRules.roles }>
-                                                    <Select
-                                                        mode="multiple"
-                                                        // size={ size }
-                                                        placeholder={ t('formMessages.errors.fieldRequired') }
-                                                        onChange={ () => {}}
-                                                        options={
-                                                            Object.keys(USER_ROLES).map(r => ({label: t(`userRoles.${r}`), value: r}))
-                                                        }
-                                                        style={{ width: '100%' }}
-                                                        >
-                                                    </Select>
+                                            <label>{ t('role') }</label>
+                                            <Form.Item 
+                                                name='roles'
+                                                rules={ addingFormRules.roles }>
+                                                <Select
+                                                    mode="multiple"
+                                                    // size={ size }
+                                                    placeholder={ t('formMessages.errors.fieldRequired') }
+                                                    onChange={ () => {}}
+                                                    options={
+                                                        Object.keys(USER_ROLES).map(r => ({label: t(`userRoles.${r}`), value: r}))
+                                                    }
+                                                    style={{ width: '100%' }}
+                                                    >
+                                                </Select>
                                             </Form.Item>
                                         </Col>
+                                        
+                                            <Col xs={ 24 } md={ 12 }>
+
+                                            <label>{ t('assignedLanguage') }</label>
+                                            
+                                            <Form.Item 
+                                                name='langScope'
+                                                rules={ addingFormRules.langScope }>
+                                                <Select
+                                                    // placeholder={ t('formMessages.errors.fieldRequired') }
+                                                    allowClear={ true }
+                                                    options={
+                                                        LANGS
+                                                            .filter(e => e.value != 'vi')
+                                                            .map(l => ({label: t(`Language.${l.label}`), value: l.value}))
+                                                    }
+                                                    style={{ width: '100%' }}>
+                                                </Select>
+                                            </Form.Item>
+                                        </Col>
+                                        
                                     </Row>
 
                                     <Button 
@@ -482,15 +612,6 @@ const ManageUserPage = (props) => {
 
                     <Table
                         className='table-striped-rows'
-                        // rowSelection={{
-                        //     type: 'checkbox'
-                        // }}
-                        // rowSelection={{
-                        //     type: 'checkbox',
-                        //     onChange: (selectedRowKeys) => {
-                        //         setSelectedUsersId(selectedRowKeys)
-                        //     },
-                        // }}
                         dataSource={ userList.items.map(d => ({...d, key: d.id})) }
                         columns={ columns }
                         pagination={ paginationOptions }>

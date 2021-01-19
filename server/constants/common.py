@@ -10,3 +10,18 @@ BACKUP_USER_DIR = "public/backups/by_user/"
 BACKUP_SCHEDULE_HOURS = 8
 
 EXPORT_FILE_DIR = "data/export_file/"
+
+LANGS = [
+    {
+        'notation': 'vi'
+    },
+    {
+        'notation': 'khm'
+    },
+    {
+        'notation': 'zh'
+    },
+    {
+        'notation': 'lo'
+    },
+]
