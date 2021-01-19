@@ -7,7 +7,7 @@ from constants.common import STATUS_CODES
 from database.models.user import User
 from database.models.backup import Backup, create_backup
 
-from oauth2 import authorization, require_oauth, status_required
+from oauth2 import authorization, require_oauth, status_required, role_required
 
 from bson import ObjectId
 
@@ -15,6 +15,7 @@ admin_manage_backup_bp = Blueprint(__name__, 'backup')
 
 @admin_manage_backup_bp.route('/', methods=['POST'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def create():
     args = request.get_json()
@@ -33,6 +34,7 @@ def create():
     
 @admin_manage_backup_bp.route('/', methods=['GET'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def get():
     args = request.args
@@ -58,6 +60,7 @@ def get():
     
 @admin_manage_backup_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def delete(id):
     try:
@@ -77,6 +80,7 @@ def delete(id):
 
 @admin_manage_backup_bp.route('/<id>', methods=['PUT'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def put(id):
     try:

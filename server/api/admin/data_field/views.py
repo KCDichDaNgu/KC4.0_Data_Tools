@@ -7,7 +7,7 @@ from constants.common import STATUS_CODES
 from database.models.data_field import DataField
 from database.models.user import User
 
-from oauth2 import authorization, require_oauth, status_required
+from oauth2 import authorization, require_oauth, status_required, role_required
 
 from bson import ObjectId
 
@@ -15,6 +15,7 @@ admin_manage_data_field_bp = Blueprint(__name__, 'data_field')
 
 @admin_manage_data_field_bp.route('/', methods=['POST'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def create():
 
@@ -36,6 +37,7 @@ def create():
 
 @admin_manage_data_field_bp.route('/<id>', methods=['DELETE'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def delete(id):
 
@@ -50,6 +52,7 @@ def delete(id):
 
 @admin_manage_data_field_bp.route('/<id>', methods=['PUT'])
 @require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def update(id):
 
@@ -66,6 +69,8 @@ def update(id):
     )
 
 @admin_manage_data_field_bp.route('/search', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def search():
     
