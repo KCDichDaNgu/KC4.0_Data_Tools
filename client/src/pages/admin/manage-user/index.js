@@ -34,6 +34,7 @@ import { hasRole } from '../../../utils/auth';
 
 import { STATUS_CODES, USER_STATUS, USER_ROLES, LANGS } from '../../../constants';
 import { useForm } from 'antd/lib/form/Form';
+import Checkbox from 'antd/lib/checkbox/Checkbox';
 
 const ManageUserPage = (props) => {
     
@@ -316,10 +317,11 @@ const ManageUserPage = (props) => {
         },
         {
             title: t('status'),
+            align: 'center',
             dataIndex: 'status',
             key: 'status',
-            render: (curentStatus, record) => {
-                return renderStatus(curentStatus, record);
+            render: (currentStatus, record) => {
+                return renderStatus(currentStatus, record);
             }
         },
         {
@@ -411,25 +413,25 @@ const ManageUserPage = (props) => {
         }
     }
 
-    const renderStatus = (curentStatus, record) => {
-        
+    const renderStatus = (currentStatus, record) => {
+        let defaultStatus = currentStatus === USER_STATUS.active;
+
         return (
-            <Radio.Group
-                key={ record.id } 
-                value={ curentStatus }
-                onChange={ event => updateUser(record.id, { status: event.target.value }) }>
-                {
-                    Object.keys(USER_STATUS).map(statusKey => {
-                        return (
-                            <Radio.Button key={ statusKey } value={ statusKey }>
-                                { t(`userStatus.${statusKey}`) }
-                            </Radio.Button>
-                        )
-                    })
-                }
-            </Radio.Group>
+            <Checkbox
+                className='status-checkbox'
+                defaultChecked={ defaultStatus }
+                onChange={ (e) =>
+                    handleStatusChange(e, currentStatus, record)
+                }> 
+            </Checkbox>
         );
-    }
+    };
+
+    const handleStatusChange = (e, currentStatus, record) => {
+        const status = e.target.checked ? USER_STATUS.active : USER_STATUS.inactive;
+
+        updateUser(record.id, { status: status });
+    };
 
     return (
         <React.Fragment>
