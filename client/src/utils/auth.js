@@ -39,9 +39,17 @@ const isAdmin = () => {
     return false
 }
 
+const hasRole = (role, roles) => {
+
+    roles = roles || [];
+    
+    return roles.includes(role);
+}
+
 export { 
     setExpireDate, 
     isTokenExpiration, 
     isAuthenticatedUser,
-    isAdmin
+    isAdmin,
+    hasRole
 }

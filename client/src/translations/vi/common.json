@@ -3,6 +3,7 @@
 		"mainPages": "Các trang chính"
 	},
 	"Homepage": "Trang chủ",
+	"language": "Ngôn ngữ",
 	"Language": {
 		"en": "Tiếng Anh",
 		"vi": "Tiếng Việt",
@@ -190,5 +191,6 @@
 	"dataField": "Miền dữ liệu",
 	"cancel": "Huỷ",
 	"submit": "Tải lên",
-	"chooseFile": "Chọn tệp"
+	"chooseFile": "Chọn tệp",
+	"assignedLanguage": "Ngôn ngữ phân công"
 }

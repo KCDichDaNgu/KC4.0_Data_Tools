@@ -5,6 +5,7 @@ from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
 
 from database.models.user import User
+from database.models.assignment import Assignment
 
 from oauth2 import authorization, require_oauth, role_required, status_required
 
@@ -114,6 +115,33 @@ def search():
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)
         )
+
+    result.items = [i.serialize for i in result.items]
+
+    if request.get_json().get('extraData'):
+
+        _extra_data_conds = request.get_json().get('extraData')
+
+        result.items = [{**item, **{'extraData': {}}} for item in result.items]
+
+        if type(_extra_data_conds['assignment']) != dict and int(_extra_data_conds['assignment']) == 1:
+
+            result.items = [{**item, **{'extraData': {'assignment': {}}}} for item in result.items]
+
+            users_id = set(map(lambda x: x['id'], result.items))
+            
+            users_assignment = Assignment.objects(user_id__in=users_id)
+            users_assignment = [us.serialize for us in users_assignment]
+
+            for item in result.items:
+
+                item['extraData']['assignment'] = {}
+
+                for index, user_assignment in enumerate(users_assignment):
+
+                    if user_assignment['user']['id'] == item['id']:
+
+                        item['extraData']['assignment'] = user_assignment
     
     return jsonify(
         code=STATUS_CODES['success'],
@@ -121,7 +149,7 @@ def search():
             'total': result.total,
             'page': result.page,
             'perPage': result.per_page,
-            'items': [i.serialize for i in result.items]
+            'items': result.items
         },
         message='success'
     )

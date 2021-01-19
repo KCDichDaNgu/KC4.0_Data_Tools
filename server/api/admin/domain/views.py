@@ -75,7 +75,7 @@ def search():
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)
         )
-    print(result)
+        
     return jsonify(
         code=STATUS_CODES['success'],
         data={

@@ -8,7 +8,7 @@ export default {
     create: (data) =>
         customAxios({
             method: 'post',
-            url: `${server_endpoint}/api/admin/manage-backup/`,
+            url: `${server_endpoint}/api/admin/backup/`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
@@ -18,7 +18,7 @@ export default {
     search: (params) =>
         customAxios({
             method: 'get',
-            url: `${server_endpoint}/api/admin/manage-backup/`,
+            url: `${server_endpoint}/api/admin/backup/`,
             params: params,
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export default {
     delete: (backupId) => 
         customAxios({
             method: 'delete',
-            url: `${server_endpoint}/api/admin/manage-backup/${backupId}`,
+            url: `${server_endpoint}/api/admin/backup/${backupId}`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -37,7 +37,7 @@ export default {
     update: (backupId, data) => 
         customAxios({
             method: 'put',
-            url: `${server_endpoint}/api/admin/manage-backup/${backupId}`,
+            url: `${server_endpoint}/api/admin/backup/${backupId}`,
             data: data,
             headers: {
                 'Content-Type': 'application/json',
