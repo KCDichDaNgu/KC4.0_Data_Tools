@@ -27,6 +27,7 @@ def get():
 
     # xoá các bản ghi cũ mà user đã xem
     user = current_token.user
+    
     if User.USER_ROLES['admin'] not in user.roles:
         remove_viewer_from_old_parasentences(user.id)
 

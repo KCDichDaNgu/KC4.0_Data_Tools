@@ -28,12 +28,16 @@ import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 
 import ImportFileModal from './import-file-modal';
-import { LANGS } from "../../constants";
+import { LANGS, STATUS_CODES } from "../../constants";
+import { isAdmin } from "../../utils/auth";
+
+import assignmentAPI from '../../api/assignment';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const ControlledTextArea = ({ defaultValue, ...props }) => {
+const CustomTextArea = ({ defaultValue, ...props }) => {
+    
     const [state, setState] = useState({ 
         value: defaultValue,
         typingTimeOut: 0 
@@ -86,7 +90,8 @@ const SentenceReview = (props) => {
     const [searchInput, setSearchInput] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-    const [filter, setFilter] = useState({
+    
+    let filter = {
         domain: "",
         rating: 'unRated',
         lang1: "vi",
@@ -94,8 +99,7 @@ const SentenceReview = (props) => {
         sort_by: "",
         sort_order: "",
         page: ""
-    });
-
+    };
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
 
@@ -105,7 +109,7 @@ const SentenceReview = (props) => {
         let disabled = !isAllowedToEdit(paraSentence);
 
         return (
-            <ControlledTextArea
+            <CustomTextArea
                 className={ disabled && isAdminOnly() ? 'input-admin-disable' : '' }
                 style={{ border: 'none' }}
                 key={ paraSentence['id'] }
@@ -200,45 +204,27 @@ const SentenceReview = (props) => {
 
     const handleChange = (searchInput, key) => {
         if (key == 'text') {
-            setFilter({ ...filter, text1: searchInput, text2: searchInput });
+            filter = { ...filter, text1: searchInput, text2: searchInput };
         } else {
-            setFilter({ ...filter, [key]: searchInput });
+            filter = { ...filter, [key]: searchInput };
         }
     };
 
     const handleFilter = () => {
-        let params = {
+        filter = {
             ...filter,
             page: 1
         }; // reset page to 1
 
-        setFilter(params);
-
-        paraSentenceAPI.getSentences(params).then((res) => {
+        paraSentenceAPI.getSentences(filter).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
     };
-
-    const [langList1, setLangList1] = useState([]);
+    
     const [langList2, setLangList2] = useState([]);
+    
     const [ratingList, setRatingList] = useState([]);
-
-    const lang1Option = [
-        <Option key='all'>{t('sentencePage.all')}</Option>
-    ].concat(
-        LANGS.map((lang) => {
-            return <Option key={ lang.value }>{ t(`Language.${lang.label}`) }</Option>;
-        })
-    );
-
-    const lang2Option = [
-        <Option key='all'>{t('sentencePage.all')}</Option>
-    ].concat(
-        LANGS.map((lang) => {
-            return <Option key={ lang.value }>{ t(`Language.${lang.label}`) }</Option>;
-        })
-    );
 
     const ratingOption = [
         <Option key='all'>{ t('sentencePage.all') }</Option>
@@ -249,31 +235,62 @@ const SentenceReview = (props) => {
     );
 
     useEffect(() => {
-        paraSentenceAPI.getSentences(filter).then((res) => {
-            setDataSource(res.data.data.para_sentences);
-            setPaginationParams(res.data.data.pagination);
-        });
 
-        paraSentenceAPI.getOptions().then((res) => {
-            setLangList1(res.data.data.lang1);
-            setLangList2(res.data.data.lang2);
-            setRatingList(res.data.data.rating);
-        });
+        const fetchData = async () => {
+            if (isAdmin()) {
+                setLangList2([
+                    {
+                        value: 'all',
+                        label: 'all'
+                    }
+                ].concat(LANGS))
+            } else {
+                let result = await assignmentAPI.owner()
+
+                let langs = []
+    
+                if (result.code == STATUS_CODES.success) {
+                    for (const langPair of result.data.lang_scope) {
+                        langs.push({
+                            value: langPair.lang2,
+                            label: langPair.lang2
+                        })
+                    }
+                }
+
+                setLangList2(langs)
+
+                filter = {
+                    ...filter,
+                    lang2: langs[0]?.value
+                }
+            }
+            
+            let res1 = await paraSentenceAPI.getSentences(filter)
+
+            setDataSource(res1.data.data.para_sentences);
+            setPaginationParams(res1.data.data.pagination);
+    
+            let res2 = await paraSentenceAPI.getOptions()
+
+            setRatingList(res2.data.data.rating);
+        }
+
+        fetchData()
     }, []);
 
     const handleTableChange = (pagination, filters, sorter) => {
         
-        let params = {
+        filter = {
             ...filter,
             sort_by: sorter['columnKey'],
             sort_order: sorter['order'],
             page: pagination['current']
         }
-
-        setFilter(params);
+        
         setSortedInfo(sorter)
 
-        paraSentenceAPI.getSentences(params).then((res) => {
+        paraSentenceAPI.getSentences(filter).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -411,38 +428,29 @@ const SentenceReview = (props) => {
                             fontSize: '20px',
                             fontWeight: 500
                         }}>
-                            { t('sentencePage.by_lang_1') }
-                        </div>
-
-                        <Select
-                            style={{
-                                width: '100%',
-                            }}
-                            defaultValue={ lang1Option.length === 0 ? "" : lang1Option[0] }
-                            onChange={ value => handleChange(value, "lang1")}
-                        >
-                            { lang1Option }
-                        </Select>
-                    </Col>
-
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                        <div style={{ 
-                            marginBottom: "10px",
-                            fontSize: '20px',
-                            fontWeight: 500
-                        }}>
                             { t('sentencePage.by_lang_2') }
                         </div>
-
+                        
                         <Select
                             showSearch
                             style={{
                                 width: '100%',
                             }}
-                            defaultValue={lang2Option.length === 0 ? "" : lang2Option[0]}
-                            onChange={ value => handleChange(value, "lang2") }
-                        >
-                            {lang2Option}
+                            options={ langList2.map(e => {
+                                if (e.value === 'all') {
+                                    return {
+                                        value: e.value, 
+                                        label: t('all')
+                                    }
+                                } 
+
+                                return {
+                                    value: e.value, 
+                                    label: t(`Language.${e.label}`)
+                                }
+                            }) }
+                            value={ langList2[0]?.value }
+                            onChange={ value => handleChange(value, "lang2") }>
                         </Select>
                     </Col>
                 </Row>
@@ -573,13 +581,16 @@ const SentenceReview = (props) => {
                 </Table>
             </Card>
 
-            <ImportFileModal 
-                isModalImportVisible={ isModalImportVisible }
-                setIsModalImportVisible={ setIsModalImportVisible }
-                reloadSentenceData={ setDataSource }
-                reloadSentencePaginationParams={ setPaginationParams }
-                currentFilter={ filter }>
-            </ImportFileModal>
+            { isAdmin() ? 
+                <ImportFileModal 
+                    isModalImportVisible={ isModalImportVisible }
+                    setIsModalImportVisible={ setIsModalImportVisible }
+                    reloadSentenceData={ setDataSource }
+                    reloadSentencePaginationParams={ setPaginationParams }
+                    currentFilter={ filter }>
+                </ImportFileModal>
+                : null 
+            }
         </React.Fragment>
     );
 };

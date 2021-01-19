@@ -257,7 +257,6 @@ const ManageUserPage = (props) => {
             title: t('username'),
             dataIndex: 'username',
             key: 'username',
-            sorter: (a, b) => a.username.localeCompare(b.username),
             render: (username, user) => (
                 <Tooltip
                     trigger={ ['focus'] }
@@ -383,7 +382,7 @@ const ManageUserPage = (props) => {
                     lang2: lang
                 }]
             }
-            console.log(_data)
+            
             let result = await assignmentAPI.update(_data);
     
             if (result.code == STATUS_CODES.success) {
