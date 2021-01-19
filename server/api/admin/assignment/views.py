@@ -72,8 +72,8 @@ def update(id):
     if request.get_json()['langScope']:
 
         _data['lang_scope'] = request.get_json()['langScope']
-    
-    assignment.update(_data)
+    print(_data)
+    assignment.update(**_data)
 
     return jsonify(
         code=STATUS_CODES['success'],

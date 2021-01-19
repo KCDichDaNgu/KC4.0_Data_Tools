@@ -374,7 +374,7 @@ const ManageUserPage = (props) => {
     ];
 
     const updateAssignedLang = async (assignment, lang) => {
-
+        
         if (assignment.id) {
             let _data = {
                 id: assignment.id,
@@ -383,7 +383,7 @@ const ManageUserPage = (props) => {
                     lang2: lang
                 }]
             }
-    
+            console.log(_data)
             let result = await assignmentAPI.update(_data);
     
             if (result.code == STATUS_CODES.success) {
