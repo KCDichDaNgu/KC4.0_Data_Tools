@@ -39,6 +39,24 @@ const isAdmin = () => {
     return false
 }
 
+const isEditor = () => {
+
+    let profile = clonedStore.getState().User.profile;
+
+    if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.roles.includes('member');
+
+    return false
+}
+
+const isReviewer = () => {
+
+    let profile = clonedStore.getState().User.profile;
+
+    if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.roles.includes('reviewer');
+
+    return false
+}
+
 const hasRole = (role, roles) => {
 
     roles = roles || [];
@@ -51,5 +69,7 @@ export {
     isTokenExpiration, 
     isAuthenticatedUser,
     isAdmin,
-    hasRole
+    hasRole,
+    isEditor,
+    isReviewer
 }

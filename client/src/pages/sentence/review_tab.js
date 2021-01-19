@@ -37,7 +37,7 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const CustomTextArea = ({ defaultValue, ...props }) => {
-    
+
     const [state, setState] = useState({ 
         value: defaultValue,
         typingTimeOut: 0 
@@ -422,37 +422,40 @@ const SentenceReview = (props) => {
                         </Select>
                     </Col>
 
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                        <div style={{ 
-                            marginBottom: "10px",
-                            fontSize: '20px',
-                            fontWeight: 500
-                        }}>
-                            { t('sentencePage.by_lang_2') }
-                        </div>
-                        
-                        <Select
-                            showSearch
-                            style={{
-                                width: '100%',
-                            }}
-                            options={ langList2.map(e => {
-                                if (e.value === 'all') {
+                    { isAdmin() ?
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                            <div style={{ 
+                                marginBottom: "10px",
+                                fontSize: '20px',
+                                fontWeight: 500
+                            }}>
+                                { t('sentencePage.by_lang_2') }
+                            </div>
+                            
+                            
+                            <Select
+                                showSearch
+                                style={{
+                                    width: '100%',
+                                }}
+                                options={ langList2.map(e => {
+                                    if (e.value === 'all') {
+                                        return {
+                                            value: e.value, 
+                                            label: t('all')
+                                        }
+                                    } 
+
                                     return {
                                         value: e.value, 
-                                        label: t('all')
+                                        label: t(`Language.${e.label}`)
                                     }
-                                } 
-
-                                return {
-                                    value: e.value, 
-                                    label: t(`Language.${e.label}`)
-                                }
-                            }) }
-                            value={ langList2[0]?.value }
-                            onChange={ value => handleChange(value, "lang2") }>
-                        </Select>
-                    </Col>
+                                }) }
+                                value={ langList2[0]?.value }
+                                onChange={ value => handleChange(value, "lang2") }>
+                            </Select>
+                        </Col> : null
+                    }
                 </Row>
 
                 <div
