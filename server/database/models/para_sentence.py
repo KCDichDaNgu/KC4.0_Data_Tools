@@ -12,6 +12,8 @@ RATING_TYPES = {
     'unRated': 'unRated'
 }
 
+LANGS = ['vi', 'khm', 'zh', 'lo']
+
 class ParaSentenceText(db.EmbeddedDocument):
 
     content = db.StringField()
