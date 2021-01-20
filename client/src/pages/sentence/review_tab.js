@@ -70,12 +70,12 @@ const CustomTextArea = ({ defaultValue, ...props }) => {
     return (
         <React.Fragment>
             <Input.TextArea
-                {...props}
-                value={state.value}
-                onChange={trimOnChange}
+                { ...props }
+                value={ state.value }
+                onChange={ trimOnChange }
             />
             <div style={{ color: 'rgba(0, 0, 0, 0.45)', textAlign: 'right'}}>
-                {wordsCount}
+                { wordsCount }
             </div>
         </React.Fragment>
     );
@@ -92,7 +92,7 @@ const SentenceReview = (props) => {
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     
-    let filter = {
+    const [filter, setFilter] = useState({
         domain: '',
         text1: '',
         text2: '',
@@ -103,8 +103,10 @@ const SentenceReview = (props) => {
         sortOrder: '',
         page: '',
         updatedAt__fromDate: '',
-        updatedAt__toDate: ''
-    };
+        updatedAt__toDate: '',
+        score__from: '',
+        score__to: ''
+    });
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
 
@@ -209,32 +211,44 @@ const SentenceReview = (props) => {
 
     const handleFilterChange = (searchData, key) => {
         if (key == 'text') {
-            filter = { ...filter, text1: searchData, text2: searchData };
+            setFilter({
+                ...filter,
+                text1: searchData,
+                text2: searchData
+            })
         } else if (key == 'updatedAt') {
         
             let fromDate = searchData == null ? null : searchData[0].valueOf();
             let toDate = searchData == null ? null : searchData[1].valueOf();
 
-            filter.updatedAt__fromDate = fromDate;
-            filter.updatedAt__toDate = toDate;
+            setFilter({
+                ...filter,
+                updatedAt__fromDate: fromDate,
+                updatedAt__toDate: toDate
+            })
 
         } else {
-            filter = { ...filter, [key]: searchData };
+            setFilter({
+                ...filter,
+                [key]: searchData
+            })
         }
     };
 
-    const handleFilter = () => {
-        filter.page = 1 // reset page to 1
+    const searchParaSentence = () => {
 
-        let filterClone = JSON.parse(JSON.stringify(filter));
+        let newFilter = {
+            ...filter,
+            page: 1
+        }
+
+        setFilter(newFilter)
         
-        for (const key in filterClone) {
-            if (!filterClone[key]) {
-                delete filterClone[key]
-            }
+        for (const key in newFilter) {
+            if (!newFilter[key]) delete newFilter[key];
         }
         
-        paraSentenceAPI.getSentences(filterClone).then((res) => {
+        paraSentenceAPI.getSentences(newFilter).then(res => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -255,10 +269,13 @@ const SentenceReview = (props) => {
     useEffect(() => {
 
         const fetchData = async () => {
+
+            let cloneFilter = {}
+
             if (isAdmin()) {
                 setLangList2([
                     {
-                        value: 'all',
+                        value: '',
                         label: 'all'
                     }
                 ].concat(LANGS))
@@ -278,13 +295,15 @@ const SentenceReview = (props) => {
 
                 setLangList2(langs)
 
-                filter = {
+                cloneFilter = {
                     ...filter,
                     lang2: langs[0]?.value
                 }
+
+                setFilter(cloneFilter)
             }
             
-            let res1 = await paraSentenceAPI.getSentences(filter)
+            let res1 = await paraSentenceAPI.getSentences(cloneFilter)
 
             setDataSource(res1.data.data.para_sentences);
             setPaginationParams(res1.data.data.pagination);
@@ -298,8 +317,8 @@ const SentenceReview = (props) => {
     }, []);
 
     const handleTableChange = (pagination, filters, sorter) => {
-        
-        filter = {
+
+        let params = {
             ...filter,
             sortBy: sorter['columnKey'],
             sortOrder: sorter['order'],
@@ -308,7 +327,7 @@ const SentenceReview = (props) => {
         
         setSortedInfo(sorter)
 
-        paraSentenceAPI.getSentences(filter).then((res) => {
+        paraSentenceAPI.getSentences(params).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -485,6 +504,32 @@ const SentenceReview = (props) => {
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
                         />
                     </Col>
+
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <div style={{ 
+                            marginBottom: '10px',
+                            fontSize: '20px',
+                            fontWeight: 500
+                        }}>
+                            { t('sentencePage.byScoreRange') }
+                        </div>
+
+                        <Input.Group compact>
+                            <Input 
+                                style={{ width: '50%' }} 
+                                placeholder={ t('from') }
+                                type='number'
+                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__from') } 
+                            />
+
+                            <Input 
+                                style={{ width: '50%' }} 
+                                placeholder={ t('to') }
+                                type='number'
+                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__to') } 
+                            />
+                        </Input.Group>
+                    </Col>
                 </Row>
 
                 <div className='custom-divider'>
@@ -506,7 +551,7 @@ const SentenceReview = (props) => {
                             borderColor: '#384AD7'
                         }}
                         type='primary'
-                        onClick={ handleFilter }>
+                        onClick={ searchParaSentence }>
                         { t('sentencePage.search') }
                     </Button> 
                     

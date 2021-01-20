@@ -78,7 +78,7 @@ def import_parasentences_from_file(data):
                     ),
                     hash_content=hash
                 ),
-                score={"senAlign": score},
+                score={ "senAlign": float(score) },
                 creator_id=creator_id,
                 data_field_id=dataFieldId,
                 created_at=time.time()
@@ -155,7 +155,7 @@ def build_query_params(args):
         })
 
     if 'updatedAt__fromDate' in args:
-        updated_at_from_date = args['updatedAt__fromDate']
+        updated_at_from_date = float(args['updatedAt__fromDate'])
 
         query['$and'].append({
             'updated_at': {
@@ -164,7 +164,7 @@ def build_query_params(args):
         })
 
     if 'updatedAt__toDate' in args:
-        updated_at_to_date = args['updatedAt__toDate']
+        updated_at_to_date = float(args['updatedAt__toDate'])
 
         query['$and'].append({
             'updated_at': {
@@ -172,6 +172,24 @@ def build_query_params(args):
             }
         })
 
+    if 'score__from' in args:
+        score__from = float(args['score__from'])
+
+        query['$and'].append({
+            'score.senAlign': {
+                '$gte': score__from
+            }
+        })
+
+    if 'score__to' in args:
+        score__to = float(args['score__to'])
+
+        query['$and'].append({
+            'score.senAlign': {
+                '$lte': score__to
+            }
+        })
+        
     # query string contains
     append_or = False
 

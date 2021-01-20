@@ -76,6 +76,7 @@
 		"byLang2": "Theo ngôn ngữ 2",
 		"byRating": "Theo đánh giá",
 		"byUpdatedAt": "Theo ngày cập nhật",
+		"byScoreRange": "Theo khoảng điểm",
 		"reject": "Từ chối",
 		"approve": "Tán thành",
 		"unRated": "Chưa đánh giá",
@@ -195,5 +196,7 @@
 	"submit": "Tải lên",
 	"chooseFile": "Chọn tệp",
 	"assignedLanguage": "Ngôn ngữ phân công",
-	"all": "Tất cả"
+	"all": "Tất cả",
+	"from": "Từ",
+	"to": "Đến"
 }
