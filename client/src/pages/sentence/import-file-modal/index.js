@@ -24,11 +24,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import paraSentenceAPI from "../../../api/para-sentence";
+import assignmentAPI from '../../../api/assignment';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
 
-import dataFieldAPI from '../../../api/admin/data-field';
+import dataFieldAPI from '../../../api/data-field';
 import { useForm } from 'antd/lib/form/Form';
+
+import { isAdmin, isReviewer } from '../../../utils/auth';
 
 const ImportFileModal = (props) => {
 
@@ -44,13 +47,15 @@ const ImportFileModal = (props) => {
 
     const [importStatus, setImportStatus] = useState({})
 
+    const [langList2, setLangList2] = useState([]);
+
     const [uploadingFile, setUploadingFile] = useState(false);
 
     const [searchInput, setSearchInput] = useState('');
 
     const initialValues = {
         dataFieldId: '',
-        lang1: '',
+        lang1: 'vi',
         lang2: '', 
         fileList: []
     }
@@ -71,12 +76,6 @@ const ImportFileModal = (props) => {
 
     const rules = {
         dataFieldId: [
-            {
-                required: true,
-                message: t('fieldRequired'),
-            }
-        ],
-        lang1: [
             {
                 required: true,
                 message: t('fieldRequired'),
@@ -121,6 +120,32 @@ const ImportFileModal = (props) => {
     const [files, setFiles] = useState([])
 
     useEffect(() => {
+        const fetchData = async () => {
+
+            if (isAdmin()) {
+                setLangList2(LANGS.filter(e => (e.value != 'vi')))
+            } else if (isReviewer()) {
+                let result = await assignmentAPI.owner()
+
+                let langs = []
+    
+                if (result.code == STATUS_CODES.success) {
+                    for (const langPair of result.data.lang_scope) {
+                        langs.push({
+                            value: langPair.lang2,
+                            label: langPair.lang2
+                        })
+                    }
+                }
+
+                setLangList2(langs)
+            }
+        }
+        
+        fetchData()
+    }, [])
+
+    useEffect(() => {
         searchDataField();
     }, [ dataFieldPagination.pagination__page, dataFieldPagination.pagination__perPage ]);
 
@@ -130,6 +155,10 @@ const ImportFileModal = (props) => {
             await form.validateFields();
 
             let _formData = form.getFieldsValue();
+
+            if (isReviewer()) {
+                _formData.lang2 = langList2[0].value;
+            }
             
             if (files.length == 0) {
                 message.error(t('formMessages.errors.filesFieldCannotBeEmpty'))
@@ -143,7 +172,7 @@ const ImportFileModal = (props) => {
                 try {
                     let result = await paraSentenceAPI.importFromFile({
                         dataFieldId: _formData.dataFieldId,
-                        lang1: _formData.lang1,
+                        lang1: 'vi',
                         lang2: _formData.lang2,
                         file: f.originFileObj
                     })
@@ -219,44 +248,34 @@ const ImportFileModal = (props) => {
                         }
 
                         <Row gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
-                            <Col xs={ 24 } md={ 12 }>
-                                <div 
-                                    style={{ 
-                                        marginBottom: "10px",
+                            { isAdmin() ?
+                                <Col xs={ 24 }>
+                                    <div style={{ 
+                                        marginBottom: '10px',
                                         fontSize: '20px',
                                         fontWeight: 500
                                     }}>
-                                    { t('lang') } 1
-                                </div>
-
-                                <Form.Item
-                                    name='lang1'
-                                    rules={ rules.dataFieldId }>
-                                    <Select
-                                        options={ LANGS.map(e => ({value: e.value, label: t(`Language.${e.value}`)})) }>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-
-                            <Col xs={ 24 } md={ 12 }>
-                                <div 
-                                    style={{ 
-                                        marginBottom: "10px",
-                                        fontSize: '20px',
-                                        fontWeight: 500
-                                    }}>
-                                    { t('lang') } 2
-                                </div>
-
-                                <Form.Item
-                                    name='lang2'
-                                    rules={ rules.lang1 }
-                                    options={ LANGS.map(e => ({value: e.value, label: t(`Language.${e.value}`)})) }>
-                                    <Select
-                                        options={ LANGS.map(e => ({value: e.value, label: t(`Language.${e.value}`)})) }>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
+                                        { t('secondLanguage') }
+                                    </div>
+                                    
+                                    <Form.Item
+                                        name='lang2'
+                                        rules={ rules.lang2 }>
+                                        <Select
+                                            showSearch
+                                            style={{
+                                                width: '100%',
+                                            }}
+                                            options={ 
+                                                langList2.map(e => ({
+                                                    value: e.value, 
+                                                    label: t(`Language.${e.label}`)
+                                                })
+                                            )}>
+                                        </Select>
+                                    </Form.Item>
+                                </Col> : null
+                            }
 
                             <Col xs={ 24 }>
                                 <div 
@@ -270,7 +289,7 @@ const ImportFileModal = (props) => {
 
                                 <Form.Item
                                     name='dataFieldId'
-                                    rules={ rules.lang2 }>
+                                    rules={ rules.dataFieldId }>
                                     <Select
                                         options={ dataFieldList.items.map(df => ({
                                             value: df.id,

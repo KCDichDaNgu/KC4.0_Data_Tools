@@ -7,8 +7,8 @@ from database.models.para_sentence import ParaSentence
 
 class ParaSentenceText(db.EmbeddedDocument):
 
-    content = db.StringField()
-    lang = db.StringField()
+    content = db.StringField(required=True)
+    lang = db.StringField(required=True)
 
 class NewestParaSentence(db.EmbeddedDocument):
 

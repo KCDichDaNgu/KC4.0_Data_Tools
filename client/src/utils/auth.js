@@ -51,7 +51,7 @@ const isEditor = () => {
 const isReviewer = () => {
 
     let profile = clonedStore.getState().User.profile;
-
+    
     if (typeof profile !== 'undefined') return isAuthenticatedUser() && profile.roles.includes('reviewer');
 
     return false

@@ -14,8 +14,8 @@ RATING_TYPES = {
 
 class ParaSentenceText(db.EmbeddedDocument):
 
-    content = db.StringField()
-    lang = db.StringField()
+    content = db.StringField(required=True)
+    lang = db.StringField(required=True)
 
 class NewestParaSentence(db.EmbeddedDocument):
 

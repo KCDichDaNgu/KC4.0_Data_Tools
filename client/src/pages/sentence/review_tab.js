@@ -32,7 +32,7 @@ import { clonedStore } from '../../store';
 
 import ImportFileModal from './import-file-modal';
 import { LANGS, STATUS_CODES } from '../../constants';
-import { isAdmin } from '../../utils/auth';
+import { isAdmin, isReviewer } from '../../utils/auth';
 
 import assignmentAPI from '../../api/assignment';
 
@@ -172,6 +172,14 @@ const SentenceReview = (props) => {
                 }
             </Radio.Group>
         );
+    }
+
+    const allowImportFiles = () => {
+        return isAdmin() || isReviewer()
+    }
+
+    const allowExport = () => {
+        return isAdmin()
     }
 
     const columns = [
@@ -379,7 +387,7 @@ const SentenceReview = (props) => {
     }
     
     const isAdminOnly = () => {
-        return currentUserRoles.length == 1 && currentUserRoles.includes('admin');
+        return currentUserRoles.length == 1 && isAdmin();
     }
 
     const getTableRowClassName = (paraSentence) => {
@@ -564,23 +572,25 @@ const SentenceReview = (props) => {
                     </Button> 
                     
                     {
-                        currentUserRoles.includes('admin') ? (
-                            <>
-                                <Button 
-                                    style={{ marginLeft: '10px' }}
-                                    onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                    icon={ <UploadOutlined /> }>
-                                    { t('sentencePage.uploadFile') }
-                                </Button>
+                        allowImportFiles() ? (
+                            <Button 
+                                style={{ marginLeft: '10px' }}
+                                onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                icon={ <UploadOutlined /> }>
+                                { t('sentencePage.uploadFile') }
+                            </Button>
+                        ) : ''
+                    }
 
-                                <Button
-                                    style={{ 
-                                        marginLeft: '10px', 
-                                    }}
-                                    onClick={ exportData }>
-                                    { t('sentencePage.exportData') }
-                                </Button>
-                            </>
+                    {
+                        allowExport() ? (
+                            <Button
+                                style={{ 
+                                    marginLeft: '10px', 
+                                }}
+                                onClick={ exportData }>
+                                { t('sentencePage.exportData') }
+                            </Button>
                         ) : ''
                     }
                 </div>
@@ -669,8 +679,8 @@ const SentenceReview = (props) => {
                     }}>
                 </Table>
             </Card>
-
-            { isAdmin() ? 
+            
+            { allowImportFiles() ? 
                 <ImportFileModal 
                     isModalImportVisible={ isModalImportVisible }
                     setIsModalImportVisible={ setIsModalImportVisible }
