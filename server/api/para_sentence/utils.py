@@ -33,7 +33,7 @@ def import_parasentences_from_file(data):
 
     lang1 = data['lang1']
     lang2 = data['lang2']
-
+    
     dataFieldId = data['dataFieldId']
 
     count = 0

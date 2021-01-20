@@ -3,24 +3,6 @@ import axios from "axios";
 import qs from "querystring";
 
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
-const module_api = "para_sentence";
-
-const toUnicode = (str) => {
-	return str
-		.split("")
-		.map(function (value, index, array) {
-			var temp = value.charCodeAt(0).toString(16).toUpperCase();
-			if (temp.length > 2) {
-				return "\\u" + temp;
-			}
-			return value;
-		})
-		.join("");
-};
-
-const toBase64 = (str) => {
-	return window.btoa(str);
-};
 
 const convertParamsToUrl = (params) => {
 	let param = "";
@@ -38,13 +20,13 @@ export default {
 	getOptions: () =>
 		customAxios({
 			method: 'get',
-			url: `${server_endpoint}/api/${module_api}/list-option-field`,
+			url: `${server_endpoint}/api/para-sentence/list-option-field`,
 		}),
 
 	getSentences: (data) =>
         customAxios({
             method: 'get',
-            url: `${server_endpoint}/api/${module_api}/${convertParamsToUrl(data)}`,
+            url: `${server_endpoint}/api/para-sentence/${convertParamsToUrl(data)}`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -53,7 +35,7 @@ export default {
 	updateParaSentence: (id, params) =>
 		customAxios({
             method: 'put',
-            url: `${server_endpoint}/api/${module_api}/${id}`,
+            url: `${server_endpoint}/api/para-sentence/${id}`,
             data: params
         }),
 
@@ -67,7 +49,7 @@ export default {
 		
 		return customAxios({
             method: 'post',
-			url: `${server_endpoint}/api/${module_api}/import-from-file`,
+			url: `${server_endpoint}/api/para-sentence/import-from-file`,
 			data: formData,
             headers: {
 				'content-type': 'multipart/form-data'
@@ -78,7 +60,7 @@ export default {
 	exportFile: (data) => 
 		customAxios({
 			method: 'get',
-			url: `${server_endpoint}/api/${module_api}/export`,
+			url: `${server_endpoint}/api/para-sentence/export`,
 			params: data,
 			responseType: 'blob'
 		}),
