@@ -41,7 +41,7 @@
     }
 }
 
-.edited-by-someone {
+.edited-by-someone > td {
     background: #e74c3c !important;
     color: #fff !important;
 }
@@ -51,7 +51,7 @@
     color: #000000;
 }
 
-.edited-by-my-self {
+.edited-by-my-self > td {
     background:#2ecc71 !important;
     color: #fff !important;
 } 
