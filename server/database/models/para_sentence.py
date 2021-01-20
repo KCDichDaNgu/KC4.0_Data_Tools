@@ -46,6 +46,10 @@ class Editor(db.EmbeddedDocument):
     user_id = db.ReferenceField(User, default=None)
     roles = db.ListField(choices=User.USER_ROLES.keys(), default=[])
 
+class Score(db.EmbeddedDocument):
+
+    senAlign = db.FloatField(default=0)
+
 class ParaSentence(db.Document):
 
     RATING_TYPES = RATING_TYPES
@@ -53,7 +57,7 @@ class ParaSentence(db.Document):
     newest_para_sentence = db.EmbeddedDocumentField(NewestParaSentence, required=True)
     original_para_sentence = db.EmbeddedDocumentField(OriginalParaSentence, required=True)
 
-    score = db.DictField()
+    score = db.EmbeddedDocumentField(Score)
 
     creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
