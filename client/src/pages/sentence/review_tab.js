@@ -208,6 +208,7 @@ const SentenceReview = (props) => {
         } else {
             filter = { ...filter, [key]: searchInput };
         }
+        console.log(filter)
     };
 
     const handleFilter = () => {
@@ -451,7 +452,7 @@ const SentenceReview = (props) => {
                                         label: t(`Language.${e.label}`)
                                     }
                                 }) }
-                                value={ langList2[0]?.value }
+                                defaultValue={ langList2[0]?.value }
                                 onChange={ value => handleChange(value, "lang2") }>
                             </Select>
                         </Col> : null
