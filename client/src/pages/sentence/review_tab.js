@@ -214,6 +214,20 @@ const SentenceReview = (props) => {
             sorter: (a, b, sortOrder) => { },
             width: '20%',
             sortDirections: ['ascend', 'descend', 'ascend']
+        },
+        {
+            title: t('sentencePage.lastUpdate'),
+            key: 'updated_at',
+            render: record => {
+                return (
+                    <div style={{ fontSize: '14px', fontWeight: 600 }}>
+                        { formatDate(record.updated_at) }
+                    </div>
+                )
+            },
+            sorter: (a, b, sortOrder) => { },
+            width: '10%',
+            sortDirections: ['ascend', 'descend', 'ascend']
         }
     ];
 
@@ -637,7 +651,7 @@ const SentenceReview = (props) => {
                                         </label>
                                         
                                         <div>
-                                            { formatDate(record.updatedAt) }
+                                            { formatDate(record.updated_at) }
                                         </div>
                                     </div>
 
