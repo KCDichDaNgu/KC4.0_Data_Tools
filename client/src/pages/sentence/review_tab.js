@@ -91,6 +91,13 @@ const SentenceReview = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
+
+    const [userList, setUserList] = useState({
+        total: 0,
+        items: [],
+        page: 1,
+        perPage: 5
+    })
     
     const [filter, setFilter] = useState({
         domain: '',
@@ -105,7 +112,8 @@ const SentenceReview = (props) => {
         updatedAt__fromDate: '',
         updatedAt__toDate: '',
         score__from: '',
-        score__to: ''
+        score__to: '',
+        userId: ''
     });
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
@@ -471,7 +479,7 @@ const SentenceReview = (props) => {
                                     width: '100%',
                                 }}
                                 options={ langList2.map(e => {
-                                    if (e.value === 'all') {
+                                    if (e.value === '') {
                                         return {
                                             value: e.value, 
                                             label: t('all')
