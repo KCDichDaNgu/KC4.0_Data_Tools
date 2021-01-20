@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 const SentenceReport = (props) => {
 
     const { t } = useTranslation(['common']);
+    const { setReviewTabFilterParams } = props;
 
     // key = lang, value = [{user_id, user_name, statistics}]
     const [dataDict, setDataDict] = useState({});
@@ -52,6 +53,10 @@ const SentenceReport = (props) => {
         });
     }, []);
 
+    const viewDetails = (user_id) => {
+        console.log(user_id);
+    }
+
     const columns = [
         {
             title: `${t('sentencePage.reportTab.username')}`,
@@ -74,8 +79,12 @@ const SentenceReport = (props) => {
             title: `${t('sentencePage.reportTab.viewDetails')}`,
             dataIndex: "view_details",
             key: "view_details",
-            render: () => (
-                <a href="#"></a>
+            render: (key, record) => (
+                <Button 
+                    type='link'
+                    onClick={() => viewDetails(record['user_id']) }>
+                    { t('sentencePage.reportTab.viewDetails') }
+                </Button>
             )
         },
     ];

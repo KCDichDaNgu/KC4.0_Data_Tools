@@ -26,13 +26,15 @@ const SentencePage = (props) => {
 
     const { t } = useTranslation(['common']);
 
-    const currentUserRoles = clonedStore.getState().User?.profile?.roles || [];
-
     let [ activeTab, setActiveTab ] = useState('reviewTab'); // review, export
     
     const toggleTab = (tabName) => {
         setActiveTab(tabName);
     };
+
+    const setReviewTabFilterParams = (params) => {
+        console.log(params);
+    }
 
     return (
         <React.Fragment>
@@ -63,10 +65,12 @@ const SentencePage = (props) => {
                     activeKey={ activeTab } 
                     onChange={ setActiveTab }>
                     <TabPane key="reviewTab">
-                        <SentenceReview />
+                        <SentenceReview 
+                            setFilterParams={ setReviewTabFilterParams }/>
                     </TabPane>
                     <TabPane key="reportTab">
-                        <SentenceReport />
+                        <SentenceReport
+                            setReviewTabFilterParams={ setReviewTabFilterParams }/>
                     </TabPane>
                 </Tabs>
 
