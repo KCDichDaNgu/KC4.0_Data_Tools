@@ -220,7 +220,7 @@ const SentenceReview = (props) => {
                 )
             },
             sorter: (a, b, sortOrder) => { },
-            width: '20%',
+            width: '15%',
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         {
