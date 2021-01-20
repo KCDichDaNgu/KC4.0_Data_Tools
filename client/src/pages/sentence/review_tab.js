@@ -1,7 +1,10 @@
-import "./style.module.scss";
+import './style.module.scss';
 
-import React, { useEffect, useState, useRef } from "react";
-import paraSentenceAPI from "../../api/para-sentence";
+import 'moment/locale/vi';
+import locale from 'antd/es/date-picker/locale/vi_VN';
+
+import React, { useEffect, useState, useRef } from 'react';
+import paraSentenceAPI from '../../api/para-sentence';
 
 import {
     Input,
@@ -16,25 +19,24 @@ import {
     Card,
     Row,
     Col,
-    Modal
-} from "antd";
+    Modal,
+    DatePicker,
+    Divider
+} from 'antd';
 
 import { UploadOutlined } from '@ant-design/icons';
-
-const FileDownload = require('js-file-download');
 
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 
 import ImportFileModal from './import-file-modal';
-import { LANGS, STATUS_CODES } from "../../constants";
-import { isAdmin } from "../../utils/auth";
+import { LANGS, STATUS_CODES } from '../../constants';
+import { isAdmin } from '../../utils/auth';
 
 import assignmentAPI from '../../api/assignment';
 
-const { TextArea } = Input;
-const { Option } = Select;
+const FileDownload = require('js-file-download');
 
 const CustomTextArea = ({ defaultValue, ...props }) => {
 
@@ -67,12 +69,12 @@ const CustomTextArea = ({ defaultValue, ...props }) => {
 
     return (
         <React.Fragment>
-            <TextArea
+            <Input.TextArea
                 {...props}
                 value={state.value}
                 onChange={trimOnChange}
             />
-            <div style={{ color: "rgba(0, 0, 0, 0.45)", textAlign: "right"}}>
+            <div style={{ color: 'rgba(0, 0, 0, 0.45)', textAlign: 'right'}}>
                 {wordsCount}
             </div>
         </React.Fragment>
@@ -87,18 +89,21 @@ const SentenceReview = (props) => {
     const currentUserRoles = clonedStore.getState().User?.profile?.roles || [];
 
     const [dataSource, setDataSource] = useState([]);
-    const [searchInput, setSearchInput] = useState("");
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     
     let filter = {
-        domain: "",
+        domain: '',
+        text1: '',
+        text2: '',
         rating: 'unRated',
-        lang1: "vi",
-        lang2: "",
-        sort_by: "",
-        sort_order: "",
-        page: ""
+        lang1: 'vi',
+        lang2: '',
+        sortBy: '',
+        sortOrder: '',
+        page: '',
+        updatedAt__fromDate: '',
+        updatedAt__toDate: ''
     };
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
@@ -136,7 +141,7 @@ const SentenceReview = (props) => {
             <Radio.Group
                 key={ paraSentence['id'] } 
                 value={ lastestRating }
-                onChange={ event => updateParaSentence(paraSentence, "rating", event.target.value) }
+                onChange={ event => updateParaSentence(paraSentence, 'rating', event.target.value) }
                 disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
@@ -162,20 +167,20 @@ const SentenceReview = (props) => {
     const columns = [
         {
             title: `${t('sentencePage.text')} 1`,
-            dataIndex: "text1",
-            key: "text1",
+            dataIndex: 'text1',
+            key: 'text1',
             render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
         },
         {
             title: `${t('sentencePage.text')} 2`,
-            dataIndex: "text2",
-            key: "text2",
+            dataIndex: 'text2',
+            key: 'text2',
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
         },
         {
             title: `${t('sentencePage.score')} / ${t('sentencePage.rating')}`,
-            // dataIndex: "score",
-            key: "score",
+            // dataIndex: 'score',
+            key: 'score',
             render: (record, index) => {
                 return (
                     <div style={{
@@ -202,22 +207,34 @@ const SentenceReview = (props) => {
         }
     ];
 
-    const handleChange = (searchInput, key) => {
+    const handleFilterChange = (searchData, key) => {
         if (key == 'text') {
-            filter = { ...filter, text1: searchInput, text2: searchInput };
+            filter = { ...filter, text1: searchData, text2: searchData };
+        } else if (key == 'updatedAt') {
+        
+            let fromDate = searchData == null ? null : searchData[0].valueOf();
+            let toDate = searchData == null ? null : searchData[1].valueOf();
+
+            filter.updatedAt__fromDate = fromDate;
+            filter.updatedAt__toDate = toDate;
+
         } else {
-            filter = { ...filter, [key]: searchInput };
+            filter = { ...filter, [key]: searchData };
         }
-        console.log(filter)
     };
 
     const handleFilter = () => {
-        filter = {
-            ...filter,
-            page: 1
-        }; // reset page to 1
+        filter.page = 1 // reset page to 1
 
-        paraSentenceAPI.getSentences(filter).then((res) => {
+        let filterClone = JSON.parse(JSON.stringify(filter));
+        
+        for (const key in filterClone) {
+            if (!filterClone[key]) {
+                delete filterClone[key]
+            }
+        }
+        
+        paraSentenceAPI.getSentences(filterClone).then((res) => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
         });
@@ -228,10 +245,10 @@ const SentenceReview = (props) => {
     const [ratingList, setRatingList] = useState([]);
 
     const ratingOption = [
-        <Option key='all'>{ t('sentencePage.all') }</Option>
+        <Select.Option key='all'>{ t('sentencePage.all') }</Select.Option>
     ].concat(
         ratingList.map((rating) => {
-            return <Option key={rating}>{ t(`sentencePage.${rating}`) }</Option>;
+            return <Select.Option key={rating}>{ t(`sentencePage.${rating}`) }</Select.Option>;
         })
     );
 
@@ -284,8 +301,8 @@ const SentenceReview = (props) => {
         
         filter = {
             ...filter,
-            sort_by: sorter['columnKey'],
-            sort_order: sorter['order'],
+            sortBy: sorter['columnKey'],
+            sortOrder: sorter['order'],
             page: pagination['current']
         }
         
@@ -309,8 +326,8 @@ const SentenceReview = (props) => {
 
                 let params = {
                     ...filter,
-                    sort_by: sortedInfo['columnKey'],
-                    sort_order: sortedInfo['order'],
+                    sortBy: sortedInfo['columnKey'],
+                    sortOrder: sortedInfo['order'],
                     page: paginationParams.current_page
                 }
 
@@ -340,7 +357,7 @@ const SentenceReview = (props) => {
 
     const getTableRowClassName = (paraSentence) => {
 
-        let className = "";
+        let className = '';
 
         if (isAllowedToEdit(paraSentence)) {
             if (!paraSentence.editor?.id) className = '';
@@ -382,33 +399,28 @@ const SentenceReview = (props) => {
                     <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
                         <div 
                             style={{ 
-                                marginBottom: "10px",
+                                marginBottom: '10px',
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                            { t('sentencePage.by_text') }
+                            { t('sentencePage.byText') }
                         </div>
 
                         <Input
                             placeholder={ t('sentencePage.searchBox') }
-                            value={ searchInput }
                             onChange={(e) => {
-
-                                const currValue = e.target.value;
-
-                                setSearchInput(currValue);
-                                handleChange(currValue, "text");
+                                handleFilterChange(e.target.value, 'text');
                             }}
                         />
                     </Col>
 
                     <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
                         <div style={{ 
-                            marginBottom: "10px",
+                            marginBottom: '10px',
                             fontSize: '20px',
                             fontWeight: 500
                         }}>
-                            { t('sentencePage.by_rating') }
+                            { t('sentencePage.byRating') }
                         </div>
 
                         <Select
@@ -417,7 +429,7 @@ const SentenceReview = (props) => {
                                 width: '100%',
                             }}
                             defaultValue={ filter.rating }
-                            onChange={ value => handleChange(value, "rating") }
+                            onChange={ value => handleFilterChange(value, 'rating') }
                         >
                             { ratingOption }
                         </Select>
@@ -426,11 +438,11 @@ const SentenceReview = (props) => {
                     { isAdmin() ?
                         <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
                             <div style={{ 
-                                marginBottom: "10px",
+                                marginBottom: '10px',
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                                { t('sentencePage.by_lang_2') }
+                                { t('sentencePage.byLang2') }
                             </div>
                             
                             
@@ -453,11 +465,31 @@ const SentenceReview = (props) => {
                                     }
                                 }) }
                                 defaultValue={ langList2[0]?.value }
-                                onChange={ value => handleChange(value, "lang2") }>
+                                onChange={ value => handleFilterChange(value, 'lang2') }>
                             </Select>
                         </Col> : null
                     }
+
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <div style={{ 
+                            marginBottom: '10px',
+                            fontSize: '20px',
+                            fontWeight: 500
+                        }}>
+                            { t('sentencePage.byUpdatedAt') }
+                        </div>
+
+                        <DatePicker.RangePicker 
+                            locale={ locale }
+                            allowClear={ true }
+                            onChange={ date => handleFilterChange(date, 'updatedAt') }
+                        />
+                    </Col>
                 </Row>
+
+                <div className='custom-divider'>
+                    <Divider />
+                </div>
 
                 <div
                     style={{ 
@@ -467,13 +499,13 @@ const SentenceReview = (props) => {
                     }}>
                         
                     <Button
-                        showsearchshowsearch="true"
+                        showsearchshowsearch='true'
                         style={{ 
-                            width: "100px", 
+                            width: '100px', 
                             background: '#384AD7', 
                             borderColor: '#384AD7'
                         }}
-                        type="primary"
+                        type='primary'
                         onClick={ handleFilter }>
                         { t('sentencePage.search') }
                     </Button> 
@@ -490,7 +522,7 @@ const SentenceReview = (props) => {
 
                                 <Button
                                     style={{ 
-                                        marginLeft: "10px", 
+                                        marginLeft: '10px', 
                                     }}
                                     onClick={ exportData }>
                                     { t('sentencePage.exportData') }
@@ -552,7 +584,7 @@ const SentenceReview = (props) => {
                                         </label>
                                         
                                         <div>
-                                            { formatDate(record.updated_at) }
+                                            { formatDate(record.updatedAt) }
                                         </div>
                                     </div>
 

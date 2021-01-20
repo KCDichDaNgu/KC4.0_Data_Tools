@@ -24,7 +24,7 @@ para_sentence_bp = Blueprint(__name__, 'para_sentence')
 @status_required(User.USER_STATUS['active'])
 def get():
     args = request.args
-
+    
     # xoá các bản ghi cũ mà user đã xem
     user = current_token.user
     
@@ -41,23 +41,24 @@ def get():
     if User.USER_ROLES['admin'] not in user.roles:
         query['$and'].append({
             '$or': [
-                {'$and': [
-                    {'viewer_id': user.id},
-                    {'view_due_date': {'$gte': current_timestamp}}
+                {
+                    '$and': [
+                        { 'viewer_id': user.id },
+                        { 'view_due_date': { '$gte': current_timestamp }}
                 ]},
-                {'viewer_id': None},
-                {'view_due_date': {'$lt': current_timestamp}}
+                { 'viewer_id': None },
+                { 'view_due_date': { '$lt': current_timestamp }}
             ]
         })
 
     para_sentences = ParaSentence.objects.filter(__raw__=query)
 
     # sort
-    if 'sort_by' in args:
-        sort_by = args['sort_by']
+    if 'sortBy' in args:
+        sort_by = args['sortBy']
         sort_mark = ''
         
-        if args['sort_order'] == 'descend':
+        if args['sortOrder'] == 'descend':
             sort_mark = '-'
             
         para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')
@@ -266,11 +267,11 @@ def export():
     para_sentences = ParaSentence.objects.filter(__raw__=query)
 
     # sort
-    if 'sort_by' in args:
-        sort_by = args['sort_by']
+    if 'sortBy' in args:
+        sort_by = args['sortBy']
         sort_mark = ''
         
-        if args['sort_order'] == 'descend':
+        if args['sortOrder'] == 'descend':
             sort_mark = '-'
             
         para_sentences = para_sentences.order_by(f'{sort_mark}{sort_by}')

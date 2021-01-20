@@ -105,7 +105,7 @@ const SentenceReport = (props) => {
                                 fontSize: '20px',
                                 fontWeight: 500
                             }}>
-                            { t('sentencePage.by_text') }
+                            { t('sentencePage.byText') }
                         </div>
 
                         <Input
@@ -127,7 +127,7 @@ const SentenceReport = (props) => {
                             fontSize: '20px',
                             fontWeight: 500
                         }}>
-                            { t('sentencePage.by_rating') }
+                            { t('sentencePage.byRating') }
                         </div>
 
                         <Select
@@ -147,7 +147,7 @@ const SentenceReport = (props) => {
                             fontSize: '20px',
                             fontWeight: 500
                         }}>
-                            { t('sentencePage.by_lang_1') }
+                            { t('sentencePage.byLang1') }
                         </div>
 
                         <Select
@@ -167,7 +167,7 @@ const SentenceReport = (props) => {
                             fontSize: '20px',
                             fontWeight: 500
                         }}>
-                            { t('sentencePage.by_lang_2') }
+                            { t('sentencePage.byLang2') }
                         </div>
 
                         <Select
