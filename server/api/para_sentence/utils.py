@@ -154,6 +154,24 @@ def build_query_params(args):
             'newest_para_sentence.text2.lang': args['lang2']
         })
 
+    if 'updatedAt__fromDate' in args:
+        updated_at_from_date = args['updatedAt__fromDate']
+
+        query['$and'].append({
+            'updated_at': {
+                '$gte': updated_at_from_date
+            }
+        })
+
+    if 'updatedAt__toDate' in args:
+        updated_at_to_date = args['updatedAt__toDate']
+
+        query['$and'].append({
+            'updated_at': {
+                '$lte': updated_at_to_date
+            }
+        })
+
     # query string contains
     append_or = False
 
