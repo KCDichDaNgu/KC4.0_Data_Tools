@@ -88,19 +88,20 @@ def update(id):
     )
 
 @admin_manage_user_bp.route('/search', methods=['POST'])
-@role_required(['admin'])
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def search():
+    user = current_token.user
 
     _raw_query = { '$or': [] }
 
-    if request.get_json().get('username'):
+    if len(request.get_json().get('username', '').strip()) > 0:
 
         pattern = re.compile(f".*{ request.get_json().get('username') }.*", re.IGNORECASE)
 
         _raw_query['$or'].append({'username': { '$regex': pattern }})
 
-    if request.get_json().get('email'):
+    if len(request.get_json().get('email', '').strip()) > 0:
 
         pattern = re.compile(f".*{ request.get_json().get('email') }.*", re.IGNORECASE)
 
@@ -108,15 +109,31 @@ def search():
 
     if len(_raw_query['$or']) == 0:
         _raw_query = {}
-        
-    result = User.objects \
-        .filter(__raw__=_raw_query) \
-        .paginate(
+
+    all_users = result = User.objects.filter(__raw__=_raw_query)
+
+    if User.USER_ROLES['admin'] not in user.roles and \
+        User.USER_ROLES['reviewer'] in user.roles:
+        # chỉ query những user cùng language với reviewer
+        assignment = Assignment.objects(user_id=user.id).first()
+        langs = [lang.lang2 for lang in assignment.lang_scope] # ngôn ngữ của editor
+
+        result = Assignment.objects(
+            lang_scope__lang2__in=langs,
+            user_id__in=[user.id for user in all_users]
+        ).paginate(
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)
         )
 
-    result.items = [i.serialize for i in result.items]
+        result.items = [ua.user_id.serialize for ua in result.items]
+    else:
+        result = all_users.paginate(
+                page=int(request.get_json().get('pagination__page') or 1), 
+                per_page=int(request.get_json().get('pagination__perPage') or 5)
+            )
+
+        result.items = [i.serialize for i in result.items]
 
     if request.get_json().get('extraData'):
 

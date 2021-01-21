@@ -33,6 +33,7 @@ import { clonedStore } from '../../store';
 import ImportFileModal from './import-file-modal';
 import { LANGS, STATUS_CODES } from '../../constants';
 import { isAdmin, isReviewer } from '../../utils/auth';
+import UserSelect from './user_select';
 
 import assignmentAPI from '../../api/assignment';
 
@@ -113,7 +114,7 @@ const SentenceReview = (props) => {
         updatedAt__toDate: '',
         score__from: '',
         score__to: '',
-        userId: ''
+        editorId: ''
     });
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
@@ -479,8 +480,7 @@ const SentenceReview = (props) => {
                                 width: '100%',
                             }}
                             defaultValue={ filter.rating }
-                            onChange={ value => handleFilterChange(value, 'rating') }
-                        >
+                            onChange={ value => handleFilterChange(value, 'rating') }>
                             { ratingOption }
                         </Select>
                     </Col>
@@ -562,6 +562,24 @@ const SentenceReview = (props) => {
                             />
                         </Input.Group>
                     </Col>
+
+                    {
+                        isAdmin() || isReviewer() ? (
+                            <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                                <div style={{ 
+                                    marginBottom: '10px',
+                                    fontSize: '20px',
+                                    fontWeight: 500
+                                }}>
+                                    { t('sentencePage.byEditor') }
+                                </div>
+
+                                <UserSelect 
+                                    setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
+                                />
+                            </Col>
+                        ) : ''
+                    }
                 </Row>
 
                 <div className='custom-divider'>

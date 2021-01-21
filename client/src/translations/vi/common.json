@@ -117,7 +117,10 @@
 			"title": "Cặp câu"
 		},
 		"exportFailure": "Xuất file lỗi",
-		"exportData": "Xuất dữ liệu"
+		"exportData": "Xuất dữ liệu",
+		"byEditor": "Người chỉnh sửa",
+		"searchByEditor": "Nhập tên người dùng...",
+		"noMoreResults": "Không tìm thấy kết quả"
 	},
 	"manageUserPage": {
 		"title": "Quản lý người dùng",

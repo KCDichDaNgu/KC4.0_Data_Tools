@@ -6,6 +6,7 @@ from database.models.user import User
 from datetime import timedelta, datetime
 import pandas as pd
 import re
+from bson import ObjectId
 
 ROLE2IDX = {
     None: 0,
@@ -189,6 +190,11 @@ def build_query_params(args):
                 '$lte': score__to
             }
         })
+
+    if 'editorId' in args:
+        query['$and'].append(({
+            'editor.user_id': ObjectId(args['editorId'])
+        }))
         
     # query string contains
     append_or = False
