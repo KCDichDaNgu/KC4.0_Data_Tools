@@ -98,7 +98,10 @@
 			"title": "Sentence"
 		},
 		"exportFailure": "Export file error",
-		"exportData": "Export data"
+		"exportData": "Export data",
+		"byEditor": "Editor",
+		"searchByEditor": "Enter editor's username...",
+		"noMoreResults": "No more results"
 	},
 	"backupDatabase": {
 		"title": "Backups management",
