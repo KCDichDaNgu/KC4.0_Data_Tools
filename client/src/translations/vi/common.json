@@ -104,7 +104,14 @@
 			"title": "Tải lên dữ liệu"
 		},
 		"reportTab": {
-			"title": "Thống kê"
+			"title": "Thống kê",
+			"username": "Tên người dùng",
+			"numberEdited": "Số lượng sửa",
+			"numberBeEdited": "Số lượng bị sửa",
+			"viewDetails": "Xem chi tiết",
+			"filter": "Lọc",
+			"unratedSentences": "câu chưa đánh giá",
+			"remain": "Còn"
 		},
 		"reviewTab": {
 			"title": "Cặp câu"

@@ -259,11 +259,13 @@ def setup_app(app):
     from api.para_sentence.views import para_sentence_bp
     from api.assignment.views import assignment_bp
     from api.data_field.views import data_field_bp
+    from api.report.views import report_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(assignment_bp, url_prefix='/api/assignment') 
     app.register_blueprint(para_sentence_bp, url_prefix='/api/para-sentence') 
     app.register_blueprint(data_field_bp, url_prefix='/api/data-field') 
+    app.register_blueprint(report_bp, url_prefix='/api/report') 
     
 
     from api.admin.user.views import admin_manage_user_bp

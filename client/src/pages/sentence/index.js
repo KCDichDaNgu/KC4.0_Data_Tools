@@ -43,25 +43,20 @@ const SentencePage = (props) => {
                     icon="pe-7s-home icon-gradient bg-happy-itmeo"
                 />
 
-                {
-                    currentUserRoles.includes('admin') ? (
-                        <div style={{ marginBottom: '20px' }}>
-                            <Button 
-                                onClick={ () => toggleTab('reviewTab') }
-                                type={ activeTab == 'reviewTab' ? "primary" : "" }>
-                                { t('sentencePage.title') }
-                            </Button>
+                <div style={{ marginBottom: '20px' }}>
+                    <Button 
+                        onClick={ () => toggleTab('reviewTab') }
+                        type={ activeTab == 'reviewTab' ? "primary" : "" }>
+                        { t('sentencePage.title') }
+                    </Button>
 
-                            <Button 
-                                onClick={ () => toggleTab('reportTab') }
-                                type={ activeTab == 'reportTab' ? "primary" : "" }>
-                                { t('sentencePage.reportTab.title') }
-                            </Button>
-                        </div>
-                    ) : ''
-                }
+                    <Button 
+                        onClick={ () => toggleTab('reportTab') }
+                        type={ activeTab == 'reportTab' ? "primary" : "" }>
+                        { t('sentencePage.reportTab.title') }
+                    </Button>
+                </div>
 
-                
                 <Tabs 
                     renderTabBar={() => (<div></div>)}
                     size='large'
@@ -70,13 +65,9 @@ const SentencePage = (props) => {
                     <TabPane key="reviewTab">
                         <SentenceReview />
                     </TabPane>
-                    {
-                        currentUserRoles.includes('admin') ? (
-                            <TabPane key="reportTab">
-                                <SentenceReport />
-                            </TabPane>
-                        ) : ''
-                    }
+                    <TabPane key="reportTab">
+                        <SentenceReport />
+                    </TabPane>
                 </Tabs>
 
             </SiteLayout>

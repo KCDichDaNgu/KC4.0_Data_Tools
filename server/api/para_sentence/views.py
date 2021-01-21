@@ -217,7 +217,8 @@ def update(_id):
             editor={
                 'user_id': user.id,
                 'roles': user.roles
-            }
+            },
+            updated_at=time.time()
         )
         para_sentence_history.save()
 

@@ -85,7 +85,14 @@
 		"ok": "OK",
 		"updatedByHigherRole": "This record has been editted by admin",
 		"reportTab": {
-			"title": "Report"
+			"title": "Report",
+			"username": "Username",
+			"numberEdited": "# Edited sentences",
+			"numberBeEdited": "# Be edited sentences",
+			"viewDetails": "View details",
+			"filter": "Filter",
+			"unratedSentences": "unrated sentences",
+			"remain": ""
 		},
 		"reviewTab": {
 			"title": "Sentence"
