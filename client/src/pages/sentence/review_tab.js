@@ -240,6 +240,7 @@ const SentenceReview = (props) => {
     ];
 
     const handleFilterChange = (searchData, key) => {
+        
         if (key == 'text') {
             setFilter({
                 ...filter,
@@ -289,7 +290,7 @@ const SentenceReview = (props) => {
     const [ratingList, setRatingList] = useState([]);
 
     const ratingOption = [
-        <Select.Option key='all'>{ t('sentencePage.all') }</Select.Option>
+        <Select.Option key=''>{ t('sentencePage.all') }</Select.Option>
     ].concat(
         ratingList.map((rating) => {
             return <Select.Option key={rating}>{ t(`sentencePage.${rating}`) }</Select.Option>;
@@ -300,7 +301,7 @@ const SentenceReview = (props) => {
 
         const fetchData = async () => {
 
-            let cloneFilter = {}
+            let cloneFilter = JSON.parse(JSON.stringify(filter))
 
             if (isAdmin()) {
                 setLangList2([
@@ -502,8 +503,9 @@ const SentenceReview = (props) => {
                                 }}
                                 options={ langList2.map(e => {
                                     if (e.value === '') {
+                                        
                                         return {
-                                            value: e.value, 
+                                            value: '', 
                                             label: t('all')
                                         }
                                     } 
