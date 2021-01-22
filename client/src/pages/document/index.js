@@ -15,7 +15,7 @@ import {
 import SiteLayout from '../../layout/site-layout';
 
 import { UploadOutlined } from '@ant-design/icons';
-import { ImportDocModal } from './import-doc-modal';
+import ImportDocModal from './import-doc-modal';
 import { useTranslation } from 'react-i18next';
 
 const moment = require('moment');
