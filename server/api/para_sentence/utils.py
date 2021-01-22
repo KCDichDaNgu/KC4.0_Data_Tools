@@ -156,7 +156,7 @@ def build_query_params(args):
         })
 
     if 'updatedAt__fromDate' in args:
-        updated_at_from_date = float(args['updatedAt__fromDate'])
+        updated_at_from_date = float(args['updatedAt__fromDate']) / 1000
 
         query['$and'].append({
             'updated_at': {
@@ -165,7 +165,7 @@ def build_query_params(args):
         })
 
     if 'updatedAt__toDate' in args:
-        updated_at_to_date = float(args['updatedAt__toDate'])
+        updated_at_to_date = float(args['updatedAt__toDate']) / 1000
 
         query['$and'].append({
             'updated_at': {
