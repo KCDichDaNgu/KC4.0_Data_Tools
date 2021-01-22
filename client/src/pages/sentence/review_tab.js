@@ -36,8 +36,13 @@ import { isAdmin, isReviewer } from '../../utils/auth';
 import UserSelect from './user_select';
 
 import assignmentAPI from '../../api/assignment';
+import moment from 'moment';
 
 const FileDownload = require('js-file-download');
+
+const startDate = moment().add(-30, 'days');
+console.log(startDate);
+const endDate = moment().add(1, 'days')
 
 const CustomTextArea = ({ defaultValue, ...props }) => {
 
@@ -104,8 +109,8 @@ const SentenceReview = forwardRef((props, ref) => {
         sortBy: '',
         sortOrder: '',
         page: '',
-        updatedAt__fromDate: '',
-        updatedAt__toDate: '',
+        updatedAt__fromDate: startDate.valueOf(),
+        updatedAt__toDate: endDate.valueOf(),
         score__from: '',
         score__to: '',
         editorId: ''
@@ -444,7 +449,9 @@ const SentenceReview = forwardRef((props, ref) => {
 
     const exportData = () => {
         paraSentenceAPI.exportFile(filter).then(res => {
-            FileDownload(res.data, 'report.csv');
+            let lang1 = filter.lang1 || 'all';
+            let lang2 = filter.lang2 || 'all';
+            FileDownload(res.data, `${lang1}-${lang2}.csv`);
         });
     }
 
@@ -556,6 +563,7 @@ const SentenceReview = forwardRef((props, ref) => {
                         <DatePicker.RangePicker 
                             locale={ locale }
                             allowClear={ true }
+                            defaultValue={[startDate, endDate]}
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
                         />
                     </Col>

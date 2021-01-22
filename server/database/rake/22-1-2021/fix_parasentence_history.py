@@ -18,10 +18,11 @@ if __name__ == "__main__":
 
     for para_history in ph_without_editor_main:
         id = para_history['_id']
-        para_sentence = db.find_one({'last_history_record_id': id})
+        # para_sentence = db.para_sentence.find_one({'last_history_record_id': id})
+        para_sentence = db.para_sentence.find_one({'id': para_history['para_sentence_id']})
 
         if para_sentence is not None:
-            db.update_one(
+            db.para_sentence_history.update_one(
                 {'_id': id},
                 {'$set': {
                     'editor': para_sentence['editor']
@@ -31,5 +32,4 @@ if __name__ == "__main__":
 
 
     print('check every para sentences have editor')
-    print(len(list(db.para_sentence.find({'editor': {'$exists': False}}))))
-    
+    print(len(list(db.para_sentence_history.find({'editor': {'$exists': False}}))))
