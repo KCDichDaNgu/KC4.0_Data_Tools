@@ -40,10 +40,6 @@ import assignmentAPI from '../../api/assignment';
 
 const FileDownload = require('js-file-download');
 
-const startDate = moment().add(-30, 'days');
-
-const endDate = moment().add(1, 'days')
-
 const SentenceReview = forwardRef((props, ref) => {
 
     const { t } = useTranslation(['common']);
