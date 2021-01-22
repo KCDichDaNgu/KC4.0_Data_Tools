@@ -63,4 +63,5 @@ backend/run.sh
 /.env
 server/data/import_from_file
 server/data/export_file
+server/data/doc-alignment
 server/public/backups

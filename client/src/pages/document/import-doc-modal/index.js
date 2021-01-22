@@ -23,7 +23,7 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
-import paraSentenceAPI from "../../../api/para-sentence";
+import documentAPI from '../../../api/document';
 import assignmentAPI from '../../../api/assignment';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
@@ -49,7 +49,7 @@ const ImportFileModal = (props) => {
 
     const [langList2, setLangList2] = useState([]);
 
-    const [uploadingFile, setUploadingFile] = useState(false);
+    const [submittingStatus, setSubmittingStatus] = useState(false);
 
     const [searchInput, setSearchInput] = useState('');
 
@@ -83,13 +83,19 @@ const ImportFileModal = (props) => {
                 message: t('fieldRequired'),
             }
         ],
-        lang2: [
+        text1: [
             {
                 required: true,
                 message: t('fieldRequired'),
             }
         ],
-        fileList: [
+        text2: [
+            {
+                required: true,
+                message: t('fieldRequired'),
+            }
+        ],
+        lang2: [
             {
                 required: true,
                 message: t('fieldRequired'),
@@ -118,8 +124,6 @@ const ImportFileModal = (props) => {
             pagination__perPage: result.data.perPage,
         })
     };
-
-    const [files, setFiles] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -157,53 +161,41 @@ const ImportFileModal = (props) => {
     const submitDocPair = async () => {
 
         try {
-            await form.validateFields();
+
+            await form.validateFields()
 
             let _formData = form.getFieldsValue();
 
-            if (isReviewer()) {
+            if (!isAdmin()) {
                 _formData.lang2 = langList2[0].value;
             }
-            
-            if (files.length == 0) {
-                message.error(t('formMessages.errors.filesFieldCannotBeEmpty'))
-                return;
-            }
 
-            setUploadingFile(true);
-
-            for (const f of files) {
+            setSubmittingStatus(true);
                 
-                try {
-                    let result = await paraSentenceAPI.importFromFile({
-                        dataFieldId: _formData.dataFieldId,
-                        lang1: 'vi',
-                        lang2: _formData.lang2,
-                        file: f.originFileObj
-                    })
-                    
-                    if (result.data.code == STATUS_CODES.success) {
-                        createImportSuccessModal('', result.data.data)
-                    }
-                } catch(err) {
-                    createImportErrorModal(
-                        `${f.name} ${t('sentencePage.uploadFailed')}`, 
-                        t('sentencePage.pleaseCheckYourFile')
-                    )
+            try {
+                let result = await documentAPI.create({
+                    lang1: 'vi',
+                    lang2: _formData.lang2,
+                    text1: _formData.text1,
+                    text2: _formData.text2
+                })
+                
+                if (result.data.code == STATUS_CODES.success) {
+                    // createImportSuccessModal('', result.data.data)
                 }
+
+            } catch(err) {
+                // createImportErrorModal(
+                //     `${f.name} ${t('sentencePage.uploadFailed')}`, 
+                //     t('sentencePage.pleaseCheckYourFile')
+                // )
             }
             
         } catch(err) {
 
         }
 
-        setUploadingFile(false);
-
-        // reload new results
-        paraSentenceAPI.getSentences(currentFilter).then((res) => {
-            reloadSentenceData(res.data.data.para_sentences);
-            reloadSentencePaginationParams(res.data.data.pagination);
-        });
+        setSubmittingStatus(false);
     }
 
     const createImportSuccessModal = (title, importStatus) => {
@@ -247,7 +239,7 @@ const ImportFileModal = (props) => {
                         initialValues={ initialValues }
                         form={ form }>
                         {
-                            uploadingFile ? (
+                            submittingStatus ? (
                                 <Spin />
                             ) : ''
                         }
@@ -288,24 +280,15 @@ const ImportFileModal = (props) => {
                                     fontSize: '20px',
                                     fontWeight: 500
                                 }}>
-                                    { t('secondLanguage') }
+                                    { t('text1') }
                                 </div>
                                 
                                 <Form.Item
-                                    name='lang2'
-                                    rules={ rules.lang2 }>
-                                    <Select
-                                        showSearch
-                                        style={{
-                                            width: '100%',
-                                        }}
-                                        options={ 
-                                            langList2.map(e => ({
-                                                value: e.value, 
-                                                label: t(`Language.${e.label}`)
-                                            })
-                                        )}>
-                                    </Select>
+                                    name='text1'
+                                    rules={ rules.text1 }>
+                                    <Input.TextArea
+                                        autoSize={{ minRows: 4 }}>
+                                    </Input.TextArea>
                                 </Form.Item>
                             </Col>
 
@@ -315,24 +298,15 @@ const ImportFileModal = (props) => {
                                     fontSize: '20px',
                                     fontWeight: 500
                                 }}>
-                                    { t('secondLanguage') }
+                                    { t('text2') }
                                 </div>
                                 
                                 <Form.Item
-                                    name='lang2'
-                                    rules={ rules.lang2 }>
-                                    <Select
-                                        showSearch
-                                        style={{
-                                            width: '100%',
-                                        }}
-                                        options={ 
-                                            langList2.map(e => ({
-                                                value: e.value, 
-                                                label: t(`Language.${e.label}`)
-                                            })
-                                        )}>
-                                    </Select>
+                                    name='text2'
+                                    rules={ rules.text2 }>
+                                    <Input.TextArea
+                                        autoSize={{ minRows: 4 }}>
+                                    </Input.TextArea>
                                 </Form.Item>
                             </Col>
 

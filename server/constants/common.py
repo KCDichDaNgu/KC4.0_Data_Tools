@@ -11,6 +11,8 @@ BACKUP_SCHEDULE_HOURS = 8
 
 EXPORT_FILE_DIR = "data/export_file/"
 
+DOC_ALIGNMENT_FILE_DIR = "data/doc-alignment"
+
 LANGS = [
     {
         'notation': 'vi'
