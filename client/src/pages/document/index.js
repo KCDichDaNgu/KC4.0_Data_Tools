@@ -18,6 +18,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import ImportDocModal from './import-doc-modal';
 import { useTranslation } from 'react-i18next';
 
+const { Option } = Select;
+
 const moment = require('moment');
 
 const DocumentPage = (props) => {
@@ -310,7 +312,7 @@ const DocumentPage = (props) => {
                     setIsModalImportVisible={ setIsModalImportVisible }>
                 </ImportDocModal>
 
-                <Card className='domain-table-card'>
+                <Card style={{ display: 'none' }} className='domain-table-card'>
                     <div className='header-controller'>
                         {FilterByNameInput}
                         <div style={{ float: 'left' }}>
@@ -379,7 +381,6 @@ const DocumentPage = (props) => {
                             </div>
 
                             <Button
-                                showSearchshowSearch
                                 style={{ width: '100px', marginLeft: '30px' }}
                                 type='primary'
                                 onClick={handleFilter}>

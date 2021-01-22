@@ -34,54 +34,15 @@ import ImportFileModal from './import-file-modal';
 import { LANGS, STATUS_CODES } from '../../constants';
 import { isAdmin, isReviewer } from '../../utils/auth';
 import UserSelect from './user_select';
+import CustomTextArea from '../../components/custom-textarea';
 
 import assignmentAPI from '../../api/assignment';
 
 const FileDownload = require('js-file-download');
 
-const CustomTextArea = ({ defaultValue, ...props }) => {
+const startDate = moment().add(-30, 'days');
 
-    const [state, setState] = useState({ 
-        value: defaultValue,
-        typingTimeOut: 0 
-    });
-
-    useEffect(() => {
-        return () => clearTimeout(state.typingTimeOut)
-    }, [state.typingTimeOut])
-
-    const trimmedValue = state.value.trim();
-    const wordsCount = trimmedValue.length == 0 ? 0 : trimmedValue.split(/\s+/).length;
-
-    function trimOnChange(e) {
-        if (state.typingTimeOut) {
-            clearTimeout(state.typingTimeOut);
-        }
-        
-        const currValue = e.target.value;
-
-        setState({
-            value: currValue,
-            typingTimeOut: setTimeout(() => {
-                setState({ ...state, value: currValue.trim() });
-            }, 650)
-        });
-    }
-
-    return (
-        <React.Fragment>
-            <Input.TextArea
-                { ...props }
-                value={ state.value }
-                onChange={ trimOnChange }
-            />
-            
-            <div style={{ color: 'rgba(0, 0, 0, 0.45)', textAlign: 'right'}}>
-                { wordsCount }
-            </div>
-        </React.Fragment>
-    );
-}
+const endDate = moment().add(1, 'days')
 
 const SentenceReview = forwardRef((props, ref) => {
 

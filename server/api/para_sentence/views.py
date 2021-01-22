@@ -144,8 +144,6 @@ def import_from_file():
     """
     Create new ParaSentences from files
     """
-
-    print(request.form.to_dict())
     
     file = request.files['file']
     
