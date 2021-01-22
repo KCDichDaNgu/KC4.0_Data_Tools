@@ -75,6 +75,7 @@ const CustomTextArea = ({ defaultValue, ...props }) => {
                 value={ state.value }
                 onChange={ trimOnChange }
             />
+            
             <div style={{ color: 'rgba(0, 0, 0, 0.45)', textAlign: 'right'}}>
                 { wordsCount }
             </div>
