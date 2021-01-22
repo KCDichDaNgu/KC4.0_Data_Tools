@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import PageTitle from "../../layout/site-layout/main/PageTitle";
 import reportAPI from "../../api/report";
 import locale from 'antd/es/date-picker/locale/vi_VN';
+import { LANGS, STATUS_CODES } from '../../constants';
 
 import {
     Button,
@@ -18,6 +19,10 @@ import {
 } from "antd";
 
 import { useTranslation } from 'react-i18next';
+import moment, { lang } from 'moment';
+
+const startDate = moment().clone().startOf('month');
+const endDate = moment().add(1, 'days');
 
 const SentenceReport = (props) => {
 
@@ -31,7 +36,19 @@ const SentenceReport = (props) => {
     const [unRatedCount, setUnRatedCount] = useState({});
 
     useEffect(() => {
-        reportAPI.getReport().then(res => {
+        let defaultFilterLangDict = {
+            fromDate: startDate.valueOf(),
+            toDate: endDate.valueOf()
+        };
+        let filterDict_ = {};
+
+        LANGS.map((lang, idx) => {
+            filterDict_[lang['value']] = defaultFilterLangDict;
+        });
+
+        setFilterDict(filterDict_);
+
+        reportAPI.getReport(defaultFilterLangDict).then(res => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
                 setDataDict(res.data.data);
                 
@@ -154,6 +171,7 @@ const SentenceReport = (props) => {
                                     <DatePicker.RangePicker 
                                         locale={ locale }
                                         allowClear={ true }
+                                        defaultValue={ [startDate, endDate] }
                                         onChange={ date => handleFilterDate(date, lang) }
                                     />
                                 </div>
