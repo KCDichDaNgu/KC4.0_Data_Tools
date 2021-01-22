@@ -3,7 +3,7 @@ import './style.module.scss';
 import 'moment/locale/vi';
 import locale from 'antd/es/date-picker/locale/vi_VN';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
 import paraSentenceAPI from '../../api/para-sentence';
 
 import {
@@ -82,7 +82,7 @@ const CustomTextArea = ({ defaultValue, ...props }) => {
     );
 }
 
-const SentenceReview = (props) => {
+const SentenceReview = forwardRef((props, ref) => {
 
     const { t } = useTranslation(['common']);
 
@@ -92,13 +92,6 @@ const SentenceReview = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-
-    const [userList, setUserList] = useState({
-        total: 0,
-        items: [],
-        page: 1,
-        perPage: 5
-    })
     
     const [filter, setFilter] = useState({
         domain: '',
@@ -116,6 +109,30 @@ const SentenceReview = (props) => {
         score__to: '',
         editorId: ''
     });
+
+    // sử dụng useRef để gọi function setSelectedUser trong UserSelect,
+    // sử dụng khi người dùng bấm xem chi tiết ở tab report, fill user_name vào select.
+    const userSelectRef = useRef();
+
+    useImperativeHandle(ref, () => ({
+
+        setFilterEditorId(editor_id, editor_name) {
+            setTimeout(() => {
+                let _filter = {
+                    ...filter,
+                    rating: 'all',
+                    editorId: editor_id
+                };
+
+                searchParaSentence(_filter);
+
+                setFilter(_filter);
+
+                userSelectRef.current.setPreSelectedUser(editor_id, editor_name);
+            }, 1000);
+        }
+
+    }));
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
 
@@ -238,7 +255,7 @@ const SentenceReview = (props) => {
             width: '10%',
             sortDirections: ['ascend', 'descend', 'ascend']
         }
-    ];
+    ]; 
 
     const handleFilterChange = (searchData, key) => {
         
@@ -267,17 +284,22 @@ const SentenceReview = (props) => {
         }
     };
 
-    const searchParaSentence = () => {
+    const searchParaSentence = (customFilter) => {
+        let newFilter = {};
 
-        let newFilter = {
-            ...filter,
-            page: 1
-        }
-
-        setFilter(newFilter)
-        
-        for (const key in newFilter) {
-            if (!newFilter[key]) delete newFilter[key];
+        if (customFilter === undefined) {
+            newFilter = {
+                ...filter,
+                page: 1
+            }
+    
+            setFilter(newFilter)
+            
+            for (const key in newFilter) {
+                if (!newFilter[key]) delete newFilter[key];
+            }
+        } else {
+            newFilter = customFilter;
         }
         
         paraSentenceAPI.getSentences(newFilter).then(res => {
@@ -291,7 +313,7 @@ const SentenceReview = (props) => {
     const [ratingList, setRatingList] = useState([]);
 
     const ratingOption = [
-        <Select.Option key=''>{ t('sentencePage.all') }</Select.Option>
+        <Select.Option key='all'>{ t('sentencePage.all') }</Select.Option>
     ].concat(
         ratingList.map((rating) => {
             return <Select.Option key={rating}>{ t(`sentencePage.${rating}`) }</Select.Option>;
@@ -479,7 +501,7 @@ const SentenceReview = (props) => {
                             style={{
                                 width: '100%',
                             }}
-                            defaultValue={ filter.rating }
+                            value={ filter.rating }
                             onChange={ value => handleFilterChange(value, 'rating') }>
                             { ratingOption }
                         </Select>
@@ -575,6 +597,7 @@ const SentenceReview = (props) => {
                                 </div>
 
                                 <UserSelect 
+                                    ref={ userSelectRef }
                                     setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
                                 />
                             </Col>
@@ -601,7 +624,7 @@ const SentenceReview = (props) => {
                             borderColor: '#384AD7'
                         }}
                         type='primary'
-                        onClick={ searchParaSentence }>
+                        onClick={ () => searchParaSentence() }>
                         { t('sentencePage.search') }
                     </Button> 
                     
@@ -726,6 +749,6 @@ const SentenceReview = (props) => {
             }
         </React.Fragment>
     );
-};
+});
 
 export default SentenceReview;

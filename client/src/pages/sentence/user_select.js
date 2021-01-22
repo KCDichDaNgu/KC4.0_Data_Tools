@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import VirtualizedSelect from 'react-virtualized-select';
 
 import 'react-select/dist/react-select.css';
@@ -9,19 +9,30 @@ import { useTranslation } from 'react-i18next';
 
 import adminUserAPI from '../../api/admin/user';
 
-const UserSelect = (props) => {
+const UserSelect = forwardRef((props, ref) => {
     const { t } = useTranslation(['common']);
 
     const { setSelectedUserId } = props;
 
+    const [searchTerm, setSearchTerm] = useState();
     const [selectedUser, setSelectedUser] = useState();
     const [userList, setUserList] = useState({
         total: 0,
         items: [],
         page: 1,
         perPage: 10
-    })
-    const [searchTerm, setSearchTerm] = useState('')
+    });
+
+    useImperativeHandle(ref, () => ({
+
+        setPreSelectedUser(user_id, username) {
+            setSelectedUser({
+                id: user_id,
+                username: username
+            });
+        }
+
+    }));
     
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
@@ -37,7 +48,7 @@ const UserSelect = (props) => {
         }, 750)
     
         return () => clearTimeout(delayDebounceFn)
-    }, [searchTerm])
+    }, [searchTerm]);
 
     const addOptions = () => {
         let params = {
@@ -47,7 +58,6 @@ const UserSelect = (props) => {
         };
 
         adminUserAPI.search(params).then(res => {
-            console.log(res);
             setUserList({
                 items: [...userList.items, ...res.data.items],
                 page: res.data.page,
@@ -78,6 +88,7 @@ const UserSelect = (props) => {
                 valueKey='id'
                 onOpen={ handleOpen }
                 onChange={ handleChange }
+                searchPromptText="awrwer"
                 onMenuScrollToBottom={ addOptions }
                 onInputChange={ (value) => setSearchTerm(value) }
                 placeholder={ t('sentencePage.searchByEditor') }
@@ -85,6 +96,6 @@ const UserSelect = (props) => {
             />
         </React.Fragment>
     );
-}
+});
 
 export default UserSelect;

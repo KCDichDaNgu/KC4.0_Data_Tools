@@ -23,6 +23,8 @@ const SentenceReport = (props) => {
 
     const { t } = useTranslation(['common']);
 
+    const { setFilterEditorId } = props;
+
     // key = lang, value = [{user_id, user_name, statistics}]
     const [dataDict, setDataDict] = useState({});
     const [filterDict, setFilterDict] = useState({});
@@ -52,6 +54,10 @@ const SentenceReport = (props) => {
         });
     }, []);
 
+    const viewDetails = (editor_id, editor_name) => {
+        setFilterEditorId(editor_id, editor_name);
+    }
+
     const columns = [
         {
             title: `${t('sentencePage.reportTab.username')}`,
@@ -74,8 +80,12 @@ const SentenceReport = (props) => {
             title: `${t('sentencePage.reportTab.viewDetails')}`,
             dataIndex: "view_details",
             key: "view_details",
-            render: () => (
-                <a href="#"></a>
+            render: (key, record) => (
+                <Button 
+                    type='link'
+                    onClick={() => viewDetails(record.user_id, record.username) }>
+                    { t('sentencePage.reportTab.viewDetails') }
+                </Button>
             )
         },
     ];
