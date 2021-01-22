@@ -22,7 +22,7 @@ def create():
 
     user = current_token.user
 
-    backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_server'])
+    backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'])
 
     # backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'])
 

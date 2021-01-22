@@ -14,6 +14,8 @@ import {
 } from 'antd';
 import SiteLayout from '../../layout/site-layout';
 
+import { UploadOutlined } from '@ant-design/icons';
+import ImportDocModal from './import-doc-modal';
 import { useTranslation } from 'react-i18next';
 
 const moment = require('moment');
@@ -165,6 +167,8 @@ const DocumentPage = (props) => {
         lang2: '',
     });
 
+    const [isModalImportVisible, setIsModalImportVisible] = useState(false);
+
     const timeformat = (last_update) => {
         const d = new Date(last_update);
         return moment(d).format('DD/MM/YYYY');
@@ -291,7 +295,20 @@ const DocumentPage = (props) => {
                     heading={ t('documentPage.title') }
                     // subheading={ t('documentPage.createNewContent') }
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
+                    customComponent={
+                        <Button 
+                            style={{ marginLeft: '10px' }}
+                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                            icon={ <UploadOutlined /> }>
+                            { t('sentencePage.uploadFile') }
+                        </Button>
+                    }
                 />
+
+                <ImportDocModal 
+                    isModalImportVisible={ isModalImportVisible }
+                    setIsModalImportVisible={ setIsModalImportVisible }>
+                </ImportDocModal>
 
                 <Card className='domain-table-card'>
                     <div className='header-controller'>
