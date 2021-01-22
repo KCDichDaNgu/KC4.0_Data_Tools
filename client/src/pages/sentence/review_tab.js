@@ -36,13 +36,8 @@ import { isAdmin, isReviewer } from '../../utils/auth';
 import UserSelect from './user_select';
 
 import assignmentAPI from '../../api/assignment';
-import moment from 'moment';
 
 const FileDownload = require('js-file-download');
-
-const startDate = moment().add(-30, 'days');
-console.log(startDate);
-const endDate = moment().add(1, 'days')
 
 const CustomTextArea = ({ defaultValue, ...props }) => {
 
@@ -108,8 +103,8 @@ const SentenceReview = forwardRef((props, ref) => {
         sortBy: '',
         sortOrder: '',
         page: '',
-        updatedAt__fromDate: startDate.valueOf(),
-        updatedAt__toDate: endDate.valueOf(),
+        updatedAt__fromDate: '',
+        updatedAt__toDate: '',
         score__from: '',
         score__to: '',
         editorId: ''
@@ -562,7 +557,6 @@ const SentenceReview = forwardRef((props, ref) => {
                         <DatePicker.RangePicker 
                             locale={ locale }
                             allowClear={ true }
-                            defaultValue={[startDate, endDate]}
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
                         />
                     </Col>
