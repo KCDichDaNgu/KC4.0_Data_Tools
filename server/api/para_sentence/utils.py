@@ -82,7 +82,8 @@ def import_parasentences_from_file(data):
                 score={ "senAlign": float(score) },
                 creator_id=creator_id,
                 data_field_id=dataFieldId,
-                created_at=time.time()
+                created_at=time.time(),
+                updated_at=time.time()
             )
 
             para_sentence.save()
@@ -243,6 +244,7 @@ def export_csv_file(para_sentences, out_path):
         'Đánh giá',
         'Ngôn ngữ 1',
         'Ngôn ngữ 2',
+        'Thời gian tạo',
         'Cập nhật lần cuối lúc',
         'Cập nhật lần cuối bởi'
     ]
@@ -258,6 +260,7 @@ def export_csv_file(para_sentences, out_path):
             RATING_KEY2TEXT[para_sentence['newest_para_sentence'].rating],
             para_sentence['newest_para_sentence'].text1.lang,
             para_sentence['newest_para_sentence'].text2.lang,
+            datetime.utcfromtimestamp(para_sentence['created_at']).strftime('%d/%m/%Y %H:%M'),
             datetime.utcfromtimestamp(para_sentence['updated_at']).strftime('%d/%m/%Y %H:%M'),
             para_sentence['editor']['username']
         ]
