@@ -1,6 +1,6 @@
 import "./style.module.scss";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { forwardRef, useState, useRef } from "react";
 import PageTitle from "../../layout/site-layout/main/PageTitle";
 import paraSentenceAPI from "../../api/para-sentence";
 import SentenceReport from "./report_tab";
@@ -34,6 +34,13 @@ const SentencePage = (props) => {
         setActiveTab(tabName);
     };
 
+    const sentencePageRef = useRef();
+
+    const setFilterEditorIdTunnel = (editor_id, editor_name) => {
+        setActiveTab('reviewTab');
+        sentencePageRef.current.setFilterEditorId(editor_id, editor_name);
+    }
+
     return (
         <React.Fragment>
             <SiteLayout>
@@ -63,10 +70,12 @@ const SentencePage = (props) => {
                     activeKey={ activeTab } 
                     onChange={ setActiveTab }>
                     <TabPane key="reviewTab">
-                        <SentenceReview />
+                        <SentenceReview 
+                            ref={sentencePageRef}/>
                     </TabPane>
                     <TabPane key="reportTab">
-                        <SentenceReport />
+                        <SentenceReport 
+                            setFilterEditorId={ setFilterEditorIdTunnel }/>
                     </TabPane>
                 </Tabs>
 
