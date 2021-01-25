@@ -2,7 +2,7 @@ import time, re
 from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
-from constants.common import STATUS_CODES
+from constants.common import STATUS_CODES, LANGS
 
 from database.models.user import User
 from database.models.assignment import Assignment
@@ -94,16 +94,17 @@ def search():
     user = current_token.user
 
     _raw_query = { '$or': [] }
+    args = request.get_json()
 
-    if len(request.get_json().get('username', '').strip()) > 0:
+    if len(args.get('username', '').strip()) > 0:
 
-        pattern = re.compile(f".*{ request.get_json().get('username') }.*", re.IGNORECASE)
+        pattern = re.compile(f".*{ args.get('username') }.*", re.IGNORECASE)
 
         _raw_query['$or'].append({'username': { '$regex': pattern }})
 
-    if len(request.get_json().get('email', '').strip()) > 0:
+    if len(args.get('email', '').strip()) > 0:
 
-        pattern = re.compile(f".*{ request.get_json().get('email') }.*", re.IGNORECASE)
+        pattern = re.compile(f".*{ args.get('email') }.*", re.IGNORECASE)
 
         _raw_query['$or'].append({'email': { '$regex': pattern }})
 
@@ -112,32 +113,40 @@ def search():
 
     all_users = result = User.objects.filter(__raw__=_raw_query)
 
-    if User.USER_ROLES['admin'] not in user.roles and \
-        User.USER_ROLES['reviewer'] in user.roles:
-        # chỉ query những user cùng language với reviewer
-        assignment = Assignment.objects(user_id=user.id).first()
-        langs = [lang.lang2 for lang in assignment.lang_scope] # ngôn ngữ của editor
+    # depend on language, query on assignment or not
+    langs = None
+    if 'lang' in args and args['lang'].strip() != '': 
+        # if lang is specified in request params
+        langs = [args['lang']]
+    else:
+        if User.USER_ROLES['admin'] not in user.roles and \
+            User.USER_ROLES['reviewer'] in user.roles: # reviewer
+            # chỉ query những user cùng language với reviewer
+            assignment = Assignment.objects(user_id=user.id).first()
+            langs = [lang.lang2 for lang in assignment.lang_scope] # ngôn ngữ của editor
 
+    if langs is not None:
+        # query through assignment
         result = Assignment.objects(
             lang_scope__lang2__in=langs,
             user_id__in=[user.id for user in all_users]
         ).paginate(
-            page=int(request.get_json().get('pagination__page') or 1), 
-            per_page=int(request.get_json().get('pagination__perPage') or 5)
+            page=int(args.get('pagination__page') or 1), 
+            per_page=int(args.get('pagination__perPage') or 5)
         )
 
         result.items = [ua.user_id.serialize for ua in result.items]
     else:
         result = all_users.paginate(
-                page=int(request.get_json().get('pagination__page') or 1), 
-                per_page=int(request.get_json().get('pagination__perPage') or 5)
+                page=int(args.get('pagination__page') or 1), 
+                per_page=int(args.get('pagination__perPage') or 5)
             )
 
         result.items = [i.serialize for i in result.items]
 
-    if request.get_json().get('extraData'):
+    if args.get('extraData'):
 
-        _extra_data_conds = request.get_json().get('extraData')
+        _extra_data_conds = args.get('extraData')
 
         result.items = [{**item, **{'extraData': {}}} for item in result.items]
 

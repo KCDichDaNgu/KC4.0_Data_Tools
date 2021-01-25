@@ -36,9 +36,10 @@ const SentencePage = (props) => {
 
     const sentencePageRef = useRef();
 
-    const setFilterEditorIdTunnel = (editor_id, editor_name) => {
+    const setFilterEditorIdTunnel = (editor_id, editor_name, lang2, fromDate, toDate) => {
         setActiveTab('reviewTab');
-        sentencePageRef.current.setFilterEditorId(editor_id, editor_name);
+        sentencePageRef.current.setFilterEditorId(editor_id, editor_name, 
+            lang2, fromDate, toDate);
     }
 
     return (

@@ -52,6 +52,9 @@ def get():
         for user_id, report in user_report.items():
             username = username_dict[user_id]
             report['username'] = username
+            report['lang'] = lang
+            report['from_date'] = from_date * 1000
+            report['to_date'] = to_date * 1000
 
         user_report_list = []
         for user_id, report in user_report.items():

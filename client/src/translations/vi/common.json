@@ -5,6 +5,7 @@
 	"Homepage": "Trang chủ",
 	"language": "Ngôn ngữ",
 	"Language": {
+		"unknown": "Văn bản",
 		"en": "Tiếng Anh",
 		"vi": "Tiếng Việt",
 		"khm": "Tiếng Khmer",

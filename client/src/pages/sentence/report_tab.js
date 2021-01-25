@@ -71,8 +71,8 @@ const SentenceReport = (props) => {
         });
     }, []);
 
-    const viewDetails = (editor_id, editor_name) => {
-        setFilterEditorId(editor_id, editor_name);
+    const viewDetails = (editor_id, editor_name, lang2, fromDate, toDate) => {
+        setFilterEditorId(editor_id, editor_name, lang2, fromDate, toDate);
     }
 
     const columns = [
@@ -100,7 +100,12 @@ const SentenceReport = (props) => {
             render: (key, record) => (
                 <Button 
                     type='link'
-                    onClick={() => viewDetails(record.user_id, record.username) }>
+                    onClick={() => viewDetails(
+                        record.user_id, 
+                        record.username, 
+                        record.lang,
+                        record.from_date,
+                        record.to_date) }>
                     { t('sentencePage.reportTab.viewDetails') }
                 </Button>
             )

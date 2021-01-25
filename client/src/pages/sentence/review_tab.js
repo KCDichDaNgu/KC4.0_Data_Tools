@@ -27,6 +27,7 @@ import {
 import { UploadOutlined } from '@ant-design/icons';
 
 import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 
@@ -74,12 +75,15 @@ const SentenceReview = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
 
-        setFilterEditorId(editor_id, editor_name) {
+        setFilterEditorId(editor_id, editor_name, lang2, fromDate, toDate) {
             setTimeout(() => {
                 let _filter = {
                     ...filter,
                     rating: 'all',
-                    editorId: editor_id
+                    editorId: editor_id,
+                    lang2: lang2,
+                    updatedAt__fromDate: fromDate,
+                    updatedAt__toDate: toDate
                 };
 
                 searchParaSentence(_filter);
@@ -160,13 +164,14 @@ const SentenceReview = forwardRef((props, ref) => {
 
     const columns = [
         {
-            title: `${t('sentencePage.text')} 1`,
+            title: t(`Language.${filter.lang1}`) ,
             dataIndex: 'text1',
             key: 'text1',
             render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
         },
         {
-            title: `${t('sentencePage.text')} 2`,
+            title: filter.lang2 ? t(`Language.${filter.lang2}`) : 
+                `${ t('Language.unknown') } 2`,
             dataIndex: 'text2',
             key: 'text2',
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
@@ -497,7 +502,8 @@ const SentenceReview = forwardRef((props, ref) => {
                                         label: t(`Language.${e.label}`)
                                     }
                                 }) }
-                                defaultValue={ langList2[0]?.value }
+                                value={ filter.lang2 }
+                                // defaultValue={ langList2[0]?.value }
                                 onChange={ value => handleFilterChange(value, 'lang2') }>
                             </Select>
                         </Col> : null
@@ -515,6 +521,11 @@ const SentenceReview = forwardRef((props, ref) => {
                         <DatePicker.RangePicker 
                             locale={ locale }
                             allowClear={ true }
+                            value={
+                                filter.updatedAt__fromDate && filter.updatedAt__toDate ? [
+                                moment(filter.updatedAt__fromDate), 
+                                moment(filter.updatedAt__toDate),
+                                ] : null }
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
                         />
                     </Col>
@@ -559,6 +570,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 <UserSelect 
                                     ref={ userSelectRef }
                                     setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
+                                    lang={ filter.lang2 }
                                 />
                             </Col>
                         ) : ''
