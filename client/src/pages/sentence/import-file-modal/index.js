@@ -179,6 +179,8 @@ const ImportFileModal = (props) => {
                     
                     if (result.data.code == STATUS_CODES.success) {
                         createImportSuccessModal('', result.data.data)
+                        form.resetFields()
+                        setFiles(initialValues.fileList)
                     }
                 } catch(err) {
                     createImportErrorModal(
@@ -303,10 +305,12 @@ const ImportFileModal = (props) => {
 
                         <Form.Item>
                             <Upload
+                                directory
                                 beforeUpload={ file => {
                                     return false;
                                 }}
                                 // fileList={ form.getFieldValue('fileList') }
+                                fileList={ files }
                                 name='file'
                                 headers={{
                                     authorization: 'authorization-text',
@@ -316,7 +320,7 @@ const ImportFileModal = (props) => {
                                     setFiles(fileList);
                                 }}>
                                 <Button icon={ <UploadOutlined /> }>
-                                    { t('chooseFile') }
+                                    { t('chooseDirectory') }
                                 </Button>
                             </Upload>
                         </Form.Item>
