@@ -203,7 +203,7 @@ const ImportFileModal = (props) => {
             
             if (successModalContents.length > 0) {
                 successModalContents.push({
-                    ...total, name: 'Tổng cộng'
+                    ...total, name: t('total')
                 });
 
                 createImportSuccessModal('', successModalContents);
@@ -231,7 +231,7 @@ const ImportFileModal = (props) => {
                 <React.Fragment key={ name }>
                     <p>
                         { 
-                            name === 'Tổng cộng' 
+                            name === t('total')
                             ? <b>{ name }</b>
                             : `${ index + 1 }. ${ t('file') } ${ name }` 
                         }
