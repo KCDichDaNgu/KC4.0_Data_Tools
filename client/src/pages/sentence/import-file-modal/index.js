@@ -310,7 +310,7 @@ const ImportFileModal = (props) => {
                                     return false;
                                 }}
                                 // fileList={ form.getFieldValue('fileList') }
-                                fileList={files}
+                                fileList={ files }
                                 name='file'
                                 headers={{
                                     authorization: 'authorization-text',
