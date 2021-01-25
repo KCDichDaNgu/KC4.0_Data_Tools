@@ -167,6 +167,13 @@ const ImportFileModal = (props) => {
 
             setUploadingFile(true);
 
+            let successModalContents = [];
+            let total = {
+                nData: 0,
+                nSuccess: 0,
+                nErrorHashExists: 0
+            };
+
             for (const f of files) {
                 
                 try {
@@ -178,9 +185,13 @@ const ImportFileModal = (props) => {
                     })
                     
                     if (result.data.code == STATUS_CODES.success) {
-                        createImportSuccessModal('', result.data.data)
-                        form.resetFields()
-                        setFiles(initialValues.fileList)
+                        successModalContents.push({
+                            ...result.data.data, name: f.name
+                        })
+
+                        total.nData += result.data.data.nData,
+                        total.nSuccess += result.data.data.nSuccess,
+                        total.nErrorHashExists += result.data.data.nErrorHashExists        
                     }
                 } catch(err) {
                     createImportErrorModal(
@@ -190,6 +201,16 @@ const ImportFileModal = (props) => {
                 }
             }
             
+            if (successModalContents.length > 0) {
+                successModalContents.push({
+                    ...total, name: t('total')
+                });
+
+                createImportSuccessModal('', successModalContents);
+                form.resetFields();
+                setFiles(initialValues.fileList);
+            }
+
         } catch(err) {
 
         }
@@ -203,19 +224,26 @@ const ImportFileModal = (props) => {
         });
     }
 
-    const createImportSuccessModal = (title, importStatus) => {
+    const createImportSuccessModal = (title, contents) => {
         Modal.success({
             title: title,
-            content: (
-                <>
+            content: contents.map(({ name, nSuccess, nData, nErrorHashExists }, index) => (
+                <React.Fragment key={ name }>
                     <p>
-                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
+                        { 
+                            name === t('total')
+                            ? <b>{ name }</b>
+                            : `${ index + 1 }. ${ t('file') } ${ name }` 
+                        }
                     </p>
                     <p>
-                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
+                        - { t('sentencePage.imported') } { nSuccess }/{ nData } { t('sentencePage.pairParaSentences') }.
                     </p>
-                </>
-            ),
+                    <p>
+                        - { nErrorHashExists }/{ nData } { t('sentencePage.duplicatedRecords') }.
+                    </p>
+                </React.Fragment>
+            )),
             onOk() {},
         });
     }
