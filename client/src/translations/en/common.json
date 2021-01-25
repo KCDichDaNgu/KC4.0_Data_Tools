@@ -4,6 +4,7 @@
 	},
 	"Homepage": "Homepage",
 	"Language": {
+		"unknown": "Text",
 		"en": "English",
 		"vi": "Vietnamese"
 	},

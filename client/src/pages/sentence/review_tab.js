@@ -164,13 +164,14 @@ const SentenceReview = forwardRef((props, ref) => {
 
     const columns = [
         {
-            title: `${t('sentencePage.text')} 1`,
+            title: t(`Language.${filter.lang1}`) ,
             dataIndex: 'text1',
             key: 'text1',
             render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
         },
         {
-            title: `${t('sentencePage.text')} 2`,
+            title: filter.lang2 ? t(`Language.${filter.lang2}`) : 
+                `${ t('Language.unknown') } 2`,
             dataIndex: 'text2',
             key: 'text2',
             render: (text, paraSentence, index) => renderText('text2', paraSentence, index)
