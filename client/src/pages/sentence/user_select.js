@@ -12,7 +12,7 @@ import adminUserAPI from '../../api/admin/user';
 const UserSelect = forwardRef((props, ref) => {
     const { t } = useTranslation(['common']);
 
-    const { setSelectedUserId } = props;
+    const { setSelectedUserId, lang } = props;
 
     const [searchTerm, setSearchTerm] = useState();
     const [selectedUser, setSelectedUser] = useState();
@@ -39,9 +39,10 @@ const UserSelect = forwardRef((props, ref) => {
             let params = {
                 'pagination__page': 1,
                 'pagination__perPage': userList.perPage,
-                'username': searchTerm
+                'username': searchTerm,
+                'lang': lang
             };
-
+            
             adminUserAPI.search(params).then(res => {
                 setUserList(res.data);
             });
@@ -54,7 +55,8 @@ const UserSelect = forwardRef((props, ref) => {
         let params = {
             'pagination__page': userList.page + 1,
             'pagination__perPage': userList.perPage,
-            'username': searchTerm
+            'username': searchTerm,
+            'lang': lang
         };
 
         adminUserAPI.search(params).then(res => {
@@ -74,7 +76,9 @@ const UserSelect = forwardRef((props, ref) => {
     }
 
     const handleOpen = () => {
-        adminUserAPI.search({}).then(res => {
+        adminUserAPI.search({
+            lang: lang
+        }).then(res => {
             setUserList(res.data);
         });
     }

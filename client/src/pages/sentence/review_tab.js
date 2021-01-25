@@ -77,8 +77,6 @@ const SentenceReview = forwardRef((props, ref) => {
 
         setFilterEditorId(editor_id, editor_name, lang2, fromDate, toDate) {
             setTimeout(() => {
-                console.log(fromDate);
-                console.log(toDate);
                 let _filter = {
                     ...filter,
                     rating: 'all',
@@ -571,6 +569,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 <UserSelect 
                                     ref={ userSelectRef }
                                     setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
+                                    lang={ filter.lang2 }
                                 />
                             </Col>
                         ) : ''
