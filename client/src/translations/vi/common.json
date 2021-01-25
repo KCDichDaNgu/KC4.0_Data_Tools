@@ -167,7 +167,7 @@
 		"success": {
 			"createUserSuccess": "Tạo người dùng thành công",
 			"updateSuccess": "Cập nhật thành công"
-		}	
+		}
 	},
 	"modalMessages": {
 		"warning": {
@@ -205,6 +205,7 @@
 	"cancel": "Huỷ",
 	"submit": "Tải lên",
 	"chooseFile": "Chọn tệp",
+	"chooseDirectory": "Chọn thư mục",
 	"assignedLanguage": "Ngôn ngữ phân công",
 	"all": "Tất cả",
 	"from": "Từ",
