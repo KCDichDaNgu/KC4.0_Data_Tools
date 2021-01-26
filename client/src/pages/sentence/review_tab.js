@@ -416,42 +416,68 @@ const SentenceReview = forwardRef((props, ref) => {
         <React.Fragment>
             <Card
                 title={
-                    <div
-                        style={{ 
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}>
+                    <div style={{ position: 'relative' }}>
                         <div 
                             style={{ 
-                                fontSize: '25px',
-                                fontWeight: 600
+                                position: 'absolute',
+                                zIndex: 1,
+                                right: 0,
+                                paddingTop: '8px'
                             }}>
-                            { t('sentencePage.filter') }
+                            
+                            {
+                                allowImportFiles() ? (
+                                    <Button 
+                                        style={{ marginLeft: '10px' }}
+                                        onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                        icon={ <UploadOutlined /> }>
+                                        { t('sentencePage.uploadFile') }
+                                    </Button>
+                                ) : ''
+                            }
+
+                            {
+                                allowExport() ? (
+                                    <Button
+                                        style={{ 
+                                            marginLeft: '10px', 
+                                        }}
+                                        onClick={ exportData }>
+                                        { t('sentencePage.exportData') }
+                                    </Button>
+                                ) : ''
+                            }
                         </div>
+
+                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                            <Col 
+                                style={{ 
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }} xs={ 24 } md={ 4 }>
+                                    <div
+                                        style={{ 
+                                            fontSize: '25px',
+                                            fontWeight: 600
+                                        }}>
+                                        { t('sentencePage.filter') }
+                                    </div>
+                            </Col>
+
+                            <Col style={{ paddingTop: 8, paddingBottom: 8 }} xs={ 24 } md={ 10 }>
+                                <Input
+                                    placeholder={ t('sentencePage.searchBox') }
+                                    onChange={(e) => {
+                                        handleFilterChange(e.target.value, 'text');
+                                    }}
+                                    />
+                            </Col>
+                        </Row>
                     </div>
                 } 
                 style={{ marginBottom: '40px' }}>
 
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                        <div 
-                            style={{ 
-                                marginBottom: '10px',
-                                fontSize: '20px',
-                                fontWeight: 500
-                            }}>
-                            { t('sentencePage.byText') }
-                        </div>
-
-                        <Input
-                            placeholder={ t('sentencePage.searchBox') }
-                            onChange={(e) => {
-                                handleFilterChange(e.target.value, 'text');
-                            }}
-                        />
-                    </Col>
-
                     <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
                         <div style={{ 
                             marginBottom: '10px',
@@ -472,8 +498,75 @@ const SentenceReview = forwardRef((props, ref) => {
                         </Select>
                     </Col>
 
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                        <div style={{ 
+                            marginBottom: '10px',
+                            fontSize: '20px',
+                            fontWeight: 500
+                        }}>
+                            { t('sentencePage.byScoreRange') }
+                        </div>
+
+                        <Input.Group compact>
+                            <Input 
+                                style={{ width: '50%' }} 
+                                placeholder={ t('from') }
+                                type='number'
+                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__from') } 
+                            />
+
+                            <Input 
+                                style={{ width: '50%' }} 
+                                placeholder={ t('to') }
+                                type='number'
+                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__to') } 
+                            />
+                        </Input.Group>
+                    </Col>
+
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <div style={{ 
+                            marginBottom: '10px',
+                            fontSize: '20px',
+                            fontWeight: 500
+                        }}>
+                            { t('sentencePage.byUpdatedAt') }
+                        </div>
+
+                        <DatePicker.RangePicker 
+                            locale={ locale }
+                            allowClear={ true }
+                            value={
+                                filter.updatedAt__fromDate && filter.updatedAt__toDate ? [
+                                moment(filter.updatedAt__fromDate), 
+                                moment(filter.updatedAt__toDate),
+                                ] : null }
+                            onChange={ date => handleFilterChange(date, 'updatedAt') }
+                        />
+                    </Col>
+
+                    {
+                        isAdmin() || isReviewer() ? (
+                            <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                                <div style={{ 
+                                    marginBottom: '10px',
+                                    fontSize: '20px',
+                                    fontWeight: 500
+                                }}>
+                                    { t('sentencePage.byEditor') }
+                                </div>
+
+                                <UserSelect 
+                                    ref={ userSelectRef }
+                                    setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
+                                    lang={ filter.lang2 }
+                                />
+                            </Col>
+                        ) : ''
+                    }
+
                     { isAdmin() ?
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
                             <div style={{ 
                                 marginBottom: '10px',
                                 fontSize: '20px',
@@ -481,7 +574,6 @@ const SentenceReview = forwardRef((props, ref) => {
                             }}>
                                 { t('sentencePage.byLang2') }
                             </div>
-                            
                             
                             <Select
                                 showSearch
@@ -508,83 +600,10 @@ const SentenceReview = forwardRef((props, ref) => {
                             </Select>
                         </Col> : null
                     }
-
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                        <div style={{ 
-                            marginBottom: '10px',
-                            fontSize: '20px',
-                            fontWeight: 500
-                        }}>
-                            { t('sentencePage.byUpdatedAt') }
-                        </div>
-
-                        <DatePicker.RangePicker 
-                            locale={ locale }
-                            allowClear={ true }
-                            value={
-                                filter.updatedAt__fromDate && filter.updatedAt__toDate ? [
-                                moment(filter.updatedAt__fromDate), 
-                                moment(filter.updatedAt__toDate),
-                                ] : null }
-                            onChange={ date => handleFilterChange(date, 'updatedAt') }
-                        />
-                    </Col>
-
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                        <div style={{ 
-                            marginBottom: '10px',
-                            fontSize: '20px',
-                            fontWeight: 500
-                        }}>
-                            { t('sentencePage.byScoreRange') }
-                        </div>
-
-                        <Input.Group compact>
-                            <Input 
-                                style={{ width: '50%' }} 
-                                placeholder={ t('from') }
-                                type='number'
-                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__from') } 
-                            />
-
-                            <Input 
-                                style={{ width: '50%' }} 
-                                placeholder={ t('to') }
-                                type='number'
-                                onChange={ e => handleFilterChange(parseFloat(e.target.value), 'score__to') } 
-                            />
-                        </Input.Group>
-                    </Col>
-
-                    {
-                        isAdmin() || isReviewer() ? (
-                            <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
-                                <div style={{ 
-                                    marginBottom: '10px',
-                                    fontSize: '20px',
-                                    fontWeight: 500
-                                }}>
-                                    { t('sentencePage.byEditor') }
-                                </div>
-
-                                <UserSelect 
-                                    ref={ userSelectRef }
-                                    setSelectedUserId={ (editorId) => handleFilterChange(editorId, "editorId")}
-                                    lang={ filter.lang2 }
-                                />
-                            </Col>
-                        ) : ''
-                    }
                 </Row>
-
-                <div className='custom-divider'>
-                    <Divider />
-                </div>
 
                 <div
                     style={{ 
-                        display: 'flex',
-                        alignItems: 'center',
                         float: 'right'
                     }}>
                         
@@ -599,29 +618,6 @@ const SentenceReview = forwardRef((props, ref) => {
                         onClick={ () => searchParaSentence() }>
                         { t('sentencePage.search') }
                     </Button> 
-                    
-                    {
-                        allowImportFiles() ? (
-                            <Button 
-                                style={{ marginLeft: '10px' }}
-                                onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                icon={ <UploadOutlined /> }>
-                                { t('sentencePage.uploadFile') }
-                            </Button>
-                        ) : ''
-                    }
-
-                    {
-                        allowExport() ? (
-                            <Button
-                                style={{ 
-                                    marginLeft: '10px', 
-                                }}
-                                onClick={ exportData }>
-                                { t('sentencePage.exportData') }
-                            </Button>
-                        ) : ''
-                    }
                 </div>
             </Card>
 

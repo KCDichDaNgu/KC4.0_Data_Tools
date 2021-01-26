@@ -187,11 +187,11 @@ const ImportFileModal = (props) => {
                     if (result.data.code == STATUS_CODES.success) {
                         successModalContents.push({
                             ...result.data.data, name: f.name
-                        })
+                        });
 
-                        total.nData += result.data.data.nData,
-                        total.nSuccess += result.data.data.nSuccess,
-                        total.nErrorHashExists += result.data.data.nErrorHashExists        
+                        total.nData += result.data.data.nData;
+                        total.nSuccess += result.data.data.nSuccess;
+                        total.nErrorHashExists += result.data.data.nErrorHashExists;        
                     }
                 } catch(err) {
                     createImportErrorModal(
