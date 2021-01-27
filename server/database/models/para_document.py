@@ -61,7 +61,6 @@ class ParaDocument(db.Document):
     original_para_sentence = db.EmbeddedDocumentField(OriginalParaDocument)
     
     score = db.EmbeddedDocumentField(Score)
-    creator_id = db.ReferenceField(User)
 
     creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
