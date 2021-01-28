@@ -18,7 +18,7 @@ LANGS = [
         'notation': 'vi'
     },
     {
-        'notation': 'khm'
+        'notation': 'km'
     },
     {
         'notation': 'zh'

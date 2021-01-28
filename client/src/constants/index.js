@@ -22,8 +22,8 @@ export const LANGS = [
         label: 'vi'
     },
     {
-        value: 'khm',
-        label: 'khm'
+        value: 'km',
+        label: 'km'
     },
     {
         value: 'zh',

@@ -8,7 +8,7 @@
 		"unknown": "Văn bản",
 		"en": "Tiếng Anh",
 		"vi": "Tiếng Việt",
-		"khm": "Tiếng Khmer",
+		"km": "Tiếng Khmer",
 		"zh": "Tiếng Trung",
 		"lo": "Tiếng Lào"
 	},
@@ -141,7 +141,7 @@
 	"updateSuccess": "Cập nhật thành công",
 	"originalText": "Câu gốc",
 	"vi": "Tiếng Việt",
-	"khm": "Tiếng Khmer",
+	"km": "Tiếng Khmer",
 	"email": "Email",
 	"username": "Tên đăng nhập",
 	"password": "Mật khẩu",
