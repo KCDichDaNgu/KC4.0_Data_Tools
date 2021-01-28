@@ -6,6 +6,7 @@ import {
     Input,
     Table,
     Button,
+    Modal,
     Popconfirm,
     Card,
     Dropdown,
@@ -25,6 +26,7 @@ import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
 import { isAdmin, isReviewer } from '../../utils/auth';
 import CustomTextArea from '../../components/custom-textarea';
+import CustomCol from '../../components/custom-modal-column';
 
 
 const { Option } = Select;
@@ -319,7 +321,25 @@ const DocumentPage = (props) => {
             title: t(`Language.${filter.lang1}`) ,
             dataIndex: 'text1',
             key: 'text1',
-            render: (text, paraSentence, index) => renderText('text1', paraSentence, index)
+            render: (text, paraSentence, index) => {
+                return (
+                    <React.Fragment>
+                        { renderText('text1', paraSentence, index) }
+                        <Button
+                            type='link'
+                            onClick={ () => showFullDocModal(paraSentence) }
+                            style={{
+                                position: 'absolute',
+                                bottom: '4px',
+                                padding: 0,
+                                zIndex: 1 
+                            }}
+                        >
+                            { t('documentPage.showFull') }
+                        </Button>
+                    </React.Fragment>
+                );
+            }
         },
         {
             title: filter.lang2 ? t(`Language.${filter.lang2}`) : 
@@ -372,9 +392,41 @@ const DocumentPage = (props) => {
         }
     ]; 
 
+    const showFullDocModal = (paraDocument) => {
+        Modal.info({
+            content: (
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                    <CustomCol
+                        lang={
+                            t(`Language.${paraDocument.newest_para_sentence['text1'].lang}`)
+                        }
+                        documentContent={
+                            paraDocument.newest_para_sentence['text1'].content
+                        }
+                        style={{ marginBottom: '20px' }}
+                    />
+
+                    <CustomCol
+                        lang={
+                            t(`Language.${paraDocument.newest_para_sentence['text2'].lang}`)
+                        }
+                        documentContent={
+                            paraDocument.newest_para_sentence['text2'].content
+                        }
+                    />
+                </Row>
+            ),
+            width: '80vw',
+            style: { maxWidth: '950px' },
+            icon: null
+        })
+    }
+
     const renderText = (key, paraSentence, index) => {
 
         let lastestContent = paraSentence.newest_para_sentence[key].content;
+        const maxChar = 100;
+        const exceedMaxChar = lastestContent.length > maxChar;
         let disabled = !isAllowedToEdit(paraSentence);
 
         return (
@@ -383,7 +435,11 @@ const DocumentPage = (props) => {
                 style={{ border: 'none' }}
                 key={ paraSentence['id'] }
                 autoSize
-                defaultValue={ lastestContent }
+                defaultValue={
+                    exceedMaxChar
+                    ? `${lastestContent.substring(0, maxChar + 1)}...`
+                    : lastestContent
+                }
                 onPressEnter={ event => {
                     event.preventDefault();
                     updateParaSentence(paraSentence, key, event.target.value);
