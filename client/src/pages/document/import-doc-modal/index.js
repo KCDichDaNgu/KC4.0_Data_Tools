@@ -24,6 +24,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import documentAPI from '../../../api/document';
+import sentAlignAPI from '../../../api/sentAlign'; 
 import assignmentAPI from '../../../api/assignment';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
@@ -59,8 +60,8 @@ const ImportFileModal = (props) => {
 
     const initialValues = {
         dataFieldId: '',
-        text1: '',
-        text2: '',
+        text1: 'Đến với Mộc Châu , du khách được hoà mình vào không gian văn hoá mang đậm nét độc đáo của đồng bào các dân tộc Thái , Mông trên miền thảo nguyên xanh.',
+        text2: 'មកដល់ Moc Chau អ្នកទេសចរបានសម្របខ្លួនចូលក្នុងលំហវប្បធម៌ ដែលមានលក្ខណៈពិសេសរបស់ជនជាតិភាគជាតិថៃ និង Mong នៅលើវាលស្មៅពណ៌ខៀវស្រងាត់។',
         lang1: 'vi',
         lang2: '', 
         fileList: []
@@ -177,15 +178,22 @@ const ImportFileModal = (props) => {
             setSubmittingStatus(true);
                 
             try {
-                let result = await documentAPI.create({
+                let result = await sentAlignAPI.create({
                     lang1: 'vi',
                     lang2: _formData.lang2,
                     text1: _formData.text1,
                     text2: _formData.text2
                 })
                 
-                if (result.data.code == STATUS_CODES.success) {
-                    // createImportSuccessModal('', result.data.data)
+                if (result.code == STATUS_CODES.success) {
+                    createSentAlignSuccessModal(
+                        `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
+                        result.data,
+                        {
+                            lang1: 'vi',
+                            lang2: _formData.lang2,
+                        }
+                    )
                 }
 
             } catch(err) {
@@ -200,6 +208,73 @@ const ImportFileModal = (props) => {
         }
 
         setSubmittingStatus(false);
+    }
+
+    const createSentAlignSuccessModal = (title, result, metaData) => {
+        Modal.confirm({
+            title: title,
+            visible: isModalImportVisible,
+            width: 1000,
+            icon: '',
+            content: (
+                <>
+                    <Row
+                        style={{ marginBottom: '15px' }} 
+                        gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
+
+                        <Col xs={ 24 } md={ 11 }>
+                            <div style={{ fontWeight: 700 }}>
+                                { t(`Language.${metaData.lang1}`) }
+                            </div>
+                        </Col>
+
+                        <Col xs={ 24 } md={ 11 }>
+                            <div style={{ fontWeight: 700 }}>
+                                { t(`Language.${metaData.lang2}`) }
+                            </div>
+                        </Col>
+
+                        <Col xs={ 24 } md={ 2 }>
+                            <div style={{ fontWeight: 700 }}>
+                                { t(`score`) }
+                            </div>
+                        </Col>
+
+                    </Row>
+                    {
+                        result.map(sentencePair => (
+                            <Row
+                                style={{ marginBottom: '10px' }} 
+                                gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
+
+                                <Col xs={ 24 } md={ 11 }>
+                                    { sentencePair.source }
+                                </Col>
+
+                                <Col xs={ 24 } md={ 11 }>
+                                    { sentencePair.target }
+                                </Col>
+
+                                <Col xs={ 24 } md={ 2 }>
+                                    <div style={{ fontWeight: 700 }}>
+                                        { Number(sentencePair.score).toFixed(2) }
+                                    </div>
+                                </Col>
+
+                            </Row>
+                        ))
+                    }
+                </>
+            ),
+            onCancel() { setIsModalImportVisible(false) },
+            cancelText: t('cancel'),
+            okText: t('submit'),
+            onOk() { submitSentencePairs() },
+        });
+    }
+
+    const submitSentencePairs = () => {
+        console.log('aaaa')
     }
 
     const createImportSuccessModal = (title, importStatus) => {
