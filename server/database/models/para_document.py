@@ -2,6 +2,7 @@ import time
 
 from database.db import db
 from database.models import User
+from database.models.data_field import DataField
 
 RATING_TYPES = {
     'good': 'good',
