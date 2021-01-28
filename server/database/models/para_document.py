@@ -58,8 +58,8 @@ class ParaDocument(db.Document):
     RATING_TYPES = RATING_TYPES
     ALIGNMENT_STATUSES = ALIGNMENT_STATUSES
 
-    newest_para_sentence = db.EmbeddedDocumentField(ParaDocumentText, required=True)
-    original_para_sentence = db.EmbeddedDocumentField(OriginalParaDocument)
+    newest_para_document = db.EmbeddedDocumentField(NewestParaDocument, required=True)
+    original_para_document = db.EmbeddedDocumentField(OriginalParaDocument)
     
     score = db.EmbeddedDocumentField(Score)
 
