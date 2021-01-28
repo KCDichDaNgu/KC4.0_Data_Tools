@@ -35,7 +35,8 @@
 		"all": "Tất cả",
 		"noDomain": "Không",
 		"senAlign": "Gióng hàng",
-		"text": "Văn bản"
+		"text": "Văn bản",
+		"showFull": "Hiển thị đầy đủ"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",
