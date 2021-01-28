@@ -36,6 +36,8 @@ class Assignment(db.Document):
     before_save = Signal()
     after_delete = Signal()
 
+    meta = {'collection': 'assignment'}
+
     @property
     def serialize(self):
         
