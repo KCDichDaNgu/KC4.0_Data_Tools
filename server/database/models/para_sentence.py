@@ -12,7 +12,7 @@ RATING_TYPES = {
     'unRated': 'unRated'
 }
 
-LANGS = ['vi', 'khm', 'zh', 'lo']
+LANGS = ['vi', 'km', 'zh', 'lo']
 
 class ParaSentenceText(db.EmbeddedDocument):
 

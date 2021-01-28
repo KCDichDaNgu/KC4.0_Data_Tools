@@ -33,6 +33,10 @@ import { useForm } from 'antd/lib/form/Form';
 
 import { isAdmin, isReviewer } from '../../../utils/auth';
 
+let SEN_ALIGN_LANG_MAPPING = {
+    'km': 'km'
+}
+
 const ImportFileModal = (props) => {
 
     const {
@@ -232,6 +236,7 @@ const ImportFileModal = (props) => {
                 onCancel={ () => setIsModalImportVisible(false)}
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
+                width={ '10000' }
                 onOk={ () => submitDocPair() }>
 
                 <>
@@ -245,36 +250,8 @@ const ImportFileModal = (props) => {
                         }
 
                         <Row gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
-                            { isAdmin() ?
-                                <Col xs={ 24 }>
-                                    <div style={{ 
-                                        marginBottom: '10px',
-                                        fontSize: '20px',
-                                        fontWeight: 500
-                                    }}>
-                                        { t('secondLanguage') }
-                                    </div>
-                                    
-                                    <Form.Item
-                                        name='lang2'
-                                        rules={ rules.lang2 }>
-                                        <Select
-                                            showSearch
-                                            style={{
-                                                width: '100%',
-                                            }}
-                                            options={ 
-                                                langList2.map(e => ({
-                                                    value: e.value, 
-                                                    label: t(`Language.${e.label}`)
-                                                })
-                                            )}>
-                                        </Select>
-                                    </Form.Item>
-                                </Col> : null
-                            }
 
-                            <Col xs={ 24 }>
+                            <Col md={ 12 } xs={ 24 }>
                                 <div style={{ 
                                     marginBottom: '10px',
                                     fontSize: '20px',
@@ -292,7 +269,7 @@ const ImportFileModal = (props) => {
                                 </Form.Item>
                             </Col>
 
-                            <Col xs={ 24 }>
+                            <Col md={ 12 } xs={ 24 }>
                                 <div style={{ 
                                     marginBottom: '10px',
                                     fontSize: '20px',
@@ -331,6 +308,35 @@ const ImportFileModal = (props) => {
                                     </Select>
                                 </Form.Item>
                             </Col>
+
+                            { isAdmin() ?
+                                <Col xs={ 24 }>
+                                    <div style={{ 
+                                        marginBottom: '10px',
+                                        fontSize: '20px',
+                                        fontWeight: 500
+                                    }}>
+                                        { t('secondLanguage') }
+                                    </div>
+                                    
+                                    <Form.Item
+                                        name='lang2'
+                                        rules={ rules.lang2 }>
+                                        <Select
+                                            showSearch
+                                            style={{
+                                                width: '100%',
+                                            }}
+                                            options={ 
+                                                langList2.map(e => ({
+                                                    value: e.value, 
+                                                    label: t(`Language.${e.label}`)
+                                                })
+                                            )}>
+                                        </Select>
+                                    </Form.Item>
+                                </Col> : null
+                            }
                         </Row>
                     </Form>
                 </>
