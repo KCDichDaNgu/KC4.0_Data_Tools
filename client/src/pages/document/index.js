@@ -397,7 +397,9 @@ const DocumentPage = (props) => {
             content: (
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                     <CustomCol
-                        lang={ t(`Language.${filter.lang1}`) }
+                        lang={
+                            t(`Language.${paraDocument.newest_para_sentence['text1'].lang}`)
+                        }
                         documentContent={
                             paraDocument.newest_para_sentence['text1'].content
                         }
@@ -406,9 +408,7 @@ const DocumentPage = (props) => {
 
                     <CustomCol
                         lang={
-                            filter.lang2
-                            ? t(`Language.${filter.lang2}`)
-                            : `${ t('language') } 2`
+                            t(`Language.${paraDocument.newest_para_sentence['text2'].lang}`)
                         }
                         documentContent={
                             paraDocument.newest_para_sentence['text2'].content
