@@ -443,7 +443,7 @@ const AddingDocModal = (props) => {
                                     name='text1'
                                     rules={ rules.text1 }>
                                     <Input.TextArea
-                                        disabled={ disableContentEditing }
+                                        disabled={ disableContentEditing() }
                                         autoSize={{ minRows: 4 }}>
                                     </Input.TextArea>
                                 </Form.Item>
@@ -462,7 +462,7 @@ const AddingDocModal = (props) => {
                                     name='text2'
                                     rules={ rules.text2 }>
                                     <Input.TextArea
-                                        disabled={ disableContentEditing }
+                                        disabled={ disableContentEditing() }
                                         autoSize={{ minRows: 4 }}>
                                     </Input.TextArea>
                                 </Form.Item>
