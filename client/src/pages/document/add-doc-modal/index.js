@@ -17,14 +17,12 @@ import {
     Form
 } from "antd";
 
-import { UploadOutlined } from '@ant-design/icons';
-
 import React, { useEffect, useState, useRef } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
 import documentAPI from '../../../api/document';
-import sentAlignAPI from '../../../api/sent-align'; 
+import sentAlignAPI from '../../../api/sent-align';
 import assignmentAPI from '../../../api/assignment';
 import paraSentenceAPI from '../../../api/para-sentence';
 
@@ -35,13 +33,20 @@ import { useForm } from 'antd/lib/form/Form';
 
 import { isAdmin, isReviewer, isEditor } from '../../../utils/auth';
 
-const ImportFileModal = (props) => {
+const alignmentTypes = {
+    fromNewPairs: 'fromNewPairs',
+    fromSavedPairs: 'fromSavedPairs'
+}
+
+const AddingDocModal = (props) => {
 
     const {
         isAddingModalVisible,
         setIsAddingModalVisible,
         reloadDocumentData,
         reloadDocumentPaginationParams,
+        chosenDocForAlignment,
+        alignmentType,
         currentFilter
     } = props;
     
@@ -126,6 +131,7 @@ const ImportFileModal = (props) => {
     };
 
     useEffect(() => {
+        
         const fetchData = async () => {
 
             if (isAdmin()) {
@@ -147,11 +153,34 @@ const ImportFileModal = (props) => {
                 setLangList2(langs)
 
                 form.setFieldsValue({ lang2: langs[0].value });
+
+                setFormData({
+                    ...formData,
+                    lang2: langs[0].value
+                })
             }
         }
         
         fetchData()
     }, [])
+
+    useEffect(() => {
+
+        if (alignmentType == alignmentTypes.fromNewPairs) {
+            form.setFieldsValue({
+                text1: '',
+                text2: '',
+            })
+        } 
+        
+        if (alignmentType == alignmentTypes.fromSavedPairs) {
+            form.setFieldsValue({
+                text1: chosenDocForAlignment.newest_para_document['text1'].content,
+                text2: chosenDocForAlignment.newest_para_document['text2'].content
+            })
+        }
+
+    }, [alignmentType])
 
     useEffect(() => {
         searchDataField();
@@ -179,9 +208,9 @@ const ImportFileModal = (props) => {
                 text1: _formData.text1,
                 text2: _formData.text2
             })
-            
+
             if (result.code == STATUS_CODES.success) {
-                
+            
                 createSentAlignSuccessModal(
                     `${t('total')} ${result.data.length} ${t('sentencePair')}`,
                     result.data.map(e => ({
@@ -207,12 +236,6 @@ const ImportFileModal = (props) => {
         }
 
         setSubmittingStatus(false);
-
-        // reload new results
-        await documentAPI.getDocuments(currentFilter).then((res) => {
-            reloadDocumentData(res.data.data.para_documents);
-            reloadDocumentPaginationParams(res.data.data.pagination);
-        });
     }
 
     const createSentAlignSuccessModal = (title, sentPairs, metaData) => {
@@ -277,46 +300,57 @@ const ImportFileModal = (props) => {
             okText: t('submit'),
             onOk: async (close) => { 
 
-                try {
-                    let result1 = await documentAPI.create({
-                        text1: metaData.docText1,
-                        text2: metaData.docText2,
-                        lang1: metaData.lang1,
-                        lang2: metaData.lang2,
-                        dataFieldId: metaData.dataFieldId
-                    })
+                if (alignmentType == alignmentTypes.fromNewPairs) {
 
-                    if (result1.data.code == STATUS_CODES.success) {    
-                        Modal.success({
-                            title: t('result'),
-                            content: t('docPairsCreatedSuccessfully'),
-                            onOk() {},
-                        });
-                    } else {
-                        if (result1.data.message == 'docExisted') {
-                            Modal.info({
+                    try {
+
+                        let result1 = await documentAPI.create({
+                            text1: metaData.docText1,
+                            text2: metaData.docText2,
+                            lang1: metaData.lang1,
+                            lang2: metaData.lang2,
+                            dataFieldId: metaData.dataFieldId
+                        })
+                        
+                        if (result1.code == STATUS_CODES.success) {    
+                            Modal.success({
                                 title: t('result'),
-                                content: t('docPairsExisted'),
+                                content: t('docPairsCreatedSuccessfully'),
                                 onOk() {},
                             });
+                        } else {
+                            if (result1.message == 'docExisted') {
+                                Modal.info({
+                                    title: t('result'),
+                                    content: t('docPairsExisted'),
+                                    onOk() {},
+                                });
+                            }
                         }
+                        
+                    } catch(err) {
+                        Modal.error({
+                            title: `${t('error')}!`,
+                            content: t('pleaseTryAgainNextTime'),
+                            onOk() {},
+                        });
                     }
-                } catch(err) {
-                    Modal.error({
-                        title: `${t('error')}!`,
-                        content: t('pleaseTryAgainNextTime'),
-                        onOk() {},
-                    });
                 }
 
                 try {
-                
-                    let result2 = await paraSentenceAPI.importByUser({
+
+                    let _data = {
                         lang1: metaData.lang1,
                         lang2: metaData.lang2,
                         pairs: sentPairs,
                         dataFieldId: metaData.dataFieldId
-                    })
+                    }
+
+                    if (alignmentType == alignmentTypes.fromSavedPairs) {
+                        _data.para_document_id = chosenDocForAlignment.id
+                    }
+                
+                    let result2 = await paraSentenceAPI.importByUser(_data)
                     
                     if (result2.data.code == STATUS_CODES.success) {    
 
@@ -344,8 +378,18 @@ const ImportFileModal = (props) => {
                         onOk() {},
                     });
                 }
+
+                // reload new results
+                let res1 = await documentAPI.getDocuments(currentFilter)
+                
+                reloadDocumentData(res1.data.data.para_documents);
+                reloadDocumentPaginationParams(res1.data.data.pagination);
             },
         });
+    }
+
+    const disableContentEditing = () => {
+        return alignmentType == alignmentTypes.fromSavedPairs;
     }
 
     const createImportErrorModal = (title, content) => {
@@ -399,6 +443,7 @@ const ImportFileModal = (props) => {
                                     name='text1'
                                     rules={ rules.text1 }>
                                     <Input.TextArea
+                                        disabled={ disableContentEditing }
                                         autoSize={{ minRows: 4 }}>
                                     </Input.TextArea>
                                 </Form.Item>
@@ -417,6 +462,7 @@ const ImportFileModal = (props) => {
                                     name='text2'
                                     rules={ rules.text2 }>
                                     <Input.TextArea
+                                        disabled={ disableContentEditing }
                                         autoSize={{ minRows: 4 }}>
                                     </Input.TextArea>
                                 </Form.Item>
@@ -480,4 +526,4 @@ const ImportFileModal = (props) => {
     );
 };
 
-export default ImportFileModal;
+export default AddingDocModal;

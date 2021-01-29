@@ -33,23 +33,32 @@ import UserSelect from '../sentence/user_select';
 
 import assignmentAPI from '../../api/assignment';
 import ParaDocumentAPI from '../../api/document';
-import AddDocumentModal from './add-doc-modal';
+import AddingDocumentModal from './add-doc-modal';
+
+const alignmentTypes = {
+    fromNewPairs: 'fromNewPairs',
+    fromSavedPairs: 'fromSavedPairs'
+}
 
 const { Option } = Select;
 
 const moment = require('moment');
 
 const DocumentPage = (props) => {
+
     const { t, i18n } = useTranslation(['common']);
 
     const currentUserId = clonedStore.getState().User?.profile?.id;
     const currentUserRoles = clonedStore.getState().User?.profile?.roles || [];
 
     const [dataSource, setDataSource] = useState([]);
-    const [isAdding, setIsAdding] = useState(false);
     
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
+
+    const [alignmentType, setAlignmentType] = useState(alignmentTypes.fromNewPairs)
+
+    const [chosenDocForAlignment, setChosenDocForAlignment] = useState(null)
 
     const [filter, setFilter] = useState({
         domain: '',
@@ -249,7 +258,7 @@ const DocumentPage = (props) => {
             key: 'score',
             render: (alignment_status, record, index) => {
                 return (
-                    <div>
+                    <div style={{ textAlign: 'center' }}>
                         { renderAlignmentStatus(alignment_status, record, index) }
                     </div>
                 )
@@ -396,10 +405,16 @@ const DocumentPage = (props) => {
     const renderAlignmentStatus = (status, paraDocument, index) => {
 
         if (status === 'not_aligned_yet') {
-            if (paraDocument.rating === 'good') {
+            
+            if (paraDocument.newest_para_document.rating === 'good') {
                 return (
                     <Button 
                         disabled={ !isAllowedToEdit(paraDocument) }
+                        onClick={ () => {
+                            setChosenDocForAlignment(paraDocument)
+                            setAlignmentType(alignmentTypes.fromSavedPairs)
+                            setIsAddingModalVisible(!isAddingModalVisible) }
+                        }
                         type='primary'>
                         { t('documentPage.align') }
                     </Button>
@@ -531,13 +546,15 @@ const DocumentPage = (props) => {
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
-                <AddDocumentModal 
+                <AddingDocumentModal 
                     isAddingModalVisible={ isAddingModalVisible }
                     reloadDocumentData={ setDataSource }
                     reloadDocumentPaginationParams={ setPaginationParams }
                     currentFilter={ filter }
+                    alignmentType={ alignmentType }
+                    chosenDocForAlignment={ chosenDocForAlignment }
                     setIsAddingModalVisible={ setIsAddingModalVisible }>
-                </AddDocumentModal>
+                </AddingDocumentModal>
 
                 <Card
                     title={
@@ -553,7 +570,10 @@ const DocumentPage = (props) => {
                                     isReviewer() || isEditor() ? (
                                         <Button 
                                             style={{ marginLeft: '10px' }}
-                                            onClick={ () => setIsAddingModalVisible(!isAddingModalVisible) } 
+                                            onClick={ () => {
+                                                setAlignmentType(alignmentTypes.fromNewPairs)
+                                                setIsAddingModalVisible(!isAddingModalVisible) 
+                                            }} 
                                             icon={ <UploadOutlined /> }>
                                             { t('documentPage.uploadFile') }
                                         </Button>

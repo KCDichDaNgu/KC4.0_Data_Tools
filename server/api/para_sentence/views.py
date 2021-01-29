@@ -8,6 +8,7 @@ from oauth2 import authorization, require_oauth, status_required
 from database.models.para_sentence import ParaSentence, Editor, NewestParaSentence, ParaSentenceText
 from database.models.para_sentence_history import ParaSentenceHistory
 from database.models.user import User
+from database.models.para_document import ParaDocument
 
 from bson import ObjectId
 from api.para_sentence.pagination import PaginationParameters
@@ -133,6 +134,14 @@ def import_by_user():
         'pairs': args['pairs'],
         'dataFieldId': args['dataFieldId']
     })
+
+    if args['para_document_id']:
+
+        para_document = ParaDocument.objects.get(id=ObjectId(args['para_document_id']))
+
+        para_document.update(
+            alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned']
+        )
     
     return jsonify(
         code=STATUS_CODES['success'],
