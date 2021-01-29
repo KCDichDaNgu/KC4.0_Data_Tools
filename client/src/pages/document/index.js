@@ -29,7 +29,7 @@ import { LANGS, STATUS_CODES } from '../../constants';
 import CustomTextArea from '../../components/custom-textarea';
 import CustomCol from '../../components/custom-modal-column';
 import locale from 'antd/es/date-picker/locale/vi_VN';
-import UserSelect from '../sentence/user_select';
+import UserSelect from '../../components/user-select';
 
 import assignmentAPI from '../../api/assignment';
 import ParaDocumentAPI from '../../api/document';

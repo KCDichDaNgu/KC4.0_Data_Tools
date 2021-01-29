@@ -135,7 +135,7 @@ def import_by_user():
         'dataFieldId': args['dataFieldId']
     })
 
-    if args['para_document_id']:
+    if 'para_document_id' in args:
 
         para_document = ParaDocument.objects.get(id=ObjectId(args['para_document_id']))
 

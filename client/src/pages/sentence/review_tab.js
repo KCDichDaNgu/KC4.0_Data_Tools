@@ -34,7 +34,7 @@ import { clonedStore } from '../../store';
 import ImportFileModal from './import-file-modal';
 import { LANGS, STATUS_CODES } from '../../constants';
 import { isAdmin, isReviewer } from '../../utils/auth';
-import UserSelect from './user_select';
+import UserSelect from '../../components/user-select';
 import CustomTextArea from '../../components/custom-textarea';
 
 import assignmentAPI from '../../api/assignment';
