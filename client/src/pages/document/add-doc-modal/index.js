@@ -38,8 +38,8 @@ import { isAdmin, isReviewer } from '../../../utils/auth';
 const ImportFileModal = (props) => {
 
     const {
-        isModalImportVisible,
-        setIsModalImportVisible,
+        isAddingModalVisible,
+        setIsAddingModalVisible,
         reloadDocumentData,
         reloadDocumentPaginationParams,
         currentFilter
@@ -218,7 +218,7 @@ const ImportFileModal = (props) => {
     const createSentAlignSuccessModal = (title, sentPairs, metaData) => {
         Modal.confirm({
             title: title,
-            visible: isModalImportVisible,
+            visible: isAddingModalVisible,
             width: 1000,
             icon: '',
             content: (
@@ -272,7 +272,7 @@ const ImportFileModal = (props) => {
                     }
                 </>
             ),
-            onCancel() { setIsModalImportVisible(false) },
+            onCancel() { setIsAddingModalVisible(false) },
             cancelText: t('cancel'),
             okText: t('submit'),
             onOk: async (close) => { 
@@ -361,8 +361,8 @@ const ImportFileModal = (props) => {
 
             <Modal 
                 title={ t('sentencePage.addDataFromFields') } 
-                visible={ isModalImportVisible } 
-                onCancel={ () => setIsModalImportVisible(false)}
+                visible={ isAddingModalVisible } 
+                onCancel={ () => setIsAddingModalVisible(false)}
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
                 width={ '10000' }

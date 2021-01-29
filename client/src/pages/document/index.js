@@ -21,7 +21,6 @@ import {
 import SiteLayout from '../../layout/site-layout';
 
 import { UploadOutlined } from '@ant-design/icons';
-import ImportDocModal from './import-doc-modal';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
@@ -34,7 +33,7 @@ import UserSelect from '../sentence/user_select';
 
 import assignmentAPI from '../../api/assignment';
 import ParaDocumentAPI from '../../api/document';
-import AddDocumentModel from './add-doc-model';
+import AddDocumentModal from './add-doc-modal';
 
 const { Option } = Select;
 
@@ -77,6 +76,8 @@ const DocumentPage = (props) => {
     const [langList2, setLangList2] = useState([]);
     const [ratingList, setRatingList] = useState([]);
     const [alignmentStatusList, setAlignmentStatusList] = useState([]);
+
+    const [isAddingModalVisible, setIsAddingModalVisible] = useState(false);
 
     const ratingOption = [
         <Select.Option key='all'>{ t('documentPage.all') }</Select.Option>
@@ -171,9 +172,6 @@ const DocumentPage = (props) => {
 
         return className;
     }
-
-    const [isModalImportVisible, setIsModalImportVisible] = useState(false);
-    const [isModalAddingVisible, setIsModalAddingVisible] = useState(false);
 
     const columns = [
         {
@@ -486,34 +484,16 @@ const DocumentPage = (props) => {
             <SiteLayout>
                 <PageTitle
                     heading={ t('documentPage.title') }
-                    // subheading={ t('documentPage.createNewContent') }
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
-                    // customComponent={
-                    //     <Button 
-                    //         style={{ marginLeft: '10px' }}
-                    //         onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                    //         icon={ <UploadOutlined /> }>
-                    //         { t('documentPage.uploadFile') }
-                    //     </Button>
-                    // }
                 />
 
-<<<<<<< HEAD
-                <AddDocumentModel 
-                    isModalImportVisible={ isModalAddingVisible }
-                    setIsModalImportVisible={ setIsModalAddingVisible }
-                    callbackFn={ searchParaDocument }>
-                </AddDocumentModel>
-=======
->>>>>>> chore: update
-
-                <ImportDocModal 
-                    isModalImportVisible={ isModalImportVisible }
+                <AddDocumentModal 
+                    isAddingModalVisible={ isAddingModalVisible }
                     reloadDocumentData={ setDataSource }
                     reloadDocumentPaginationParams={ setPaginationParams }
                     currentFilter={ filter }
-                    setIsModalImportVisible={ setIsModalImportVisible }>
-                </ImportDocModal>
+                    setIsAddingModalVisible={ setIsAddingModalVisible }>
+                </AddDocumentModal>
 
                 <Card
                     title={
@@ -524,35 +504,16 @@ const DocumentPage = (props) => {
                                 right: 0,
                                 paddingTop: '8px'
                             }}>
-<<<<<<< HEAD
-                                { 
-                                    isAdmin() || isReviewer() ? (
-                                        <>
-                                            <Button 
-                                                type='primary'
-                                                style={{ marginLeft: '10px' }}
-                                                onClick={ () => setIsModalAddingVisible(!isModalAddingVisible) } >
-                                                { t('documentPage.addDocument') }
-                                            </Button>
-                                            <Button 
-                                                style={{ marginLeft: '10px' }}
-                                                onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                                icon={ <UploadOutlined /> }>
-                                                { t('documentPage.uploadFile') }
-                                            </Button>
-                                        </>
-                                    ) : ''
-=======
+
                                 {
                                     isReviewer() || isEditor() ? (
                                         <Button 
                                             style={{ marginLeft: '10px' }}
-                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                            onClick={ () => setIsAddingModalVisible(!isAddingModalVisible) } 
                                             icon={ <UploadOutlined /> }>
                                             { t('documentPage.uploadFile') }
                                         </Button>
                                     ) : <></>
->>>>>>> chore: update
                                 }
                             </div>
     
