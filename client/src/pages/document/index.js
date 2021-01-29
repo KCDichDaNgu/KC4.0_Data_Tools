@@ -9,6 +9,7 @@ import {
     Modal,
     Popconfirm,
     Card,
+    message,
     Dropdown,
     Menu,
     Select,
@@ -32,7 +33,7 @@ import locale from 'antd/es/date-picker/locale/vi_VN';
 import UserSelect from '../sentence/user_select';
 
 import assignmentAPI from '../../api/assignment';
-import paraDocumentAPI from '../../api/document';
+import ParaDocumentAPI from '../../api/document';
 
 const { Option } = Select;
 
@@ -64,7 +65,7 @@ const DocumentPage = (props) => {
         updatedAt__toDate: '',
         score__from: '',
         score__to: '',
-        editorId: '',
+        creatorId: '',
         alignment_status: 'all'
     });
 
@@ -129,12 +130,12 @@ const DocumentPage = (props) => {
                 setFilter(cloneFilter)
             }
             
-            let res1 = await paraDocumentAPI.getDocuments(cloneFilter)
+            let res1 = await ParaDocumentAPI.getDocuments(cloneFilter)
 
             setDataSource(res1.data.data.para_documents);
             setPaginationParams(res1.data.data.pagination);
     
-            let res2 = await paraDocumentAPI.getOptions()
+            let res2 = await ParaDocumentAPI.getOptions()
 
             setRatingList(res2.data.data.rating);
             setAlignmentStatusList(res2.data.data.alignment_status);
@@ -144,14 +145,13 @@ const DocumentPage = (props) => {
     }, []);
 
     const isAllowedToEdit = (paraDocument) => {
-        return true;
-        // // if current user roles contains admin only -> can not edit
-        // if (isAdminOnly()) return false;
+        // if current user roles contains admin only -> can not edit
+        if (isAdminOnly()) return false;
 
-        // // if editted by reviewer and current user is editor -> can not edit
-        // return  !(paraDocument.editor && paraDocument.editor.roles &&
-        //     (paraDocument.editor.roles.includes('admin') || paraDocument.editor.roles.includes('reviewer')) &&
-        //     currentUserRoles.includes('member')) 
+        // if editted by reviewer and current user is editor -> can not edit
+        return  !(paraDocument.editor && paraDocument.editor.roles &&
+            (paraDocument.editor.roles.includes('admin') || paraDocument.editor.roles.includes('reviewer')) &&
+            currentUserRoles.includes('member')) 
     }
     
     const isAdminOnly = () => {
@@ -216,7 +216,7 @@ const DocumentPage = (props) => {
             key: 'information',
             render: (record) => (
                 <div>
-                    { record.creator.username } ({ formatDate(record.created_at) })
+                    { record.creator.username } ({ formatDate(record.updated_at) })
                 </div>
             )
         },
@@ -312,7 +312,7 @@ const DocumentPage = (props) => {
                 }
                 onPressEnter={ event => {
                     event.preventDefault();
-                    updateparaDocument(paraDocument, key, event.target.value);
+                    updateParaDocument(paraDocument, key, event.target.value);
                 }}
                 onResize={({ width, height }) => {
                     return height + 10;
@@ -331,7 +331,7 @@ const DocumentPage = (props) => {
             <Radio.Group
                 key={ paraDocument['id'] } 
                 value={ lastestRating }
-                onChange={ event => updateparaDocument(paraDocument, 'rating', event.target.value) }
+                onChange={ event => updateParaDocument(paraDocument, 'rating', event.target.value) }
                 disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
@@ -359,6 +359,7 @@ const DocumentPage = (props) => {
         if (status === 'not_aligned_yet') {
             return (
                 <Button 
+                    disabled={ !isAllowedToEdit(paraDocument) }
                     // style={{ marginLeft: '10px' }}
                     // onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
                     // icon={ <UploadOutlined /> }
@@ -423,7 +424,7 @@ const DocumentPage = (props) => {
         }
         
         ParaDocumentAPI.getDocuments(newFilter).then(res => {
-            setDataSource(res.data.data.para_sentences);
+            setDataSource(res.data.data.para_documents);
             setPaginationParams(res.data.data.pagination);
         });
     };
@@ -440,8 +441,35 @@ const DocumentPage = (props) => {
         setSortedInfo(sorter)
 
         ParaDocumentAPI.getDocuments(params).then((res) => {
-            setDataSource(res.data.data.para_sentences);
+            setDataSource(res.data.data.para_documents);
             setPaginationParams(res.data.data.pagination);
+        });
+    }
+
+    const updateParaDocument = (paraDocument, key, value) => {
+
+        let filterParams = {};
+
+        filterParams[key] = value;
+
+        ParaDocumentAPI.updateParaDocument(paraDocument['id'], filterParams).then((res) => {
+            if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                message.success(t('documentPage.editedSuccess'));
+
+                let params = {
+                    ...filter,
+                    sortBy: sortedInfo['columnKey'],
+                    sortOrder: sortedInfo['order'],
+                    page: paginationParams.current_page
+                }
+
+                ParaDocumentAPI.getDocuments(params).then((res) => {
+                    setDataSource(res.data.data.para_documents);
+                    setPaginationParams(res.data.data.pagination);
+                });
+            } else {
+                message.error(t(`documentPage.${res.data.message}`));
+            }
         });
     }
 
@@ -609,39 +637,43 @@ const DocumentPage = (props) => {
                             </Select>
                         </Col>
 
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
-                            <div style={{ 
-                                marginBottom: '10px',
-                                fontSize: '20px',
-                                fontWeight: 500
-                            }}>
-                                { t('documentPage.byLang2') }
-                            </div>
-                            
-                            <Select
-                                showSearch
-                                style={{
-                                    width: '100%',
-                                }}
-                                options={ langList2.map(e => {
-                                    if (e.value === '') {
-                                        
-                                        return {
-                                            value: '', 
-                                            label: t('all')
-                                        }
-                                    } 
+                        { 
+                            isAdmin() ? (
+                                <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                                    <div style={{ 
+                                        marginBottom: '10px',
+                                        fontSize: '20px',
+                                        fontWeight: 500
+                                    }}>
+                                        { t('documentPage.byLang2') }
+                                    </div>
+                                    
+                                    <Select
+                                        showSearch
+                                        style={{
+                                            width: '100%',
+                                        }}
+                                        options={ langList2.map(e => {
+                                            if (e.value === '') {
+                                                
+                                                return {
+                                                    value: '', 
+                                                    label: t('all')
+                                                }
+                                            } 
 
-                                    return {
-                                        value: e.value, 
-                                        label: t(`Language.${e.label}`)
-                                    }
-                                }) }
-                                value={ filter.lang2 }
-                                // defaultValue={ langList2[0]?.value }
-                                onChange={ value => handleFilterChange(value, 'lang2') }
-                            />
-                        </Col> 
+                                            return {
+                                                value: e.value, 
+                                                label: t(`Language.${e.label}`)
+                                            }
+                                        }) }
+                                        value={ filter.lang2 }
+                                        // defaultValue={ langList2[0]?.value }
+                                        onChange={ value => handleFilterChange(value, 'lang2') }
+                                    />
+                                </Col>
+                            ) : ''
+                        }
 
                         <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
                             <div style={{ 
@@ -686,22 +718,26 @@ const DocumentPage = (props) => {
                                 onChange={ date => handleFilterChange(date, 'updatedAt') }
                             />
                         </Col>
+                        
+                        {
+                            isAdmin() || isReviewer() ? (
+                                <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                                    <div style={{ 
+                                        marginBottom: '10px',
+                                        fontSize: '20px',
+                                        fontWeight: 500
+                                    }}>
+                                        { t('documentPage.byCreator') }
+                                    </div>
 
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
-                            <div style={{ 
-                                marginBottom: '10px',
-                                fontSize: '20px',
-                                fontWeight: 500
-                            }}>
-                                { t('documentPage.byCreator') }
-                            </div>
-
-                            <UserSelect 
-                                ref={ userSelectRef }
-                                setSelectedUserId={ (creatorId) => handleFilterChange(creatorId, "creator_id")}
-                                lang={ filter.lang2 }
-                            />
-                        </Col>
+                                    <UserSelect 
+                                        ref={ userSelectRef }
+                                        setSelectedUserId={ (creatorId) => handleFilterChange(creatorId, "creator_id")}
+                                        lang={ filter.lang2 }
+                                    />
+                                </Col>
+                            ) : ''
+                        }
                     </Row>
 
                     <div style={{ 
@@ -716,7 +752,7 @@ const DocumentPage = (props) => {
                                 borderColor: '#384AD7'
                             }}
                             type='primary'
-                            onClick={ () => searchParaSentence() }
+                            onClick={ () => searchParaDocument() }
                         >
                             { t('documentPage.search') }
                         </Button> 
@@ -726,7 +762,7 @@ const DocumentPage = (props) => {
                 <Card className='domain-table-card'>
                     <Table
                         rowKey={ record => record.id } 
-                        className='table-striped-rows'
+                        rowClassName={ record => getTableRowClassName(record)}
                         // rowSelection={{
                         //     type: 'checkbox',
                         //     ...rowSelection,

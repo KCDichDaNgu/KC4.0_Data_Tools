@@ -85,6 +85,11 @@ def build_query_params(args):
         query['$and'].append({
             'newest_para_document.rating': args['rating']
         })
+
+    if 'alignment_status' in args and args['alignment_status'] != 'all':
+        query['$and'].append({
+            'alignment_status': args['alignment_status']
+        })
         
     if 'lang1' in args and args['lang1'] != 'all':
         query['$and'].append({
@@ -132,9 +137,9 @@ def build_query_params(args):
             }
         })
 
-    if 'editorId' in args:
+    if 'creator_id' in args:
         query['$and'].append(({
-            'editor.user_id': ObjectId(args['editorId'])
+            'creator_id': ObjectId(args['creator_id'])
         }))
         
     # query string contains

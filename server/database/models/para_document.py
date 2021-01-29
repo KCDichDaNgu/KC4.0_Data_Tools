@@ -88,7 +88,6 @@ class ParaDocument(db.Document):
             'newest_para_document': self.newest_para_document,
             'original_para_document': self.original_para_document,
             'score': self.score,
-            'creator_id': str(self.creator_id),
             'creator': {
                 'id': str(self.creator_id.id),
                 'username': self.creator_id.username
