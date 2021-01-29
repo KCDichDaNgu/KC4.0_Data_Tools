@@ -6,7 +6,7 @@ from database.models.user import User
 
 class DataField(db.Document):
 
-    name = db.StringField()
+    name = db.StringField(required=True)
 
     creator_id = db.ReferenceField(User)
     editor_id = db.ReferenceField(User)

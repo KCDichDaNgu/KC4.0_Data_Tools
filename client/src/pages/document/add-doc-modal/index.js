@@ -28,8 +28,8 @@ import paraSentenceAPI from '../../../api/para-sentence';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
 
-import dataFieldAPI from '../../../api/data-field';
 import { useForm } from 'antd/lib/form/Form';
+import DataFieldSelect from '../../../components/data-field-select';
 
 import { isAdmin, isReviewer, isEditor } from '../../../utils/auth';
 
@@ -56,8 +56,6 @@ const AddingDocModal = (props) => {
 
     const [submittingStatus, setSubmittingStatus] = useState(false);
 
-    const [searchInput, setSearchInput] = useState('');
-
     const initialValues = {
         dataFieldId: '',
         text1: 'Đến với Mộc Châu , du khách được hoà mình vào không gian văn hoá mang đậm nét độc đáo của đồng bào các dân tộc Thái , Mông trên miền thảo nguyên xanh.',
@@ -68,18 +66,6 @@ const AddingDocModal = (props) => {
 
     const [form] = useForm()
     const [formData, setFormData] = useState(initialValues)
-
-    const [dataFieldList, setDataFieldList] = useState({
-        items: [],
-        total: 0,
-        page: 1,
-        perPage: 5,
-    });
-    
-    const [dataFieldPagination, setDataFieldPagination] = useState({
-        pagination__page: 1,
-        pagination__perPage: 5
-    })
 
     const rules = {
         dataFieldId: [
@@ -106,28 +92,6 @@ const AddingDocModal = (props) => {
                 message: t('fieldRequired'),
             }
         ]
-    };
-
-    const searchDataField = async () => {
-
-        let data = {
-            name: searchInput || '',
-            ...dataFieldPagination
-        };
-
-        let result = await dataFieldAPI.search(data);
-        
-        setDataFieldList({
-            items: result.data.items,
-            total: result.data.total,
-            page: result.data.page,
-            perPage: result.data.perPage,
-        });
-        
-        setDataFieldPagination({
-            pagination__page: result.data.page,
-            pagination__perPage: result.data.perPage,
-        })
     };
 
     useEffect(() => {
@@ -181,13 +145,6 @@ const AddingDocModal = (props) => {
         }
 
     }, [alignmentType])
-
-    useEffect(() => {
-        searchDataField();
-    }, [ 
-        dataFieldPagination.pagination__page, 
-        dataFieldPagination.pagination__perPage 
-    ]);
 
     const submitDocPair = async () => {
 
@@ -481,12 +438,17 @@ const AddingDocModal = (props) => {
                                 <Form.Item
                                     name='dataFieldId'
                                     rules={ rules.dataFieldId }>
-                                    <Select
-                                        options={ dataFieldList.items.map(df => ({
-                                            value: df.id,
-                                            label: df.name
-                                        }))}>
-                                    </Select>
+                                    <DataFieldSelect
+                                        setSelectedDataFieldId={ dataFieldId => {
+
+                                            form.setFieldsValue({dataFieldId: dataFieldId});
+
+                                            setFormData({
+                                                ...formData,
+                                                dataFieldId: dataFieldId
+                                            })
+                                        }}>
+                                    </DataFieldSelect>
                                 </Form.Item>
                             </Col>
 

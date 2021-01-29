@@ -7,7 +7,7 @@ import 'react-virtualized-select/styles.css';
 
 import { useTranslation } from 'react-i18next';
 
-import adminUserAPI from '../../api/admin/user';
+import adminUserAPI from '../api/admin/user';
 
 const UserSelect = forwardRef((props, ref) => {
     const { t } = useTranslation(['common']);

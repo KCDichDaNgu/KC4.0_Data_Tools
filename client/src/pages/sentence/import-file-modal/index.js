@@ -28,10 +28,10 @@ import assignmentAPI from '../../../api/assignment';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
 
-import dataFieldAPI from '../../../api/data-field';
 import { useForm } from 'antd/lib/form/Form';
 
 import { isAdmin, isReviewer } from '../../../utils/auth';
+import DataFieldSelect from '../../../components/data-field-select';
 
 const ImportFileModal = (props) => {
 
@@ -45,13 +45,9 @@ const ImportFileModal = (props) => {
     
     const { t } = useTranslation(['common']);
 
-    const [importStatus, setImportStatus] = useState({})
-
     const [langList2, setLangList2] = useState([]);
 
     const [uploadingFile, setUploadingFile] = useState(false);
-
-    const [searchInput, setSearchInput] = useState('');
 
     const initialValues = {
         dataFieldId: '',
@@ -61,18 +57,6 @@ const ImportFileModal = (props) => {
     }
 
     const [form] = useForm()
-
-    const [dataFieldList, setDataFieldList] = useState({
-        items: [],
-        total: 0,
-        page: 1,
-        perPage: 5,
-    });
-    
-    const [dataFieldPagination, setDataFieldPagination] = useState({
-        pagination__page: 1,
-        pagination__perPage: 5
-    })
 
     const rules = {
         dataFieldId: [
@@ -93,28 +77,6 @@ const ImportFileModal = (props) => {
                 message: t('fieldRequired'),
             }
         ]
-    };
-
-    const searchDataField = async () => {
-
-        let data = {
-            name: searchInput || '',
-            ...dataFieldPagination
-        };
-
-        let result = await dataFieldAPI.search(data);
-        
-        setDataFieldList({
-            items: result.data.items,
-            total: result.data.total,
-            page: result.data.page,
-            perPage: result.data.perPage,
-        });
-        
-        setDataFieldPagination({
-            pagination__page: result.data.page,
-            pagination__perPage: result.data.perPage,
-        })
     };
 
     const [files, setFiles] = useState([])
@@ -144,10 +106,6 @@ const ImportFileModal = (props) => {
         
         fetchData()
     }, [])
-
-    useEffect(() => {
-        searchDataField();
-    }, [ dataFieldPagination.pagination__page, dataFieldPagination.pagination__perPage ]);
 
     const submitImportFile = async () => {
 
@@ -320,12 +278,9 @@ const ImportFileModal = (props) => {
                                 <Form.Item
                                     name='dataFieldId'
                                     rules={ rules.dataFieldId }>
-                                    <Select
-                                        options={ dataFieldList.items.map(df => ({
-                                            value: df.id,
-                                            label: df.name
-                                        }))}>
-                                    </Select>
+                                    <DataFieldSelect
+                                        setSelectedDataFieldId={ dataFieldId => form.setFieldsValue({dataFieldId: dataFieldId})}>
+                                    </DataFieldSelect>
                                 </Form.Item>
                             </Col>
                         </Row>
