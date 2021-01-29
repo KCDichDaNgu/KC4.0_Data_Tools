@@ -66,6 +66,7 @@ const ImportFileModal = (props) => {
     }
 
     const [form] = useForm()
+    const [formData, setFormData] = useState(initialValues)
 
     const [dataFieldList, setDataFieldList] = useState({
         items: [],
@@ -148,6 +149,8 @@ const ImportFileModal = (props) => {
                 }
 
                 setLangList2(langs)
+
+                form.setFieldsValue({ lang2: langs[0].value });
             }
         }
         
@@ -182,7 +185,7 @@ const ImportFileModal = (props) => {
             })
             
             if (result.code == STATUS_CODES.success) {
-                console.log(result.data)
+                
                 createSentAlignSuccessModal(
                     `${t('total')} ${result.data.length} ${t('sentencePair')}`,
                     result.data.map(e => ({
@@ -193,7 +196,9 @@ const ImportFileModal = (props) => {
                     {
                         lang1: 'vi',
                         lang2: _formData.lang2,
-                        dataFieldId: _formData.dataFieldAPI
+                        dataFieldId: _formData.dataFieldId,
+                        docText1: _formData.text1,
+                        docText2: _formData.text2
                     }
                 )
             }
@@ -208,7 +213,7 @@ const ImportFileModal = (props) => {
         setSubmittingStatus(false);
     }
 
-    const createSentAlignSuccessModal = (title, result, metaData) => {
+    const createSentAlignSuccessModal = (title, sentPairs, metaData) => {
         Modal.confirm({
             title: title,
             visible: isModalImportVisible,
@@ -240,7 +245,7 @@ const ImportFileModal = (props) => {
                     </Row>
 
                     {
-                        result.map((sentencePair, index) => (
+                        sentPairs.map((sentencePair, index) => (
                             <Row
                                 key={ index }
                                 style={{ marginBottom: '10px' }} 
@@ -268,42 +273,76 @@ const ImportFileModal = (props) => {
             onCancel() { setIsModalImportVisible(false) },
             cancelText: t('cancel'),
             okText: t('submit'),
-            onOk() { submitSentencePairs({
-                lang1: metaData.lang1,
-                lang2: metaData.lang2,
-                pairs: result,
-                dataFieldId: metaData.dataFieldAPI
-            }) },
-        });
-    }
+            onOk: async (close) => { 
 
-    const submitSentencePairs = async (data) => {
-        let result = await paraSentenceAPI.importBySentAlign({
-            lang1: data.lang1,
-            lang2: data.lang2,
-            pairs: data.pairs,
-            dataFieldId: data.dataFieldId
-        })
+                try {
+                    let result1 = await documentAPI.create({
+                        text1: metaData.docText1,
+                        text2: metaData.docText2,
+                        lang1: metaData.lang1,
+                        lang2: metaData.lang2,
+                        dataFieldId: metaData.dataFieldId
+                    })
 
-        if (result.data.code == STATUS_CODES.success) {    
-            createImportSuccessModal('', result.data.data)
-        }
-    }
+                    if (result1.data.code == STATUS_CODES.success) {    
+                        Modal.success({
+                            title: t('result'),
+                            content: t('docPairsCreatedSuccessfully'),
+                            onOk() {},
+                        });
+                    } else {
+                        if (result1.data.message == 'docExisted') {
+                            Modal.info({
+                                title: t('result'),
+                                content: t('docPairsExisted'),
+                                onOk() {},
+                            });
+                        }
+                    }
+                } catch(err) {
+                    Modal.error({
+                        title: `${t('error')}!`,
+                        content: t('pleaseTryAgainNextTime'),
+                        onOk() {},
+                    });
+                }
 
-    const createImportSuccessModal = (title, importStatus) => {
-        Modal.success({
-            title: title,
-            content: (
-                <>
-                    <p>
-                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
-                    </p>
-                    <p>
-                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
-                    </p>
-                </>
-            ),
-            onOk() {},
+                try {
+                
+                    let result2 = await paraSentenceAPI.importByUser({
+                        lang1: metaData.lang1,
+                        lang2: metaData.lang2,
+                        pairs: sentPairs,
+                        dataFieldId: metaData.dataFieldId
+                    })
+                    
+                    if (result2.data.code == STATUS_CODES.success) {    
+
+                        let importStatus = result2.data.data;
+
+                        Modal.success({
+                            title: t('result'),
+                            content: (
+                                <>
+                                    <p>
+                                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
+                                    </p>
+                                    <p>
+                                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
+                                    </p>
+                                </>
+                            ),
+                            onOk() {},
+                        });
+                    }
+                } catch(err) {
+                    Modal.error({
+                        title: `${t('error')}!`,
+                        content: t('pleaseTryAgainNextTime'),
+                        onOk() {},
+                    });
+                }
+            },
         });
     }
 
@@ -330,7 +369,13 @@ const ImportFileModal = (props) => {
                 <>
                     <Form
                         initialValues={ initialValues }
-                        form={ form }>
+                        form={ form }
+                        onValuesChange={(values, changedValues) => {
+                            setFormData({
+                                ...formData,
+                                ...values
+                            })
+                        }}>
                         {
                             submittingStatus ? (
                                 <Spin />
@@ -345,7 +390,7 @@ const ImportFileModal = (props) => {
                                     fontSize: '20px',
                                     fontWeight: 500
                                 }}>
-                                    { t('text1') }
+                                    { t(`Language.${formData.lang1}`) }
                                 </div>
                                 
                                 <Form.Item
@@ -363,7 +408,7 @@ const ImportFileModal = (props) => {
                                     fontSize: '20px',
                                     fontWeight: 500
                                 }}>
-                                    { t('text2') }
+                                    { formData.lang2 ? t(`Language.${formData.lang2}`) : t('text2') }
                                 </div>
                                 
                                 <Form.Item

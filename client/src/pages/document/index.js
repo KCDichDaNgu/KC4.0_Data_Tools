@@ -232,7 +232,7 @@ const DocumentPage = (props) => {
                             fontWeight: 600,
                             marginBottom: '10px'
                         }}>
-                            { Number(record.score.docAlign).toFixed(2) }
+                            { Number(record.score?.docAlign).toFixed(2) }
                         </div>
                         
                         <div>

@@ -39,10 +39,10 @@ export default {
             data: params
 		}),
 		
-	importBySentAlign: (data) => {
+	importByUser: (data) => {
 		return customAxios({
             method: 'post',
-			url: `${server_endpoint}/api/para-sentence/import-from-file`,
+			url: `${server_endpoint}/api/para-sentence/import-by-user`,
 			data: data,
             headers: {
 				'Content-Type': 'application/json',

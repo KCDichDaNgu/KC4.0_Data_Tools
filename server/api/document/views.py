@@ -4,7 +4,11 @@ from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
 
-from database.models.para_document import ParaDocument, Editor
+from database.models.para_document import (
+    ParaDocument, 
+    Editor
+)
+
 from database.models.user import User
 
 from oauth2 import authorization, require_oauth, status_required, role_required
@@ -14,7 +18,7 @@ import json
 
 from .utils import *
 
-document_bp = Blueprint(__name__, 'document')    
+document_bp = Blueprint(__name__, 'document')
 
 @document_bp.route('/', methods=['POST'])
 @require_oauth()
@@ -23,26 +27,23 @@ def create():
 
     user = current_token.user
 
-    _data = request.get_json()
+    _data = request.get_json()  
 
-    files_metadata = save_to_local_file({
-        'text1': _data['text1'],
-        'text2': _data['text2'],
-        'lang1': _data['lang1'],
-        'lang2': _data['lang2']
-    }) 
+    res_data = {
+        'code': STATUS_CODES['success'],
+        'data': { 'id': None },
+        'message': 'success'
+    }
 
     try:
-        data_field_id = _data['dataFieldId']
-
-        hash = hash_para_document(
-            _data['text1'],
-            _data['text2'],
-            _data['lang1'],
-            _data['lang2'],
+        hash_content = hash_para_document(
+            _data['text1'], 
+            _data['text2'], 
+            _data['lang1'], 
+            _data['lang2']
         )
 
-        para_document = ParaDocument(
+        para_doc = ParaDocument(
             newest_para_document=NewestParaDocument(
                 text1=ParaDocumentText(
                     content=_data['text1'],
@@ -52,8 +53,9 @@ def create():
                     content=_data['text2'],
                     lang=_data['lang2']
                 ),
-                hash_content=hash
+                hash_content=hash_content
             ),
+            
             original_para_document=OriginalParaDocument(
                 text1=ParaDocumentText(
                     content=_data['text1'],
@@ -63,28 +65,28 @@ def create():
                     content=_data['text2'],
                     lang=_data['lang2']
                 ),
-                hash_content=hash
+                hash_content=hash_content
             ),
-            score={},
             creator_id=user.id,
-            data_field_id=data_field_id,
-            created_at=time.time(),
-            updated_at=time.time()
+            data_field_id=_data['dataFieldId'],
+            created_by=ParaDocument.CREATED_BY['by_user']
         )
 
-        para_document.save()
+        para_doc.save()
+        
+        res_data['data']['id'] = para_doc.id
 
-        return jsonify(
-            code=STATUS_CODES['success'],
-            data={},
-            message='success'
-        )
-    except:
-        return jsonify(
-            code=STATUS_CODES['failure'],
-            data={},
-            message='error'
-        )
+    except Exception as err:
+        import pdb; pdb.set_trace()
+        if str(err) == "hashExists":
+            
+            res_data = {
+                'code': STATUS_CODES['failure'],
+                'data': { 'id': None },
+                'message': 'docExisted'
+            }
+
+    return jsonify(res_data)
     
 @document_bp.route('/', methods=['GET'])
 @require_oauth()
