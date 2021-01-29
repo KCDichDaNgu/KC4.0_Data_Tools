@@ -42,5 +42,12 @@ export default {
 		customAxios({
 			method: 'get',
 			url: `${server_endpoint}/api/document/list-option-field`,
-		}),
+        }),
+        
+    updateParaDocument: (id, params) =>
+		customAxios({
+            method: 'put',
+            url: `${server_endpoint}/api/document/${id}`,
+            data: params
+        }),
 };

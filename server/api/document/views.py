@@ -4,12 +4,13 @@ from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
 
-from database.models.para_document import ParaDocument
+from database.models.para_document import ParaDocument, Editor
 from database.models.user import User
 
 from oauth2 import authorization, require_oauth, status_required, role_required
 
 from bson import ObjectId
+import json
 
 from .utils import *
 
@@ -138,3 +139,78 @@ def list_option_field():
         },
         message='success'
     )
+
+@document_bp.route('/<_id>', methods=['PUT'])
+@require_oauth()
+@status_required(User.USER_STATUS['active'])
+def update(_id):
+    # người quản trị chỉ được xem không được sửa
+    # nếu user chỉ có roles 'admin' => ko được sửa
+    user = current_token.user
+    if set(User.USER_ROLES['admin']) == set(user.roles): 
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='notAllowed'
+        )
+
+    try:
+        para_document = ParaDocument.objects.get(id=ObjectId(_id))
+    except:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'notFound', 
+        })
+
+    if para_document.viewer_id != user.id:
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'notAllowed', 
+        })
+    
+    if para_document.editor is not None:
+        if is_member_only(user.roles) and ('reviewer' in para_document.editor.roles or 'admin' in para_document.editor.roles):
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'updatedByHigherRole', 
+            })
+
+    try:
+        # # save revised history
+        # para_document_history = ParaDocumentHistory(
+        #     para_document_id=para_document.id,
+        #     newest_para_document=json.loads(para_document.newest_para_document.to_json()),
+        #     editor={
+        #         'user_id': user.id,
+        #         'roles': user.roles
+        #     },
+        #     updated_at=time.time()
+        # )
+        # para_document_history.save()
+
+        args = request.json
+
+        # update para document
+        newest_para_document = para_document.newest_para_document
+        newest_para_document.text1.content = args.get('text1', newest_para_document.text1.content).strip()
+        newest_para_document.text2.content = args.get('text2', newest_para_document.text2.content).strip()
+        newest_para_document.rating = args.get('rating', ParaDocument.RATING_TYPES['good'])
+
+        para_document.update(
+            newest_para_document=json.loads(newest_para_document.to_json()),
+            updated_at=time.time(),
+            editor=Editor(
+                user_id=user.id,
+                roles=user.roles
+            )
+        )
+
+        return jsonify({
+            'code': STATUS_CODES['success'], 
+            'message': 'updatedSuccess'
+        })
+    except Exception as err:
+        print(err)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'errorUpdate'
+        })

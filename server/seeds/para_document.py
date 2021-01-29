@@ -28,7 +28,7 @@ class ParaDocumentSeeder():
             text1 = fake.text()
             text2 = fake.text()
             lang1 = "vi"
-            lang2 = "khm"
+            lang2 = "km"
             score = random.uniform(0, 1)
 
             hash = hash_para_sentence(text1, text2, lang1, lang2)
