@@ -30,15 +30,61 @@ def create():
         'text2': _data['text2'],
         'lang1': _data['lang1'],
         'lang2': _data['lang2']
-    })    
+    }) 
 
-    print(files_metadata) 
+    try:
+        data_field_id = _data['dataFieldId']
 
-    return jsonify(
-        code=STATUS_CODES['success'],
-        data={},
-        message='success'
-    )
+        hash = hash_para_document(
+            _data['text1'],
+            _data['text2'],
+            _data['lang1'],
+            _data['lang2'],
+        )
+
+        para_document = ParaDocument(
+            newest_para_document=NewestParaDocument(
+                text1=ParaDocumentText(
+                    content=_data['text1'],
+                    lang=_data['lang1']
+                ),
+                text2=ParaDocumentText(
+                    content=_data['text2'],
+                    lang=_data['lang2']
+                ),
+                hash_content=hash
+            ),
+            original_para_document=OriginalParaDocument(
+                text1=ParaDocumentText(
+                    content=_data['text1'],
+                    lang=_data['lang1']
+                ),
+                text2=ParaDocumentText(
+                    content=_data['text2'],
+                    lang=_data['lang2']
+                ),
+                hash_content=hash
+            ),
+            score={},
+            creator_id=user.id,
+            data_field_id=data_field_id,
+            created_at=time.time(),
+            updated_at=time.time()
+        )
+
+        para_document.save()
+
+        return jsonify(
+            code=STATUS_CODES['success'],
+            data={},
+            message='success'
+        )
+    except:
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            data={},
+            message='error'
+        )
     
 @document_bp.route('/', methods=['GET'])
 @require_oauth()

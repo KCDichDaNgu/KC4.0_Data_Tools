@@ -34,6 +34,7 @@ import UserSelect from '../sentence/user_select';
 
 import assignmentAPI from '../../api/assignment';
 import ParaDocumentAPI from '../../api/document';
+import AddDocumentModel from './add-doc-model';
 
 const { Option } = Select;
 
@@ -58,8 +59,8 @@ const DocumentPage = (props) => {
         rating: 'unRated',
         lang1: 'vi',
         lang2: '',
-        sortBy: '',
-        sortOrder: '',
+        sortBy: 'created_at',
+        sortOrder: 'descend',
         page: '',
         updatedAt__fromDate: '',
         updatedAt__toDate: '',
@@ -172,11 +173,7 @@ const DocumentPage = (props) => {
     }
 
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
-
-    const timeformat = (last_update) => {
-        const d = new Date(last_update);
-        return moment(d).format('DD/MM/YYYY');
-    };
+    const [isModalAddingVisible, setIsModalAddingVisible] = useState(false);
 
     const columns = [
         {
@@ -570,6 +567,12 @@ const DocumentPage = (props) => {
                     // }
                 />
 
+                <AddDocumentModel 
+                    isModalImportVisible={ isModalAddingVisible }
+                    setIsModalImportVisible={ setIsModalAddingVisible }
+                    callbackFn={ searchParaDocument }>
+                </AddDocumentModel>
+
                 <ImportDocModal 
                     isModalImportVisible={ isModalImportVisible }
                     setIsModalImportVisible={ setIsModalImportVisible }>
@@ -584,12 +587,24 @@ const DocumentPage = (props) => {
                                 right: 0,
                                 paddingTop: '8px'
                             }}>
-                                <Button 
-                                    style={{ marginLeft: '10px' }}
-                                    onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                    icon={ <UploadOutlined /> }>
-                                    { t('documentPage.uploadFile') }
-                                </Button>
+                                { 
+                                    isAdmin() || isReviewer() ? (
+                                        <>
+                                            <Button 
+                                                type='primary'
+                                                style={{ marginLeft: '10px' }}
+                                                onClick={ () => setIsModalAddingVisible(!isModalAddingVisible) } >
+                                                { t('documentPage.addDocument') }
+                                            </Button>
+                                            <Button 
+                                                style={{ marginLeft: '10px' }}
+                                                onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                                icon={ <UploadOutlined /> }>
+                                                { t('documentPage.uploadFile') }
+                                            </Button>
+                                        </>
+                                    ) : ''
+                                }
                             </div>
     
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
