@@ -37,7 +37,18 @@ export default {
             method: 'put',
             url: `${server_endpoint}/api/para-sentence/${id}`,
             data: params
-        }),
+		}),
+		
+	importBySentAlign: (data) => {
+		return customAxios({
+            method: 'post',
+			url: `${server_endpoint}/api/para-sentence/import-from-file`,
+			data: data,
+            headers: {
+				'Content-Type': 'application/json',
+			}
+        })
+	},
 
 	importFromFile: (data) => {
 		const formData = new FormData();

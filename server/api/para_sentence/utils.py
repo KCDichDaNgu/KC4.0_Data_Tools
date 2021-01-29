@@ -27,6 +27,74 @@ RATING_KEY2TEXT = {
     ParaSentence.RATING_TYPES['unRated']: 'Chưa đánh giá'
 }
 
+def import_parasentences_by_sent_align(data):
+    
+    creator_id = data['creator_id']
+
+    lang1 = data['lang1']
+    lang2 = data['lang2']
+    
+    dataFieldId = data['dataFieldId']
+    sentPairs = data['pairs']
+
+    count = 0
+    n_rows = 0
+    n_error_hash_exists = 0
+
+    for pair in sentPairs:
+
+        score, text1, text2 = pair['score'], pair['text1'], pair['text2']
+
+        try:
+            hash_content = hash_para_sentence(text1, text2, lang1, lang2)
+
+            para_sentence = ParaSentence(
+                newest_para_sentence=NewestParaSentence(
+                    text1=ParaSentenceText(
+                        content=text1,
+                        lang=lang1
+                    ),
+                    text2=ParaSentenceText(
+                        content=text2,
+                        lang=lang2
+                    ),
+                    hash_content=hash_content
+                ),
+
+                original_para_sentence=OriginalParaSentence(
+                    text1=ParaSentenceText(
+                        content=text1,
+                        lang=lang1
+                    ),
+                    text2=ParaSentenceText(
+                        content=text2,
+                        lang=lang2
+                    ),
+                    hash_content=hash_content
+                ),
+                score={ "senAlign": float(score) },
+                creator_id=creator_id,
+                data_field_id=dataFieldId,
+                created_at=time.time(),
+                updated_at=time.time()
+            )
+
+            para_sentence.save()
+
+            count += 1
+            
+        except Exception as err:
+            if str(err) == "hashExists":
+                n_error_hash_exists += 1
+
+        n_rows += 1
+
+    return {
+        'nSuccess': count,
+        'nData': n_rows,
+        'nErrorHashExists': n_error_hash_exists
+    }
+
 def import_parasentences_from_file(data):
 
     text_file = data['filepath']

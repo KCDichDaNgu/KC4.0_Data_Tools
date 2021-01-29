@@ -37,19 +37,24 @@ const Nav = () => {
 
                     setMainNav([
                         {
-                            icon: 'pe-7s-home',
-                            label: t('homePage.title'),
-                            to: '/',
+                            icon: 'pe-7s-copy-file',
+                            label: t('sentencePage.title'),
+                            to: 'sentence',
                         },
                         {
-                            icon: 'pe-7s-users',
-                            label: t('manageUserPage.title'),
-                            to: '/manage-user',
+                            icon: 'pe-7s-news-paper',
+                            label: t('documentPage.title'),
+                            to: 'document',
                         },
                         {
                             icon: 'pe-7s-server',
                             label: t('backupDatabase.title'),
                             to: '/manage-backup',
+                        },
+                        {
+                            icon: 'pe-7s-users',
+                            label: t('manageUserPage.title'),
+                            to: '/manage-user',
                         },
                         {
                             icon: 'pe-7s-global',
@@ -60,16 +65,6 @@ const Nav = () => {
                             icon: 'pe-7s-global',
                             label: t('dataFieldPage.title'),
                             to: 'data-field',
-                        },
-                        {
-                            icon: 'pe-7s-news-paper',
-                            label: t('documentPage.title'),
-                            to: 'document',
-                        },
-                        {
-                            icon: 'pe-7s-copy-file',
-                            label: t('sentencePage.title'),
-                            to: 'sentence',
                         },
                     ])
                 }
