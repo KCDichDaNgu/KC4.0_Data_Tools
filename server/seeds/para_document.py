@@ -1,5 +1,5 @@
 from database.models.para_document import ParaDocument, NewestParaDocument, OriginalParaDocument, ParaDocumentText
-from api.para_sentence.utils import hash_para_sentence
+from api.para_document.utils import hash_para_document
 from database.models.user import User
 from database.models.data_field import DataField
 from faker import Faker
@@ -31,7 +31,7 @@ class ParaDocumentSeeder():
             lang2 = "km"
             score = random.uniform(0, 1)
 
-            hash = hash_para_sentence(text1, text2, lang1, lang2)
+            hash = hash_para_document(text1, text2, lang1, lang2)
 
             para_document = ParaDocument(
                 newest_para_document=NewestParaDocument(
