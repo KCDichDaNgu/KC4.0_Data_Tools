@@ -71,7 +71,6 @@ def create():
                 rating=ParaDocument.RATING_TYPES['good']
             ),
             creator_id=user.id,
-            score=Score(docAlign=1.0),
             alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned'],
             data_field_id=_data['dataFieldId'],
             created_by=ParaDocument.CREATED_BY['by_user']

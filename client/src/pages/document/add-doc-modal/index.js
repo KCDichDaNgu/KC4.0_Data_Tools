@@ -33,7 +33,7 @@ import { LANGS, STATUS_CODES } from '../../../constants';
 import dataFieldAPI from '../../../api/data-field';
 import { useForm } from 'antd/lib/form/Form';
 
-import { isAdmin, isReviewer } from '../../../utils/auth';
+import { isAdmin, isReviewer, isEditor } from '../../../utils/auth';
 
 const ImportFileModal = (props) => {
 
@@ -130,7 +130,7 @@ const ImportFileModal = (props) => {
 
             if (isAdmin()) {
                 setLangList2(LANGS.filter(e => (e.value != 'vi')))
-            } else if (isReviewer()) {
+            } else if (isReviewer() || isEditor()) {
                 let result = await assignmentAPI.owner()
 
                 let langs = []
