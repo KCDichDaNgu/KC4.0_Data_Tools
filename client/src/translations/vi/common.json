@@ -27,7 +27,7 @@
 		"action": "Hành động",
 		"status": "Trạng thái",
 		"selectDomain": "Lựa chọn tên miền",
-		"filter": "Lọc",
+		"filter": "Bộ lọc",
 		"selectStatus": "Lựa chọn trạng thái",
 		"add": "Thêm",
 		"approve": "Tán thành",
@@ -79,7 +79,10 @@
 		"rating": "Đánh giá",
 		"byAlignmentStatus": "Theo trạng thái",
 		"not_aligned_yet": "Chưa gióng",
-		"byCreator": "Theo người thêm"
+		"byCreator": "Theo người thêm",
+		"addDocument": "Thêm",
+		"addedSuccess": "Thêm mới cặp văn bản thành công",
+		"addedError": "Thêm mới cặp văn bản lỗi"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",
