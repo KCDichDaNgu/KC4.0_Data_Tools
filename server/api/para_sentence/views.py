@@ -92,29 +92,6 @@ def get():
         message='success'
     )
 
-@para_sentence_bp.route('/', methods=['POST'])
-@require_oauth()
-@status_required(User.USER_STATUS['active'])
-def create():
-    """
-    Create a new ParaSentences.
-    """
-    args = request.get_json()
-
-    para_sentence = ParaSentence(
-        text1=args[ParaSentence.Attr.text1],
-        text2=args[ParaSentence.Attr.text2],
-        editor_id=args[ParaSentence.Attr.editor_id],
-        para_document_id=args[ParaSentence.Attr.para_document_id],
-        origin_para_document_id=args[ParaSentence.Attr.origin_para_document_id],
-        created_time=args[ParaSentence.Attr.created_time],
-        updated_at=args[ParaSentence.Attr.updated_at]
-    )
-
-    para_sentence.save()
-
-    return jsonify(para_sentence)
-
 @para_sentence_bp.route('/list-option-field', methods=['GET'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
@@ -137,10 +114,10 @@ def list_option_field():
         message='success'
     )
 
-@para_sentence_bp.route('/import-by-sent-align-tool', methods=['POST'])
+@para_sentence_bp.route('/import-by-user', methods=['POST'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
-def import_by_sent_align_tool():
+def import_by_user():
     """
     Create new ParaSentences from sent align
     """

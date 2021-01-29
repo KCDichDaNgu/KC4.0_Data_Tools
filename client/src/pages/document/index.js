@@ -25,7 +25,7 @@ import ImportDocModal from './import-doc-modal';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
-import { isAdmin, isReviewer } from '../../utils/auth';
+import { isAdmin, isEditor, isReviewer } from '../../utils/auth';
 import { LANGS, STATUS_CODES } from '../../constants';
 import CustomTextArea from '../../components/custom-textarea';
 import CustomCol from '../../components/custom-modal-column';
@@ -232,7 +232,7 @@ const DocumentPage = (props) => {
                             fontWeight: 600,
                             marginBottom: '10px'
                         }}>
-                            { Number(record.score.docAlign).toFixed(2) }
+                            { Number(record.score?.docAlign).toFixed(2) }
                         </div>
                         
                         <div>
@@ -471,76 +471,7 @@ const DocumentPage = (props) => {
         });
     }
 
-    const allowImportFiles = () => {
-        return isAdmin() || isReviewer()
-    }
-
-    const allowExport = () => {
-        return isAdmin()
-    }
-
-    const rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-            setSeletedDomain(selectedRowKeys);
-        },
-    };
-
-    const handleAddButtonClick = () => {
-        setIsAdding(!isAdding);
-    };
-
-    // const FilterByNameInput = (
-    //     <Input
-    //         placeholder={ t('documentPage.searchBox') }
-    //         className='search-input-box'
-    //         value={value}
-    //         onChange={(e) => {
-    //             const currValue = e.target.value;
-    //             setValue(currValue);
-    //             const filteredData = data.filter((entry) => {
-    //                 if (
-    //                     entry.text_1_lang.includes(currValue) ||
-    //                     entry.text_2_lang.includes(currValue)
-    //                 )
-    //                     return true;
-    //             });
-    //             setDataSource(filteredData);
-    //         }}
-    //     />
-    // );
-
-    const handleChange = (value, key) => {
-        setFilterOptions({ ...filterOptions, [key]: value });
-        console.log(filterOptions);
-    };
-
-    const handleFilter = () => {
-        const filteredData = data.filter((item) => {
-            for (var key in filterOptions) {
-                if (item[key] === undefined || item[key] != filterOptions[key])
-                    return false;
-            }
-            return true;
-        });
-        setDataSource(filteredData);
-    };
-
-    // let domainList = [...new Set(data.map((data) => data.domain))];
-    // domainList = [t('documentPage.all'), t('documentPage.noDomain')].concat(domainList);
-
     let langList = [t('documentPage.all'), 'vi-VN', 'zh-CN', 'en-US', 'pt-PT'];
-
-    // const domainOption = domainList.map((domain) => {
-    //     return <Option key={domain}>{domain}</Option>;
-    // });
-
-    const lang1Option = langList.map((lang) => {
-        return <Option key={lang}>{lang}</Option>;
-    });
-
-    const lang2Option = langList.map((lang) => {
-        return <Option key={lang}>{lang}</Option>;
-    });
 
     const statusOption = (
         <>
@@ -567,14 +498,20 @@ const DocumentPage = (props) => {
                     // }
                 />
 
+<<<<<<< HEAD
                 <AddDocumentModel 
                     isModalImportVisible={ isModalAddingVisible }
                     setIsModalImportVisible={ setIsModalAddingVisible }
                     callbackFn={ searchParaDocument }>
                 </AddDocumentModel>
+=======
+>>>>>>> chore: update
 
                 <ImportDocModal 
                     isModalImportVisible={ isModalImportVisible }
+                    reloadDocumentData={ setDataSource }
+                    reloadDocumentPaginationParams={ setPaginationParams }
+                    currentFilter={ filter }
                     setIsModalImportVisible={ setIsModalImportVisible }>
                 </ImportDocModal>
 
@@ -587,6 +524,7 @@ const DocumentPage = (props) => {
                                 right: 0,
                                 paddingTop: '8px'
                             }}>
+<<<<<<< HEAD
                                 { 
                                     isAdmin() || isReviewer() ? (
                                         <>
@@ -604,6 +542,17 @@ const DocumentPage = (props) => {
                                             </Button>
                                         </>
                                     ) : ''
+=======
+                                {
+                                    isReviewer() || isEditor() ? (
+                                        <Button 
+                                            style={{ marginLeft: '10px' }}
+                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                            icon={ <UploadOutlined /> }>
+                                            { t('documentPage.uploadFile') }
+                                        </Button>
+                                    ) : <></>
+>>>>>>> chore: update
                                 }
                             </div>
     
