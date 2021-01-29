@@ -266,3 +266,22 @@ def update(_id):
             'code': STATUS_CODES['failure'], 
             'message': 'errorUpdate'
         })
+
+@document_bp.route('/<id>', methods=['DELETE'])
+@require_oauth()
+@status_required(User.USER_STATUS['active'])
+def delete(id):
+    try:
+        para_document = ParaDocument.objects.get(id=ObjectId(id))
+
+        para_document.delete()
+
+        return jsonify(
+            code=STATUS_CODES['success'],
+            message='success'
+        )
+    except:
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='notFound'
+        )

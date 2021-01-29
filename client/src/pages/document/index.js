@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import SiteLayout from '../../layout/site-layout';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
@@ -254,8 +254,52 @@ const DocumentPage = (props) => {
                     </div>
                 )
             }
+        },
+        {
+            title: t('documentPage.delete'),
+            dataIndex: "delete",
+            key: "delete",
+            render: (row_value, paraDocument) => (
+                <Button 
+                    disabled={ !isAllowedToEdit(paraDocument) }
+                    type="link" 
+                    icon={<DeleteOutlined />} 
+                    size='small'
+                    onClick={() => openModelConfirmDelete(paraDocument)}
+                    block>
+                </Button>
+                
+            ),
+            width: '5%'
         }
-    ]; 
+    ];
+
+    const openModelConfirmDelete = (paraDocument) => {
+        Modal.confirm({
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <>
+                    <p>
+                        {t('documentPage.confirmDeleteContent')}
+                    </p>
+                </>
+            ),
+            onOk() {
+                deleteParaDocument(paraDocument);
+            }
+        });
+    }
+
+    const deleteParaDocument = (paraDocument) => {
+        ParaDocumentAPI.delete(paraDocument['id']).then(res => {
+            if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                message.success(t('documentPage.deletedSuccess'));
+                searchParaDocument();
+            } else {
+                message.error(t('documentPage.deletedFailure'));
+            }
+        })
+    }
 
     const showFullDocModal = (paraDocument) => {
         Modal.info({
