@@ -58,9 +58,11 @@ class Backup(db.Document):
     }
 
     name = db.StringField()
+    
     type = db.StringField(
         choices=BACKUP_TYPES.values()
     )
+
     creator_id = db.ReferenceField(User)
     hash_name = db.StringField()
     created_at = db.FloatField(default=time.time(), required=True)

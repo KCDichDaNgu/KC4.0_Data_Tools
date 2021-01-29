@@ -168,7 +168,7 @@
 		"noMoreResults": "Không tìm thấy kết quả"
 	},
 	"manageUserPage": {
-		"title": "Quản lý người dùng",
+		"title": "Người dùng",
 		"addUser": "Thêm người dùng",
 		"deleteUser": "Xóa người dùng",
 		"searchUser": "Tìm kiếm người dùng"
@@ -221,7 +221,7 @@
 		}
 	},
 	"backupDatabase": {
-		"title": "Quản lý sao lưu",
+		"title": "Sao lưu",
 		"addBackUp": "Thêm sao lưu",
 		"name": "Tên",
 		"type": "Loại",
@@ -263,5 +263,6 @@
 	"sentencePair": "Cặp câu",
 	"score": "Điểm",
 	"pleaseTryAgainNextTime": "Xin vui lòng thử lại sau",
-	"senAlignFail": "Gióng hàng lỗi!"
+	"senAlignFail": "Gióng hàng lỗi!",
+	"lastUpdatedDay": "Ngày cập nhật"
 }

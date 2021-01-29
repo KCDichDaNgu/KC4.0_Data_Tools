@@ -182,10 +182,9 @@ const ImportFileModal = (props) => {
             })
             
             if (result.code == STATUS_CODES.success) {
+                console.log(result.data)
                 createSentAlignSuccessModal(
-                    `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
-                        `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
-                    `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
+                    `${t('total')} ${result.data.length} ${t('sentencePair')}`,
                     result.data.map(e => ({
                         ...e, 
                         text1: e.source, 
@@ -238,11 +237,12 @@ const ImportFileModal = (props) => {
                                 { t(`score`) }
                             </div>
                         </Col>
-
                     </Row>
+
                     {
-                        result.map(sentencePair => (
+                        result.map((sentencePair, index) => (
                             <Row
+                                key={ index }
                                 style={{ marginBottom: '10px' }} 
                                 gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
 
@@ -272,7 +272,7 @@ const ImportFileModal = (props) => {
                 lang1: metaData.lang1,
                 lang2: metaData.lang2,
                 pairs: result,
-                dataFieldId: _formData.dataFieldAPI
+                dataFieldId: metaData.dataFieldAPI
             }) },
         });
     }

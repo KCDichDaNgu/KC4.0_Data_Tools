@@ -317,7 +317,7 @@ const DocumentPage = (props) => {
                 onResize={({ width, height }) => {
                     return height + 10;
                 }} 
-                disabled={ disabled }
+                disabled={ true }
             />
         );
     }
@@ -358,12 +358,10 @@ const DocumentPage = (props) => {
 
         if (status === 'not_aligned_yet') {
             return (
-                <Button 
+                <Button
                     disabled={ !isAllowedToEdit(paraDocument) }
-                    // style={{ marginLeft: '10px' }}
-                    // onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                    // icon={ <UploadOutlined /> }
-                    >
+                    type='primary'
+                >
                     { t('documentPage.align') }
                 </Button>
             );

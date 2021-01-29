@@ -15,6 +15,11 @@ ALIGNMENT_STATUSES = {
     'not_aligned_yet': 'not_aligned_yet'
 }
 
+CREATED_BY = {
+    "by_marchine": "by_marchine",
+    "by_user": "by_user"
+}
+
 class ParaDocumentText(db.EmbeddedDocument):
 
     content = db.StringField(required=True)
@@ -57,6 +62,7 @@ class ParaDocument(db.Document):
 
     RATING_TYPES = RATING_TYPES
     ALIGNMENT_STATUSES = ALIGNMENT_STATUSES
+    CREATED_BY = CREATED_BY
 
     newest_para_document = db.EmbeddedDocumentField(NewestParaDocument, required=True)
     original_para_document = db.EmbeddedDocumentField(OriginalParaDocument)
@@ -70,6 +76,11 @@ class ParaDocument(db.Document):
     
     created_at = db.IntField(default=int(time.time()), required=True)
     updated_at = db.IntField(default=int(time.time()), required=True)
+
+    created_by = db.StringField(
+        choices=CREATED_BY.values(),
+        default=CREATED_BY['by_marchine']
+    )
 
     viewer_id = db.ObjectIdField()
     view_due_date = db.FloatField()

@@ -205,7 +205,7 @@ const SentenceReview = forwardRef((props, ref) => {
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         {
-            title: t('sentencePage.lastUpdate'),
+            title: t('lastUpdatedDay'),
             key: 'updated_at',
             render: record => {
                 return (
