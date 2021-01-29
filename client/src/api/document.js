@@ -50,4 +50,14 @@ export default {
             url: `${server_endpoint}/api/document/${id}`,
             data: params
         }),
+    
+    delete: (paraDocumentId) => 
+        customAxios({
+            method: 'delete',
+            url: `${server_endpoint}/api/document/${paraDocumentId}`,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }),
+
 };

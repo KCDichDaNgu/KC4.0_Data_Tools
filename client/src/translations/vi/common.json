@@ -82,7 +82,11 @@
 		"byCreator": "Theo người thêm",
 		"addDocument": "Thêm",
 		"addedSuccess": "Thêm mới cặp văn bản thành công",
-		"addedError": "Thêm mới cặp văn bản lỗi"
+		"addedError": "Thêm mới cặp văn bản lỗi",
+		"deletedSuccess": "Xóa cặp văn bản thành công",
+		"deletedFailure": "Xóa cặp văn bản thất bại",
+		"confirmDeleteContent":"Bạn có chắc chắn muốn xóa cặp văn bản này?",
+		"delete": "Xóa"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",
