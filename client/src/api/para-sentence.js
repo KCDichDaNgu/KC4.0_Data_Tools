@@ -1,4 +1,4 @@
-import { customAxios } from "../utils/customAxios";
+import { customAxios } from "../utils/custom-axios";
 import axios from "axios";
 import qs from "querystring";
 

@@ -35,17 +35,13 @@ import { useForm } from 'antd/lib/form/Form';
 
 import { isAdmin, isReviewer } from '../../../utils/auth';
 
-let SEN_ALIGN_LANG_MAPPING = {
-    'km': 'km'
-}
-
 const ImportFileModal = (props) => {
 
     const {
         isModalImportVisible,
         setIsModalImportVisible,
-        reloadSentenceData,
-        reloadSentencePaginationParams,
+        reloadDocumentData,
+        reloadDocumentPaginationParams,
         currentFilter
     } = props;
     
@@ -211,6 +207,12 @@ const ImportFileModal = (props) => {
         }
 
         setSubmittingStatus(false);
+
+        // reload new results
+        await documentAPI.getDocuments(currentFilter).then((res) => {
+            reloadDocumentData(res.data.data.para_documents);
+            reloadDocumentPaginationParams(res.data.data.pagination);
+        });
     }
 
     const createSentAlignSuccessModal = (title, sentPairs, metaData) => {

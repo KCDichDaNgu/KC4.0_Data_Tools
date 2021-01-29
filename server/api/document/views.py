@@ -6,7 +6,8 @@ from constants.common import STATUS_CODES
 
 from database.models.para_document import (
     ParaDocument, 
-    Editor
+    Editor,
+    Score
 )
 
 from database.models.user import User
@@ -53,7 +54,8 @@ def create():
                     content=_data['text2'],
                     lang=_data['lang2']
                 ),
-                hash_content=hash_content
+                hash_content=hash_content,
+                rating=ParaDocument.RATING_TYPES['good']
             ),
             
             original_para_document=OriginalParaDocument(
@@ -65,9 +67,12 @@ def create():
                     content=_data['text2'],
                     lang=_data['lang2']
                 ),
-                hash_content=hash_content
+                hash_content=hash_content,
+                rating=ParaDocument.RATING_TYPES['good']
             ),
             creator_id=user.id,
+            score=Score(docAlign=1.0),
+            alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned'],
             data_field_id=_data['dataFieldId'],
             created_by=ParaDocument.CREATED_BY['by_user']
         )

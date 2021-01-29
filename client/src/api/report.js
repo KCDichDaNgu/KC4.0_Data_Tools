@@ -1,4 +1,4 @@
-import { customAxios } from "../utils/customAxios";
+import { customAxios } from "../utils/custom-axios";
 
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
 const module_api = "report";

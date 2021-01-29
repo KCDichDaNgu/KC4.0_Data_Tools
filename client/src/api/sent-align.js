@@ -1,4 +1,4 @@
-import { customAxios } from '../utils/customAxios';
+import { customAxios } from '../utils/custom-axios';
 
 const sent_align_km_api = process.env.REACT_APP_SENT_ALIGN_KM_API
 
