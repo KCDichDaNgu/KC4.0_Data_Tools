@@ -357,19 +357,22 @@ const DocumentPage = (props) => {
     const renderAlignmentStatus = (status, paraDocument, index) => {
 
         if (status === 'not_aligned_yet') {
-            return (
-                <Button
-                    disabled={ !isAllowedToEdit(paraDocument) }
-                    type='primary'
-                >
-                    { t('documentPage.align') }
-                </Button>
-            );
+            if (paraDocument.rating === 'good') {
+                return (
+                    <Button 
+                        disabled={ !isAllowedToEdit(paraDocument) }
+                        type='primary'>
+                        { t('documentPage.align') }
+                    </Button>
+                );
+            } else {
+                return (<></>);
+            }
         } else {
             return (
                 <div className="text-center">
                     <i>
-                        (${ t('document.aligned') })
+                        ({ t('documentPage.aligned') })
                     </i>
                 </div>
             );
