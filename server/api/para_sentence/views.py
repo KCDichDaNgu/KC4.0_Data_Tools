@@ -137,6 +137,32 @@ def list_option_field():
         message='success'
     )
 
+@para_sentence_bp.route('/import-by-sent-align-tool', methods=['POST'])
+@require_oauth()
+@status_required(User.USER_STATUS['active'])
+def import_by_sent_align_tool():
+    """
+    Create new ParaSentences from sent align
+    """
+
+    user = current_token.user
+
+    args = request.get_json()
+        
+    status = import_parasentences_by_sent_align({
+        'creator_id': user.id,
+        'lang1': args['lang1'],
+        'lang2': args['lang2'],
+        'pairs': args['pairs'],
+        'dataFieldId': args['dataFieldId']
+    })
+    
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data=status,
+        message='success'
+    )
+
 @para_sentence_bp.route('/import-from-file', methods=['POST'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])

@@ -261,5 +261,7 @@
 	"text1": "Văn bản 1",
 	"text2": "Văn bản 2",
 	"sentencePair": "Cặp câu",
-	"score": "Điểm"
+	"score": "Điểm",
+	"pleaseTryAgainNextTime": "Xin vui lòng thử lại sau",
+	"senAlignFail": "Gióng hàng lỗi!"
 }

@@ -19,7 +19,7 @@ document_bp = Blueprint(__name__, 'document')
 @document_bp.route('/', methods=['POST'])
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
-def alignment():
+def create():
 
     user = current_token.user
 

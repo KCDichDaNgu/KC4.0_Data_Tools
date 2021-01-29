@@ -6,8 +6,8 @@ export default {
 
     create: (data) => {
         
-        if (data.lang2 == 'km')
-            console.log(`${sent_align_km_api}/sen_align`)
+        if (data.lang2 == 'km') {
+        
             return customAxios({
                 method: 'post',
                 url: `${sent_align_km_api}/sen_align`,
@@ -22,5 +22,6 @@ export default {
             }).then(res => {
                 return res.data;
             })
+        }
     }
 };

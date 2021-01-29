@@ -24,8 +24,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import documentAPI from '../../../api/document';
-import sentAlignAPI from '../../../api/sentAlign'; 
+import sentAlignAPI from '../../../api/sent-align'; 
 import assignmentAPI from '../../../api/assignment';
+import paraSentenceAPI from '../../../api/para-sentence';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
 
@@ -50,8 +51,6 @@ const ImportFileModal = (props) => {
     
     const { t } = useTranslation(['common']);
 
-    const [importStatus, setImportStatus] = useState({})
-
     const [langList2, setLangList2] = useState([]);
 
     const [submittingStatus, setSubmittingStatus] = useState(false);
@@ -63,8 +62,7 @@ const ImportFileModal = (props) => {
         text1: 'Đến với Mộc Châu , du khách được hoà mình vào không gian văn hoá mang đậm nét độc đáo của đồng bào các dân tộc Thái , Mông trên miền thảo nguyên xanh.',
         text2: 'មកដល់ Moc Chau អ្នកទេសចរបានសម្របខ្លួនចូលក្នុងលំហវប្បធម៌ ដែលមានលក្ខណៈពិសេសរបស់ជនជាតិភាគជាតិថៃ និង Mong នៅលើវាលស្មៅពណ៌ខៀវស្រងាត់។',
         lang1: 'vi',
-        lang2: '', 
-        fileList: []
+        lang2: ''
     }
 
     const [form] = useForm()
@@ -165,46 +163,47 @@ const ImportFileModal = (props) => {
 
     const submitDocPair = async () => {
 
-        try {
+        await form.validateFields()
 
-            await form.validateFields()
+        let _formData = form.getFieldsValue();
 
-            let _formData = form.getFieldsValue();
+        if (!isAdmin()) {
+            _formData.lang2 = langList2[0].value;
+        }
 
-            if (!isAdmin()) {
-                _formData.lang2 = langList2[0].value;
-            }
-
-            setSubmittingStatus(true);
-                
-            try {
-                let result = await sentAlignAPI.create({
-                    lang1: 'vi',
-                    lang2: _formData.lang2,
-                    text1: _formData.text1,
-                    text2: _formData.text2
-                })
-                
-                if (result.code == STATUS_CODES.success) {
-                    createSentAlignSuccessModal(
-                        `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
-                        result.data,
-                        {
-                            lang1: 'vi',
-                            lang2: _formData.lang2,
-                        }
-                    )
-                }
-
-            } catch(err) {
-                // createImportErrorModal(
-                //     `${f.name} ${t('sentencePage.uploadFailed')}`, 
-                //     t('sentencePage.pleaseCheckYourFile')
-                // )
-            }
+        setSubmittingStatus(true);
             
-        } catch(err) {
+        try {
+            let result = await sentAlignAPI.create({
+                lang1: 'vi',
+                lang2: _formData.lang2,
+                text1: _formData.text1,
+                text2: _formData.text2
+            })
+            
+            if (result.code == STATUS_CODES.success) {
+                createSentAlignSuccessModal(
+                    `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
+                        `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
+                    `${t('total')} ${result.data.length} ${t('sentencePair')}`, 
+                    result.data.map(e => ({
+                        ...e, 
+                        text1: e.source, 
+                        text2: e.target
+                    })),
+                    {
+                        lang1: 'vi',
+                        lang2: _formData.lang2,
+                        dataFieldId: _formData.dataFieldAPI
+                    }
+                )
+            }
 
+        } catch(err) {
+            createImportErrorModal(
+                t('senAlignFail'), 
+                t('pleaseTryAgainNextTime')
+            )
         }
 
         setSubmittingStatus(false);
@@ -248,11 +247,11 @@ const ImportFileModal = (props) => {
                                 gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
 
                                 <Col xs={ 24 } md={ 11 }>
-                                    { sentencePair.source }
+                                    { sentencePair.text1 }
                                 </Col>
 
                                 <Col xs={ 24 } md={ 11 }>
-                                    { sentencePair.target }
+                                    { sentencePair.text2 }
                                 </Col>
 
                                 <Col xs={ 24 } md={ 2 }>
@@ -269,12 +268,26 @@ const ImportFileModal = (props) => {
             onCancel() { setIsModalImportVisible(false) },
             cancelText: t('cancel'),
             okText: t('submit'),
-            onOk() { submitSentencePairs() },
+            onOk() { submitSentencePairs({
+                lang1: metaData.lang1,
+                lang2: metaData.lang2,
+                pairs: result,
+                dataFieldId: _formData.dataFieldAPI
+            }) },
         });
     }
 
-    const submitSentencePairs = () => {
-        console.log('aaaa')
+    const submitSentencePairs = async (data) => {
+        let result = await paraSentenceAPI.importBySentAlign({
+            lang1: data.lang1,
+            lang2: data.lang2,
+            pairs: data.pairs,
+            dataFieldId: data.dataFieldId
+        })
+
+        if (result.data.code == STATUS_CODES.success) {    
+            createImportSuccessModal('', result.data.data)
+        }
     }
 
     const createImportSuccessModal = (title, importStatus) => {
