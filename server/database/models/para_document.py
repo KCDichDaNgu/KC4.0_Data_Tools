@@ -58,8 +58,8 @@ class ParaDocument(db.Document):
     RATING_TYPES = RATING_TYPES
     ALIGNMENT_STATUSES = ALIGNMENT_STATUSES
 
-    newest_para_sentence = db.EmbeddedDocumentField(ParaDocumentText, required=True)
-    original_para_sentence = db.EmbeddedDocumentField(OriginalParaDocument)
+    newest_para_document = db.EmbeddedDocumentField(NewestParaDocument, required=True)
+    original_para_document = db.EmbeddedDocumentField(OriginalParaDocument)
     
     score = db.EmbeddedDocumentField(Score)
 
@@ -80,3 +80,27 @@ class ParaDocument(db.Document):
     )
 
     meta = {'collection': 'para_document'}
+
+    @property
+    def serialize(self):
+        return {
+            'id': str(self.id),
+            'newest_para_document': self.newest_para_document,
+            'original_para_document': self.original_para_document,
+            'score': self.score,
+            'creator_id': str(self.creator_id),
+            'creator': {
+                'id': str(self.creator_id.id),
+                'username': self.creator_id.username
+            },
+            'editor': {
+                'id': str(self.editor.user_id.id) if self.editor is not None else None,
+                'username': self.editor.user_id.username if self.editor is not None else None,
+                'roles': self.editor.roles if self.editor is not None else None
+            },
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+            'viewer_id': str(self.viewer_id),
+            'view_due_date': self.view_due_date,
+            'alignment_status': self.alignment_status
+        }

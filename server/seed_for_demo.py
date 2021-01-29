@@ -3,6 +3,7 @@ from seeds.oauth2 import Oauth2Seeder
 from seeds.domain import DomainSeeder
 from seeds.para_sentence import ParaSentenceSeeder
 from seeds.data_field import DataFieldSeeder
+from seeds.para_document import ParaDocumentSeeder
 
 from database.db import init_for_migrate
 
@@ -26,3 +27,5 @@ if __name__ == '__main__':
     DataFieldSeeder.run()
 
     ParaSentenceSeeder.run()
+
+    ParaDocumentSeeder.run()
