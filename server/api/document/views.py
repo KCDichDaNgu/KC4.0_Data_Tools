@@ -81,7 +81,6 @@ def create():
         res_data['data']['id'] = para_doc.id
 
     except Exception as err:
-        import pdb; pdb.set_trace()
         if str(err) == "hashExists":
             
             res_data = {

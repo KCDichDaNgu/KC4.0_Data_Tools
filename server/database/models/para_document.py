@@ -92,6 +92,16 @@ class ParaDocument(db.Document):
 
     meta = {'collection': 'para_document'}
 
+    def save(self, is_update=False):
+        similar_paradocuments = ParaDocument.objects.filter(
+            original_para_document__hash_content=self.original_para_document.hash_content
+        )
+
+        if len(similar_paradocuments) == 0:
+            return super(ParaDocument, self).save()
+        else:
+            raise Exception('hashExists')
+
     @property
     def serialize(self):
         return {
