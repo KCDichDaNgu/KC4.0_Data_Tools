@@ -7,7 +7,10 @@ from constants.common import STATUS_CODES
 from database.models.para_document import (
     ParaDocument, 
     Editor,
-    Score
+    Score,
+    NewestParaDocument,
+    OriginalParaDocument,
+    ParaDocumentText
 )
 
 from database.models.user import User
@@ -105,6 +108,7 @@ def get():
 
     # request new records
     query = build_query_params(args)
+    print(query)
 
     # get records has current_user_id and not expired yet or without viewer_id or expired view_due_date
     current_timestamp = time.time()
