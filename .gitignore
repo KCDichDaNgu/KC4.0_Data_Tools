@@ -60,7 +60,7 @@ example.db
 clients/*/swagger.json
 clients/*/dist
 backend/run.sh
-/.env
+/.env/
 server/data/import_from_file
 server/data/export_file
 server/data/doc-alignment
