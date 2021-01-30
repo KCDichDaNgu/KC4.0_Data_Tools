@@ -309,7 +309,7 @@ def site_map(app):
 # cronjob backup databases
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(create_backup, 'interval', hours=BACKUP_SCHEDULE_HOURS)
-sched.add_job(add_all_documents_and_sentences_in_local, 'interval', seconds=ADD_LOCAL_DATA_SCHEDULE_MINUTES)
+sched.add_job(add_all_documents_and_sentences_in_local, 'interval', minutes=ADD_LOCAL_DATA_SCHEDULE_MINUTES)
 sched.start()
 
 app = create_app()
