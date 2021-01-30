@@ -86,7 +86,9 @@
 		"deletedSuccess": "Xóa cặp văn bản thành công",
 		"deletedFailure": "Xóa cặp văn bản thất bại",
 		"confirmDeleteContent":"Bạn có chắc chắn muốn xóa cặp văn bản này?",
-		"delete": "Xóa"
+		"delete": "Xóa",
+		"by_machine": "Tự động",
+		"by_user": "Vô danh"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",

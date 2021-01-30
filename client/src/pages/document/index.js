@@ -220,7 +220,9 @@ const DocumentPage = (props) => {
             key: 'information',
             render: (record) => (
                 <div>
-                    { record.creator.username } ({ formatDate(record.updated_at) })
+                    { 
+                        record.creator.id ? record.creator.username : t(`documentPage.${record.created_by}`)
+                    } ({ formatDate(record.updated_at) })
                 </div>
             )
         },

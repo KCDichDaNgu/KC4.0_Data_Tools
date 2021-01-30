@@ -32,7 +32,9 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 from database.models.backup import create_backup
-from constants.common import BACKUP_SCHEDULE_HOURS
+from constants.common import BACKUP_SCHEDULE_HOURS, ADD_LOCAL_DATA_SCHEDULE_MINUTES
+
+from jobs.add_documents_and_sentences import add_all_documents_and_sentences_in_local
 
 # import entrypoints
 
@@ -307,6 +309,7 @@ def site_map(app):
 # cronjob backup databases
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(create_backup, 'interval', hours=BACKUP_SCHEDULE_HOURS)
+sched.add_job(add_all_documents_and_sentences_in_local, 'interval', seconds=ADD_LOCAL_DATA_SCHEDULE_MINUTES)
 sched.start()
 
 app = create_app()

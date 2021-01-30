@@ -1,5 +1,5 @@
 from database.models.para_document import ParaDocument, NewestParaDocument, OriginalParaDocument, ParaDocumentText
-from api.para_document.utils import hash_para_document
+from api.document.utils import hash_para_document
 from database.models.user import User
 from database.models.data_field import DataField
 from faker import Faker
