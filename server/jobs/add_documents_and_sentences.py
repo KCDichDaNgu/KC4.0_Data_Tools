@@ -341,7 +341,7 @@ def add_all_documents_and_sentences_in_local():
         return
 
     add_para_sentences_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path)
-    add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path)
+    # add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path)
 
 
 if __name__ == '__main__':
