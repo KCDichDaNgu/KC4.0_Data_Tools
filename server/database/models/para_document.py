@@ -16,7 +16,7 @@ ALIGNMENT_STATUSES = {
 }
 
 CREATED_BY = {
-    "by_marchine": "by_marchine",
+    "by_machine": "by_machine",
     "by_user": "by_user"
 }
 
@@ -79,7 +79,7 @@ class ParaDocument(db.Document):
 
     created_by = db.StringField(
         choices=CREATED_BY.values(),
-        default=CREATED_BY['by_marchine']
+        default=CREATED_BY['by_machine']
     )
 
     viewer_id = db.ObjectIdField()
