@@ -471,7 +471,7 @@ const SentenceReview = forwardRef((props, ref) => {
             >
 
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 6 : 8 }>
                         <div style={{ 
                             marginBottom: '10px',
                             fontSize: '20px',
@@ -492,7 +492,7 @@ const SentenceReview = forwardRef((props, ref) => {
                         </Select>
                     </Col>
 
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 4 : 8 }>
                         <div style={{ 
                             marginBottom: '10px',
                             fontSize: '20px',
@@ -518,7 +518,7 @@ const SentenceReview = forwardRef((props, ref) => {
                         </Input.Group>
                     </Col>
 
-                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                    <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 6 : 8 }>
                         <div style={{ 
                             marginBottom: '10px',
                             fontSize: '20px',
