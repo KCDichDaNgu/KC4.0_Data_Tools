@@ -416,56 +416,55 @@ const SentenceReview = forwardRef((props, ref) => {
         <React.Fragment>
             <Card
                 title={
-                    <div style={{ position: 'relative' }}>
-                        <div style={{ 
-                            position: 'absolute',
-                            zIndex: 1,
-                            right: 0,
-                            paddingTop: '8px'
-                        }}>
-                            
-                            {
-                                allowImportFiles() ? (
-                                    <Button 
-                                        style={{ marginLeft: '10px' }}
-                                        onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
-                                        icon={ <UploadOutlined /> }
-                                    >
-                                        { t('sentencePage.uploadFile') }
-                                    </Button>
-                                ) : ''
-                            }
+                    <Row 
+                        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} 
+                        style={{ position: 'relative' }}>
 
-                            {
-                                allowExport() ? (
-                                    <Button style={{ marginLeft: '10px' }} onClick={ exportData }>
-                                        { t('sentencePage.exportData') }
-                                    </Button>
-                                ) : ''
-                            }
-                        </div>
+                        <Col
+                            style={{ display: 'flex', alignItems: 'center' }}
+                            xs={ 24 } md={ 4 }>
 
-                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                            <Col style={{ display: 'flex', alignItems: 'center' }} xs={ 24 } md={ 4 }>
+                            <div style={{ 
+                                fontSize: '25px',
+                                fontWeight: 600
+                            }}>
+                                { t('sentencePage.filter') }
+                            </div>
+                        </Col>
 
-                                <div style={{ 
-                                    fontSize: '25px',
-                                    fontWeight: 600
-                                }}>
-                                    { t('sentencePage.filter') }
-                                </div>
-                            </Col>
+                        <Col className='import-export-buttons-wrapper' xs={ 24 } md={ 10 }>
+                            <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                                {
+                                    allowImportFiles() ? (
+                                        <Button
+                                            style={{ marginRight: '10px' }}
+                                            onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
+                                            icon={ <UploadOutlined /> }
+                                        >
+                                            { t('sentencePage.uploadFile') }
+                                        </Button>
+                                    ) : ''
+                                }
 
-                            <Col style={{ paddingTop: 8, paddingBottom: 8 }} xs={ 24 } md={ 10 }>
-                                <Input
-                                    placeholder={ t('sentencePage.searchBox') }
-                                    onChange={(e) => {
-                                        handleFilterChange(e.target.value, 'text');
-                                    }}
-                                />
-                            </Col>
-                        </Row>
-                    </div>
+                                {
+                                    allowExport() ? (
+                                        <Button onClick={ exportData }>
+                                            { t('sentencePage.exportData') }
+                                        </Button>
+                                    ) : ''
+                                }
+                            </div>
+                        </Col>
+
+                        <Col style={{ paddingTop: 8, paddingBottom: 8 }} xs={ 24 } md={ 10 }>
+                            <Input
+                                placeholder={ t('sentencePage.searchBox') }
+                                onChange={(e) => {
+                                    handleFilterChange(e.target.value, 'text');
+                                }}
+                            />
+                        </Col>
+                    </Row>
                 } 
                 style={{ marginBottom: '40px' }}
             >

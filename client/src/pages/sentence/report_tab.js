@@ -142,7 +142,7 @@ const SentenceReport = (props) => {
                         style={{ marginBottom: '40px' }}>
                             
                         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                            <Col xs={ 24 } md={ 12 }>
+                            <Col style={{ marginBottom: '10px' }} xs={ 24 } md={ 14 }>
                                 <div
                                     style={{ 
                                         justifyContent: 'space-between',
@@ -152,13 +152,13 @@ const SentenceReport = (props) => {
                                         style={{ 
                                             fontSize: '20px',
                                             fontWeight: 600,
+                                            marginRight: '16px',
                                             display: 'inline-block'
                                         }}>
                                         { t(`Language.${lang}`) }
                                     </div>
                                     <div style={{ 
                                             display: 'inline-block',
-                                            marginLeft: '20px',
                                             fontSize: '18px'
                                         }}>
                                         (
@@ -169,30 +169,36 @@ const SentenceReport = (props) => {
                                 </div> 
                             </Col>
 
-                            <Col 
-                                style={{ marginBottom: '20px', textAlign: 'right' }} 
-                                xs={ 24 } md={ 12 }>
-                                <div style={{ display: 'inline-block', marginRight: '10px' }}>
-                                    <DatePicker.RangePicker 
-                                        locale={ locale }
-                                        allowClear={ true }
-                                        defaultValue={ [startDate, endDate] }
-                                        onChange={ date => handleFilterDate(date, lang) }
-                                    />
-                                </div>
-                                
-                                <div style={{ display: 'inline-block' }}>
-                                    <Button
-                                        style={{ 
-                                            width: '100px', 
-                                            background: '#384AD7', 
-                                            borderColor: '#384AD7'
-                                        }}
-                                        type='primary'
-                                        onClick={ () => handleFilter(lang) }>
-                                        { t('sentencePage.reportTab.filter') }
-                                    </Button> 
-                                </div>
+                            <Col xs={24} md={10}>
+                                <Row gutter={ [ 16, 8 ] }>
+                                    <Col 
+                                        style={{ textAlign: 'right' }} 
+                                        xs={ 24 } md={ 18 }>
+                                        <DatePicker.RangePicker 
+                                            style={{ width: '100%' }}
+                                            locale={ locale }
+                                            allowClear={ true }
+                                            defaultValue={ [startDate, endDate] }
+                                            onChange={ date => handleFilterDate(date, lang) }
+                                        />
+                                    </Col>
+
+                                    <Col 
+                                        style={{ marginBottom: '10px', textAlign: 'right' }}
+                                        xs={ 24 } md={ 6 }>
+                                        <Button
+                                            style={{ 
+                                                width: '100%',
+                                                maxWidth: '100px',
+                                                background: '#384AD7', 
+                                                borderColor: '#384AD7'
+                                            }}
+                                            type='primary'
+                                            onClick={ () => handleFilter(lang) }>
+                                            { t('sentencePage.reportTab.filter') }
+                                        </Button> 
+                                    </Col>
+                                </Row>
                             </Col>
 
                             <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 24 }>

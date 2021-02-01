@@ -560,18 +560,24 @@ const DocumentPage = (props) => {
 
                 <Card
                     title={
-                        <div style={{ position: 'relative' }}>
-                            <div style={{ 
-                                position: 'absolute',
-                                zIndex: 1,
-                                right: 0,
-                                paddingTop: '8px'
-                            }}>
+                        <Row 
+                            gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} 
+                            style={{ position: 'relative' }}>
 
+                            <Col style={{ display: 'flex', alignItems: 'center' }} xs={ 24 } md={ 4 }>
+
+                                <div style={{ 
+                                    fontSize: '25px',
+                                    fontWeight: 600
+                                }}>
+                                    { t('documentPage.filter') }
+                                </div>
+                            </Col>
+
+                            <Col className='import-button-wrapper' xs={ 24 } md={ 10 }>
                                 {
                                     isReviewer() || isEditor() ? (
                                         <Button 
-                                            style={{ marginLeft: '10px' }}
                                             onClick={ () => {
                                                 setAlignmentType(alignmentTypes.fromNewPairs)
                                                 setIsAddingModalVisible(!isAddingModalVisible) 
@@ -581,29 +587,17 @@ const DocumentPage = (props) => {
                                         </Button>
                                     ) : <></>
                                 }
-                            </div>
-    
-                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col style={{ display: 'flex', alignItems: 'center' }} xs={ 24 } md={ 4 }>
-    
-                                    <div style={{ 
-                                        fontSize: '25px',
-                                        fontWeight: 600
-                                    }}>
-                                        { t('documentPage.filter') }
-                                    </div>
-                                </Col>
-    
-                                <Col style={{ paddingTop: 8, paddingBottom: 8 }} xs={ 24 } md={ 10 }>
-                                    <Input
-                                        placeholder={ t('documentPage.searchBox') }
-                                        onChange={(e) => {
-                                            handleFilterChange(e.target.value, 'text');
-                                        }}
-                                    />
-                                </Col>
-                            </Row>
-                        </div>
+                            </Col>
+
+                            <Col style={{ paddingTop: 8, paddingBottom: 8 }} xs={ 24 } md={ 10 }>
+                                <Input
+                                    placeholder={ t('documentPage.searchBox') }
+                                    onChange={(e) => {
+                                        handleFilterChange(e.target.value, 'text');
+                                    }}
+                                />
+                            </Col>
+                        </Row>
                     } 
                     style={{ marginBottom: '40px' }}>
 

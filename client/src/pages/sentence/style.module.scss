@@ -79,3 +79,17 @@
 .Select-multi-value-wrapper {
     height: 32px;
 }
+
+.import-export-buttons-wrapper {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+    padding-top: 8px;
+}
+
+@media (max-width: 575px) {
+    .import-export-buttons-wrapper {
+        position: relative !important;
+        text-align: left;
+    }
+}
