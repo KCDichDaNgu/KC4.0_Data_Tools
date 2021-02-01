@@ -30,3 +30,17 @@
 .domain-table-card {
     position: relative;
 }
+
+.import-button-wrapper {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+    padding-top: 8px;
+}
+
+@media (max-width: 375px) {
+    .import-button-wrapper {
+        position: relative !important;
+        text-align: left;
+    }
+}
