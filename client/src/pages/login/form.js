@@ -70,13 +70,13 @@ const LoginForm = (props) => {
 
                         <div className="h5 modal-title text-center">
                             <h4 className="mt-2">
-                                <div>Welcome Back,</div>
-                                <span>Please sign in to your account below.</span>
+                                <div>{ t('loginPage.formWelcome') },</div>
+                                <span>{ t('loginPage.formTitleMessage') }.</span>
                             </h4>
                         </div>
 
                         <FormGroup>
-                            <Label htmlFor="username">User</Label>
+                            <Label htmlFor="username">{ t('username') }</Label>
                             <Input
                                 type="text"
                                 className="Form-control"
@@ -92,7 +92,7 @@ const LoginForm = (props) => {
                         </FormGroup>
                         
                         <FormGroup>
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">{ t('password') }</Label>
                             <Input
                                 type="password"
                                 className="Form-control"
