@@ -753,6 +753,7 @@ const DocumentPage = (props) => {
 
                 <Card className='domain-table-card'>
                     <Table
+                        scroll={{ x: 'max-content' }}
                         rowKey={ record => record.id } 
                         rowClassName={ record => getTableRowClassName(record)}
                         // rowSelection={{

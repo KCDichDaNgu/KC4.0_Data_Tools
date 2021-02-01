@@ -621,6 +621,7 @@ const SentenceReview = forwardRef((props, ref) => {
 
             <Card className='card-body-padding-0'>
                 <Table
+                    scroll={{ x: 'max-content' }}
                     rowKey={ record => record.id } 
                     rowClassName={ record => getTableRowClassName(record)}
                     expandable={{
