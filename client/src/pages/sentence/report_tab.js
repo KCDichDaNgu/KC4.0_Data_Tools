@@ -197,6 +197,7 @@ const SentenceReport = (props) => {
 
                             <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 24 }>
                                 <Table
+                                    scroll={{ x: 'max-content' }}
                                     rowKey={ record => record.user_id }
                                     dataSource={ data }
                                     columns={ columns }

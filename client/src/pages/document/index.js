@@ -608,7 +608,7 @@ const DocumentPage = (props) => {
                     style={{ marginBottom: '40px' }}>
 
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 6 : 8 }>
                             <div style={{ 
                                 marginBottom: '10px',
                                 fontSize: '20px',
@@ -667,7 +667,7 @@ const DocumentPage = (props) => {
                             ) : ''
                         }
 
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 4 }>
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 4 : 8 }>
                             <div style={{ 
                                 marginBottom: '10px',
                                 fontSize: '20px',
@@ -688,7 +688,7 @@ const DocumentPage = (props) => {
                             </Select>
                         </Col>
 
-                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ 6 }>
+                        <Col style={{ marginBottom: '20px' }} xs={ 24 } md={ isAdmin() ? 6 : 8 }>
                             <div style={{ 
                                 marginBottom: '10px',
                                 fontSize: '20px',
@@ -753,6 +753,7 @@ const DocumentPage = (props) => {
 
                 <Card className='domain-table-card'>
                     <Table
+                        scroll={{ x: 'max-content' }}
                         rowKey={ record => record.id } 
                         rowClassName={ record => getTableRowClassName(record)}
                         // rowSelection={{

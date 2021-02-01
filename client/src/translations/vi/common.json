@@ -108,7 +108,9 @@
 	"loginPage": {
 		"title": "Đăng nhập",
 		"usernameHint": "Nhập tên tài khoản...",
-		"passwordHint": "Nhập mật khẩu..."
+		"passwordHint": "Nhập mật khẩu...",
+		"formWelcome": "Chào mừng trở lại",
+		"formTitleMessage": "Vui lòng đăng nhập vào tài khoản của bạn"
 	},
 	"sentencePage": {
 		"all": "Tất cả",
