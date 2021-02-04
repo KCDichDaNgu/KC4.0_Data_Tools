@@ -5,6 +5,8 @@ import HomePage from './pages/home';
 
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
+
+import SettingPage from './pages/admin/setting';
 import ManageUserPage from './pages/admin/manage-user';
 import DomainPage from './pages/admin/domain';
 import DataFieldPage from './pages/admin/data-field';
@@ -85,6 +87,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/data-field" 
                                     component={ DataFieldPage } 
+                                />
+
+                                <AdminRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/setting" 
+                                    component={ SettingPage } 
                                 />
 
                                 <AdminRoute 
