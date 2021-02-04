@@ -7,6 +7,7 @@ from datetime import timedelta, datetime
 import pandas as pd
 import re
 from bson import ObjectId
+from database.models.setting import Setting
 
 ROLE2IDX = {
     None: 0,
@@ -304,18 +305,13 @@ def build_query_params(args):
 
     return query
 
-def read_env_files(env_path=".env"):
-    env_dict = {}
-
-    with open(env_path) as fp:
-        for line in fp:
-            key, value = line.strip().split("=")
-            env_dict[key] = value
-    
-    return env_dict
-
 def export_csv_file(para_sentences, out_path):
-    env_dict = read_env_files()
+    setting = Setting.objects.first()
+
+    if setting is None:
+        min_words = 0
+    else:
+        min_words = setting['content']['min_words_of_vietnamese_sentence']
 
     columns = [
         'Văn bản 1',
@@ -334,7 +330,7 @@ def export_csv_file(para_sentences, out_path):
     for para_sentence in para_sentences:
         text1 = para_sentence.newest_para_sentence.text1.content
         n_words = len(text1.split())
-        if n_words < int(env_dict['MIN_WORDS_IN_TEXT1']):
+        if n_words < min_words:
             continue
 
         para_sentence = para_sentence.serialize
