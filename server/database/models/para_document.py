@@ -72,6 +72,7 @@ class ParaDocument(db.Document):
     creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
 
+    domain_id = db.ObjectIdField()
     data_field_id = db.ReferenceField(DataField)
     
     created_at = db.IntField(default=int(time.time()), required=True)
@@ -119,6 +120,7 @@ class ParaDocument(db.Document):
                 'username': self.editor.user_id.username if self.editor is not None else None,
                 'roles': self.editor.roles if self.editor is not None else None
             },
+            'domain_id': str(self.domain_id),
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'viewer_id': str(self.viewer_id),
