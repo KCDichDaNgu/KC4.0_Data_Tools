@@ -304,7 +304,19 @@ def build_query_params(args):
 
     return query
 
+def read_env_files(env_path=".env"):
+    env_dict = {}
+
+    with open(env_path) as fp:
+        for line in fp:
+            key, value = line.strip().split("=")
+            env_dict[key] = value
+    
+    return env_dict
+
 def export_csv_file(para_sentences, out_path):
+    env_dict = read_env_files()
+
     columns = [
         'Văn bản 1',
         'Văn bản 2',
@@ -320,6 +332,11 @@ def export_csv_file(para_sentences, out_path):
     data_list = []
 
     for para_sentence in para_sentences:
+        text1 = para_sentence.newest_para_sentence.text1.content
+        n_words = len(text1.split())
+        if n_words < int(env_dict['MIN_WORDS_IN_TEXT1']):
+            continue
+
         para_sentence = para_sentence.serialize
         data_row = [
             para_sentence['newest_para_sentence'].text1.content,
