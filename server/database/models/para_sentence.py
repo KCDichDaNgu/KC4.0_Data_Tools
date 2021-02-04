@@ -64,6 +64,7 @@ class ParaSentence(db.Document):
     creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
 
+    domain_id = db.ObjectIdField()
     para_document_id = db.ReferenceField(ParaDocument)
     last_history_record_id = db.ReferenceField('ParaSentenceHistory')
 
@@ -102,6 +103,7 @@ class ParaSentence(db.Document):
                 'username': self.editor.user_id.username if self.editor is not None else None,
                 'roles': self.editor.roles if self.editor is not None else None
             },
+            'domain_id': str(self.domain_id),
             'para_document_id': self.para_document_id,
             'last_history_record_id': self.last_history_record_id,
             'created_at': self.created_at,
