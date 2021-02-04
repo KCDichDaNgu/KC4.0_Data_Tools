@@ -277,12 +277,14 @@ def setup_app(app):
     from api.admin.data_field.views import admin_manage_data_field_bp
     from api.admin.backup.views import admin_manage_backup_bp
     from api.admin.assignment.views import admin_manage_assignment_bp
+    from api.admin.setting.views import admin_manage_setting_bp
     
     app.register_blueprint(admin_manage_data_field_bp, url_prefix='/api/admin/data-field') 
     app.register_blueprint(admin_manage_domain_bp, url_prefix='/api/admin/domain') 
     app.register_blueprint(admin_manage_user_bp, url_prefix='/api/admin/user') 
     app.register_blueprint(admin_manage_backup_bp, url_prefix='/api/admin/backup') 
     app.register_blueprint(admin_manage_assignment_bp, url_prefix='/api/admin/assignment') 
+    app.register_blueprint(admin_manage_setting_bp, url_prefix='/api/admin/setting') 
 
     public_bp = Blueprint('public', 'public', static_folder='public', 
         static_url_path='public')

@@ -279,5 +279,11 @@
 	"result": "Kết quả",
 	"docPairsCreatedSuccessfully": "Cặp văn bản được lưu thành công!",
 	"docPairsExisted": "Cặp văn bản đã tồn tại!",
-	"error": "Lỗi"
+	"error": "Lỗi",
+	"minWordsOfVietnameseSentence": "Số từ tối thiểu của một câu Tiếng Việt",
+	"setting": "Thiết lập",
+	"settingPage": {
+		"title": "Thiết lập"
+	},
+	"update": "Cập nhật"
 }

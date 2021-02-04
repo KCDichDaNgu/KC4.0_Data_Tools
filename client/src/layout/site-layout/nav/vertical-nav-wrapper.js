@@ -13,14 +13,14 @@ const Nav = () => {
     let [ isClient, setIsClient ] = useState(false)
     let [ mainNav, setMainNav ] = useState([
         {
-            icon: 'pe-7s-news-paper',
-            label: t('documentPage.title'),
-            to: 'document',
-        },
-        {
             icon: 'pe-7s-copy-file',
             label: t('sentencePage.title'),
             to: 'sentence',
+        },
+        {
+            icon: 'pe-7s-news-paper',
+            label: t('documentPage.title'),
+            to: 'document',
         },
     ])
     
@@ -65,6 +65,11 @@ const Nav = () => {
                             icon: 'pe-7s-global',
                             label: t('dataFieldPage.title'),
                             to: 'data-field',
+                        },
+                        {
+                            icon: 'pe-7s-settings',
+                            label: t('settingPage.title'),
+                            to: 'setting',
                         },
                     ])
                 }
