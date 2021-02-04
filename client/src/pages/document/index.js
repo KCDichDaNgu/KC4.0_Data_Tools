@@ -576,7 +576,7 @@ const DocumentPage = (props) => {
 
                             <Col className='import-button-wrapper' xs={ 24 } md={ 10 }>
                                 {
-                                    isReviewer() || isEditor() ? (
+                                    isAdmin() || isReviewer() || isEditor() ? (
                                         <Button 
                                             onClick={ () => {
                                                 setAlignmentType(alignmentTypes.fromNewPairs)

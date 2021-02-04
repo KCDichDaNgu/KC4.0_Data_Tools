@@ -197,30 +197,31 @@ const AddingDocModal = (props) => {
 
     const createSentAlignSuccessModal = (title, sentPairs, metaData) => {
         Modal.confirm({
-            title: title,
+            title: <div style={{ paddingLeft: '12px' }}>{ title }</div>,
             visible: isAddingModalVisible,
+            bodyStyle: { maxHeight: '60vh', overflowY: 'auto' },
             width: 1000,
             icon: '',
             content: (
                 <>
                     <Row
-                        style={{ marginBottom: '15px' }} 
+                        style={{ width: '100%', paddingLeft: '12px' }} 
                         gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
 
-                        <Col xs={ 24 } md={ 11 }>
+                        <Col xs={ 0 } md={ 11 }>
                             <div style={{ fontWeight: 700 }}>
                                 { t(`Language.${metaData.lang1}`) }
                             </div>
                         </Col>
 
-                        <Col xs={ 24 } md={ 11 }>
+                        <Col xs={ 0 } md={ 11 }>
                             <div style={{ fontWeight: 700 }}>
                                 { t(`Language.${metaData.lang2}`) }
                             </div>
                         </Col>
 
-                        <Col xs={ 24 } md={ 2 }>
-                            <div style={{ fontWeight: 700 }}>
+                        <Col xs={ 0 } md={ 2 }>
+                            <div style={{ fontWeight: 700, minWidth: '50px' }}>
                                 { t(`score`) }
                             </div>
                         </Col>
@@ -230,21 +231,52 @@ const AddingDocModal = (props) => {
                         sentPairs.map((sentencePair, index) => (
                             <Row
                                 key={ index }
-                                style={{ marginBottom: '10px' }} 
+                                style={{
+                                    padding: '12px 0 12px 12px',
+                                    width: '100%',
+                                    backgroundColor: index % 2 == 0 ? 'white' : '#f2f2f2'
+                                }} 
                                 gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
-
+                                
                                 <Col xs={ 24 } md={ 11 }>
-                                    { sentencePair.text1 }
+                                    <Row>
+                                        <Col xs={ 24 } md={ 0 }>
+                                            <div style={{ fontWeight: 700 }}>
+                                                { t(`Language.${metaData.lang1}`) }
+                                            </div>
+                                        </Col>
+                                        <Col span={ 24 }>
+                                            { sentencePair.text1 }
+                                        </Col>
+                                    </Row>
                                 </Col>
 
                                 <Col xs={ 24 } md={ 11 }>
-                                    { sentencePair.text2 }
+                                    <Row>
+                                        <Col xs={ 24 } md={ 0 }>
+                                            <div style={{ fontWeight: 700 }}>
+                                                { t(`Language.${metaData.lang2}`) }
+                                            </div>
+                                        </Col>
+                                        <Col span={ 24 }>
+                                            { sentencePair.text2 }
+                                        </Col>
+                                    </Row>
                                 </Col>
 
                                 <Col xs={ 24 } md={ 2 }>
-                                    <div style={{ fontWeight: 700 }}>
-                                        { Number(sentencePair.score).toFixed(2) }
-                                    </div>
+                                    <Row>
+                                        <Col xs={ 24 } md={ 0 }>
+                                            <div style={{ fontWeight: 700 }}>
+                                                { `${t(`score`)}: ${Number(sentencePair.score).toFixed(2)}` }
+                                            </div>
+                                        </Col>
+                                        <Col xs={ 0 } md={ 24 }>
+                                            <div style={{ fontWeight: 700 }}>
+                                                { Number(sentencePair.score).toFixed(2) }
+                                            </div>
+                                        </Col>
+                                    </Row>
                                 </Col>
 
                             </Row>
