@@ -28,3 +28,11 @@ LANGS = [
         'notation': 'lo'
     },
 ]
+
+API_ALIGN_DOCUMENT = {
+    'vi-lo': 'http://103.124.92.104:9988/scores/sentences'
+}
+
+API_SCORE_DOCUMENT = {
+    'vi-lo': 'http://103.124.92.104:9988/scores/document'
+}

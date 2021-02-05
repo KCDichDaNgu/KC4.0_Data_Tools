@@ -5,6 +5,7 @@ import re
 import time
 from shutil import copyfile
 from datetime import datetime
+import requests
 
 from database.models.para_document import (
     ParaDocument, 
@@ -23,6 +24,7 @@ from database.models.para_sentence import (
 from database.models.domain import Domain
 from api.document.utils import hash_para_document
 from api.para_sentence.utils import hash_para_sentence
+from constants.common import API_ALIGN_DOCUMENT, API_SCORE_DOCUMENT
 
 def read_env_files(env_path=".env"):
     env_dict = {}
@@ -66,6 +68,36 @@ def check_valid_file_pair(src_document_path, tgt_document_path):
         "message": "Cặp file đạt tiêu chuẩn"
     }
 
+def align_documents(src_text, tgt_text, src_lang, tgt_lang):
+    res = requests.post(
+        API_ALIGN_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
+        json={
+            "source": src_text,
+            "target": tgt_text,
+            "type": f'{src_lang[0]}{tgt_lang[0]}'
+        }
+    ).json()
+
+    if res['isvalid']:
+        sentences = res['sentences']
+
+        return sentences
+    else:
+        return []
+
+def get_documents_score(src_text, tgt_text, src_lang, tgt_lang):
+    res = requests.post(
+        API_SCORE_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
+        json={
+            "source": src_text,
+            "target": tgt_text,
+            "type": f'{src_lang[0]}{tgt_lang[0]}'
+        }
+    ).json()
+    
+    return res['score']
+
+
 def create_para_document(src_document_path, tgt_document_path, domain, src_lang, tgt_lang):
     src_text = open(src_document_path, encoding='utf8').read().strip()
     tgt_text = open(tgt_document_path, encoding='utf8').read().strip()
@@ -78,6 +110,16 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
     )
 
     try:
+        message = ""
+
+        # get score
+        try:
+            score = get_documents_score(src_text, tgt_text, src_lang, tgt_lang)
+        except Exception as err:
+            print('get score error', err)
+            message += f"\nLỗi lấy điểm cặp câu: {str(err)}"
+            score = None
+
         para_doc = ParaDocument(
             newest_para_document=NewestParaDocument(
                 text1=ParaDocumentText(
@@ -102,7 +144,7 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
                 ),
                 hash_content=hash_content
             ),
-            score={'docAlign': None},
+            score={'docAlign': score},
             alignment_status=ParaDocument.ALIGNMENT_STATUSES['not_aligned_yet'],
             created_by=ParaDocument.CREATED_BY['by_machine'],
             created_at=time.time(),
@@ -111,6 +153,42 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
         )
         
         para_doc.save()
+
+        # gọi tool gióng hàng
+        # try:
+        #     sentences = align_documents(src_text, tgt_text, src_lang, tgt_lang)
+        #     para_doc.update(alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned'])
+        # except Exception as err:
+        #     sentences = []
+        #     print('error align document', err)
+        #     message += f'\nLỗi gióng hàng văn bản: {str(err)}'
+
+        # try:
+        #     n_add_sentences = 0
+        #     n_dup_sentences = 0
+        #     n_unknown_error = 0
+
+        #     for sentence in sentences:
+        #         try:
+        #             create_para_sentence(domain, sentence['source'], sentence['target'], src_lang, tgt_lang, score=sentence['score'])
+        #             n_add_sentences += 1
+        #         except Exception as err:
+        #             if str(err) == "hashExists":
+        #                 n_dup_sentences += 1
+        #             else:
+        #                 n_unknown_error += 1
+            
+        #     message += f'\nĐã thêm vào {n_add_sentences} cặp câu'\
+        #         f'\n{n_dup_sentences} cặp câu trùng lặp không được thêm vào'\
+        #         f'\n{n_unknown_error} cặp câu gặp lỗi không lường trước'
+        # except Exception as err:
+        #     message += f'\nLỗi khi thêm cặp câu: {str(err)}'
+
+        return {
+            "success": True,
+            "message": "Đã thêm vào cặp văn bản." + message
+
+        }
 
     except Exception as err:
         if str(err) == "hashExists":
@@ -124,10 +202,40 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
                 "message": f"Lỗi không lường trước. {str(err)}."
             }
 
-    return {
-        "success": True,
-        "message": "Đã thêm vào cặp văn bản."
-    }
+
+def create_para_sentence(domain, src_text, tgt_text, src_lang, tgt_lang, score=None):
+    hash = hash_para_sentence(src_text, tgt_text, src_lang, tgt_lang)
+
+    para_sentence = ParaSentence(
+        newest_para_sentence=NewestParaSentence(
+            text1=ParaSentenceText(
+                content=src_text,
+                lang=src_lang
+            ),
+            text2=ParaSentenceText(
+                content=tgt_text,
+                lang=tgt_lang
+            ),
+            hash_content=hash
+        ),
+        original_para_sentence=OriginalParaSentence(
+            text1=ParaSentenceText(
+                content=src_text,
+                lang=src_lang
+            ),
+            text2=ParaSentenceText(
+                content=tgt_text,
+                lang=tgt_lang
+            ),
+            hash_content=hash
+        ),
+        score={'senAlign': score},
+        created_at=time.time(),
+        updated_at=time.time(),
+        domain_id=domain.id
+    )
+
+    para_sentence.save()
 
 def add_para_sentences_from_file(sentence_file, domain, src_lang, tgt_lang):
     try:
@@ -153,39 +261,8 @@ def add_para_sentences_from_file(sentence_file, domain, src_lang, tgt_lang):
                 n_error_missing_pair += 1
                 continue
 
-            hash = hash_para_sentence(src_text, tgt_text, src_lang, tgt_lang)
-
-            para_sentence = ParaSentence(
-                newest_para_sentence=NewestParaSentence(
-                    text1=ParaSentenceText(
-                        content=src_text,
-                        lang=src_lang
-                    ),
-                    text2=ParaSentenceText(
-                        content=tgt_text,
-                        lang=tgt_lang
-                    ),
-                    hash_content=hash
-                ),
-                original_para_sentence=OriginalParaSentence(
-                    text1=ParaSentenceText(
-                        content=src_text,
-                        lang=src_lang
-                    ),
-                    text2=ParaSentenceText(
-                        content=tgt_text,
-                        lang=tgt_lang
-                    ),
-                    hash_content=hash
-                ),
-                score={'senAlign': None},
-                created_at=time.time(),
-                updated_at=time.time(),
-                domain_id=domain.id
-            )
-
             try:
-                para_sentence.save()
+                create_para_sentence(domain, src_text, tgt_text, src_lang, tgt_lang)
                 n_success += 1
             except Exception as err:
                 if str(err) == "hashExists":
@@ -230,6 +307,13 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
     log_summary_text = ""
 
     for language_pair in tqdm(language_pairs, desc="Adding documents"):
+        langs = language_pair.split('-')
+        src_lang, tgt_lang = langs
+
+        # tạm thời chỉ chạy import việt lào
+        if language_pair != 'vi-lo' and language_pair != 'lo-vi':
+            continue
+
         # domain 
         domains = os.listdir(f"{bitextor_path}/{language_pair}")
 
@@ -237,9 +321,6 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
             domain = find_or_create_domain(domain_url)
 
             document_path = f"{bitextor_path}/{language_pair}/{domain_url}/documents"
-
-            langs = language_pair.split('-')
-            src_lang, tgt_lang = langs
             
             all_document_files = os.listdir(document_path)
             prefixs = get_all_prefixs(all_document_files)
@@ -271,7 +352,12 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
 
                     message = check_dict['message']
                 else:
-                    success_dict = create_para_document(src_document_path, tgt_document_path, domain, src_lang, tgt_lang)
+                    success_dict = create_para_document(
+                        src_document_path, 
+                        tgt_document_path, 
+                        domain, 
+                        src_lang, 
+                        tgt_lang)
                     
                     if success_dict['success']:
                         # add file to done
@@ -301,12 +387,13 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
                     f'\nFile pair {src_document_path} - {tgt_document_path}:'\
                     f'\n{message}'
                 
-    log_summary_fp = open(f"{bitextor_log_path}/document-log-summary-{today}.log", 'w+', encoding='utf8')
     if len(log_summary_text) > 0:
+        log_summary_fp = open(f"{bitextor_log_path}/document-log-summary-{today}.log", 'w+', encoding='utf8')
         log_summary_fp.write(log_summary_text)
-    else:
-        log_summary_fp.write('Nothing to do')
-    log_summary_fp.close()
+        log_summary_fp.close()
+    # else:
+    #     log_summary_fp.write('Nothing to do')
+    
 
 def find_or_create_domain(domain_url):
     domain = Domain.objects(url=domain_url).first()
@@ -379,12 +466,13 @@ def add_para_sentences_from_local(bitextor_path, bitextor_done_path, bitextor_er
                     f'\nFile {sentence_filepath}:'\
                     f'\n{success_dict["message"]}'
 
-    log_summary_fp = open(f"{bitextor_log_path}/sentence-log-summary-{today}.log", 'w+', encoding='utf8')
     if len(log_summary_text) > 0:
+        log_summary_fp = open(f"{bitextor_log_path}/sentence-log-summary-{today}.log", 'w+', encoding='utf8')
         log_summary_fp.write(log_summary_text)
-    else:
-        log_summary_fp.write('Nothing to do')
-    log_summary_fp.close()
+        log_summary_fp.close()
+    # else:
+    #     log_summary_fp.write('Nothing to do')
+    
 
 def makedirs(path):
     if not os.path.isdir(path):
@@ -405,8 +493,17 @@ def add_all_documents_and_sentences_in_local():
     makedirs(bitextor_err_path)
     makedirs(bitextor_log_path)
 
-    add_para_sentences_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path)
-    # add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path)
+    add_para_sentences_from_local(
+        bitextor_path, 
+        bitextor_done_path, 
+        bitextor_err_path, 
+        bitextor_log_path)
+    add_para_documents_from_local(
+        bitextor_path, 
+        bitextor_done_path, 
+        bitextor_err_path, 
+        bitextor_log_path
+        )
 
 
 if __name__ == '__main__':
