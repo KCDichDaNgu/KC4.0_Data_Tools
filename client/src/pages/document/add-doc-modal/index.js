@@ -289,6 +289,8 @@ const AddingDocModal = (props) => {
             okText: t('submit'),
             onOk: async (close) => { 
 
+                let para_document_id = null;
+
                 if (alignmentType == alignmentTypes.fromNewPairs) {
 
                     try {
@@ -307,6 +309,8 @@ const AddingDocModal = (props) => {
                                 content: t('docPairsCreatedSuccessfully'),
                                 onOk() {},
                             });
+
+                            para_document_id = result1.data.id;
                         } else {
                             if (result1.message == 'docExisted') {
                                 Modal.info({
@@ -324,55 +328,56 @@ const AddingDocModal = (props) => {
                             onOk() {},
                         });
                     }
+                } else {
+                    para_document_id = chosenDocForAlignment.id
                 }
 
-                try {
+                if (para_document_id) {
+                    try {
 
-                    let _data = {
-                        lang1: metaData.lang1,
-                        lang2: metaData.lang2,
-                        pairs: sentPairs,
-                        dataFieldId: metaData.dataFieldId
-                    }
-
-                    if (alignmentType == alignmentTypes.fromSavedPairs) {
-                        _data.para_document_id = chosenDocForAlignment.id
-                    }
-                
-                    let result2 = await paraSentenceAPI.importByUser(_data)
+                        let _data = {
+                            lang1: metaData.lang1,
+                            lang2: metaData.lang2,
+                            pairs: sentPairs,
+                            dataFieldId: metaData.dataFieldId,
+                            paraDocumentId: para_document_id
+                        };
                     
-                    if (result2.data.code == STATUS_CODES.success) {    
-
-                        let importStatus = result2.data.data;
-
-                        Modal.success({
-                            title: t('result'),
-                            content: (
-                                <>
-                                    <p>
-                                        - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
-                                    </p>
-                                    <p>
-                                        - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
-                                    </p>
-                                </>
-                            ),
+                        let result2 = await paraSentenceAPI.importByUser(_data)
+                        
+                        if (result2.data.code == STATUS_CODES.success) {    
+    
+                            let importStatus = result2.data.data;
+    
+                            Modal.success({
+                                title: t('result'),
+                                content: (
+                                    <>
+                                        <p>
+                                            - { t('sentencePage.imported') } { importStatus.nSuccess }/{ importStatus.nData } { t('sentencePage.pairParaSentences') }.
+                                        </p>
+                                        <p>
+                                            - { importStatus.nErrorHashExists }/{ importStatus.nData } { t('sentencePage.duplicatedRecords') }.
+                                        </p>
+                                    </>
+                                ),
+                                onOk() {},
+                            });
+                        }
+                    } catch(err) {
+                        Modal.error({
+                            title: `${t('error')}!`,
+                            content: t('pleaseTryAgainNextTime'),
                             onOk() {},
                         });
                     }
-                } catch(err) {
-                    Modal.error({
-                        title: `${t('error')}!`,
-                        content: t('pleaseTryAgainNextTime'),
-                        onOk() {},
-                    });
+    
+                    // reload new results
+                    let res1 = await documentAPI.getDocuments(currentFilter)
+                    
+                    reloadDocumentData(res1.data.data.para_documents);
+                    reloadDocumentPaginationParams(res1.data.data.pagination);
                 }
-
-                // reload new results
-                let res1 = await documentAPI.getDocuments(currentFilter)
-                
-                reloadDocumentData(res1.data.data.para_documents);
-                reloadDocumentPaginationParams(res1.data.data.pagination);
             },
         });
     }

@@ -38,6 +38,8 @@ def import_parasentences_by_sent_align(data):
     dataFieldId = data['dataFieldId']
     sentPairs = data['pairs']
 
+    para_document = data['para_document']
+    
     count = 0
     n_rows = 0
     n_error_hash_exists = 0
@@ -61,7 +63,6 @@ def import_parasentences_by_sent_align(data):
                     ),
                     hash_content=hash_content
                 ),
-
                 original_para_sentence=OriginalParaSentence(
                     text1=ParaSentenceText(
                         content=text1,
@@ -76,6 +77,8 @@ def import_parasentences_by_sent_align(data):
                 score={ "senAlign": float(score) },
                 creator_id=creator_id,
                 data_field_id=dataFieldId,
+                para_document_id=para_document.id,
+                domain_id=para_document.domain_id,
                 created_at=time.time(),
                 updated_at=time.time()
             )

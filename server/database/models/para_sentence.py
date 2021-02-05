@@ -65,7 +65,9 @@ class ParaSentence(db.Document):
     editor = db.EmbeddedDocumentField(Editor)
 
     domain_id = db.ObjectIdField()
+    
     para_document_id = db.ReferenceField(ParaDocument)
+
     last_history_record_id = db.ReferenceField('ParaSentenceHistory')
 
     data_field_id = db.ReferenceField(DataField)

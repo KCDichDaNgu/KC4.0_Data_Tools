@@ -126,22 +126,21 @@ def import_by_user():
     user = current_token.user
 
     args = request.get_json()
-        
+
+    para_document = ParaDocument.objects.get(id=ObjectId(args['paraDocumentId']))
+
+    para_document.update(
+        alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned']
+    )
+    
     status = import_parasentences_by_sent_align({
         'creator_id': user.id,
         'lang1': args['lang1'],
         'lang2': args['lang2'],
         'pairs': args['pairs'],
-        'dataFieldId': args['dataFieldId']
+        'dataFieldId': args['dataFieldId'],
+        'para_document': para_document
     })
-
-    if 'para_document_id' in args:
-
-        para_document = ParaDocument.objects.get(id=ObjectId(args['para_document_id']))
-
-        para_document.update(
-            alignment_status=ParaDocument.ALIGNMENT_STATUSES['aligned']
-        )
     
     return jsonify(
         code=STATUS_CODES['success'],
