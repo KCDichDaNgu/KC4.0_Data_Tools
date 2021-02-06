@@ -9,7 +9,6 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import AppHeader from '../header';
 import AppSidebar from '../sidebar';
-import AppFooter from '../footer';
 
 const AppMain = ( props ) => {
     
@@ -22,7 +21,6 @@ const AppMain = ( props ) => {
                     <div className="app-main__inner">
                         { props.children }
                     </div>
-                    <AppFooter/>
                 </div>
             </div>
             <ToastContainer/>
