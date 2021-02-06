@@ -166,11 +166,13 @@ const AddingDocModal = (props) => {
                 text2: _formData.text2
             })
 
-            if (result.code == STATUS_CODES.success) {
+            if (result.code == STATUS_CODES.success || result.isvalid) {
             
+                const data = result.data ?? result.sentences;
+
                 createSentAlignSuccessModal(
-                    `${t('total')} ${result.data.length} ${t('sentencePair')}`,
-                    result.data.map(e => ({
+                    `${t('total')} ${data.length} ${t('sentencePair')}`,
+                    data.map(e => ({
                         ...e, 
                         text1: e.source, 
                         text2: e.target
@@ -199,7 +201,6 @@ const AddingDocModal = (props) => {
         Modal.confirm({
             title: <div style={{ paddingLeft: '12px' }}>{ title }</div>,
             visible: isAddingModalVisible,
-            bodyStyle: { maxHeight: '60vh', overflowY: 'auto' },
             width: 1000,
             icon: '',
             content: (
