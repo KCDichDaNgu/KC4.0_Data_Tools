@@ -9,6 +9,7 @@ class ParaSentenceText(db.EmbeddedDocument):
 
     content = db.StringField(required=True)
     lang = db.StringField(required=True)
+    words_count = db.IntField(required=True)
 
 class NewestParaSentence(db.EmbeddedDocument):
 
