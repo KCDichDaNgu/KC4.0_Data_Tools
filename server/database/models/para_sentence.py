@@ -1,4 +1,5 @@
 import time
+import re
 
 from database.db import db
 
@@ -18,6 +19,7 @@ class ParaSentenceText(db.EmbeddedDocument):
 
     content = db.StringField(required=True)
     lang = db.StringField(required=True)
+    words_count = db.IntField(required=True)
 
 class NewestParaSentence(db.EmbeddedDocument):
 
@@ -82,15 +84,36 @@ class ParaSentence(db.Document):
 
     meta = {'collection': 'para_sentence'}
 
-    def save(self, is_update=False):
-        similar_parasentences = ParaSentence.objects.filter(
-            original_para_sentence__hash_content=self.original_para_sentence.hash_content
-        )
+    def custom_update(self, **kwargs):
+        for key, value in kwargs.items():
+            self[key] = value
 
-        if len(similar_parasentences) == 0:
+        self.save()
+
+    def save(self, is_update=True):
+        n_words1 = len(re.split("\s+", self.newest_para_sentence.text1.content))
+        self.newest_para_sentence.text1.words_count = n_words1
+
+        n_words2 = len(re.split("\s+", self.newest_para_sentence.text2.content))
+        self.newest_para_sentence.text2.words_count = n_words2
+
+        n_words_ori1 = len(re.split("\s+", self.original_para_sentence.text1.content))
+        self.original_para_sentence.text1.words_count = n_words1
+
+        n_words_ori2 = len(re.split("\s+", self.original_para_sentence.text2.content))
+        self.original_para_sentence.text2.words_count = n_words2
+
+        if is_update:
             return super(ParaSentence, self).save()
         else:
-            raise Exception('hashExists')
+            similar_parasentences = ParaSentence.objects.filter(
+                original_para_sentence__hash_content=self.original_para_sentence.hash_content
+            )
+
+            if len(similar_parasentences) == 0:
+                return super(ParaSentence, self).save()
+            else:
+                raise Exception('hashExists')
         
     @property
     def serialize(self):

@@ -212,6 +212,20 @@ def build_query_params(args):
         '$and': []
     }
 
+    # filter text1.words_count >= threshold
+    setting = Setting.objects.first()
+
+    if setting is None:
+        min_words = 0
+    else:
+        min_words = setting['content']['min_words_of_vietnamese_sentence']
+
+    query['$and'].append({
+        'newest_para_sentence.text1.words_count': {
+            '$gte': min_words
+        }
+    })
+
     # filter params send by request
     if 'rating' in args and args['rating'] != 'all':
         query['$and'].append({
@@ -309,13 +323,6 @@ def build_query_params(args):
     return query
 
 def export_csv_file(para_sentences, out_path):
-    setting = Setting.objects.first()
-
-    if setting is None:
-        min_words = 0
-    else:
-        min_words = setting['content']['min_words_of_vietnamese_sentence']
-
     columns = [
         'Văn bản 1',
         'Văn bản 2',
@@ -331,11 +338,6 @@ def export_csv_file(para_sentences, out_path):
     data_list = []
 
     for para_sentence in para_sentences:
-        text1 = para_sentence.newest_para_sentence.text1.content
-        n_words = len(text1.split())
-        if n_words < min_words:
-            continue
-
         para_sentence = para_sentence.serialize
         data_row = [
             para_sentence['newest_para_sentence'].text1.content,

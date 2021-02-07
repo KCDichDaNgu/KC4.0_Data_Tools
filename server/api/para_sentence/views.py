@@ -239,8 +239,8 @@ def update(_id):
         newest_para_sentence.text2.content = args.get('text2', newest_para_sentence.text2.content).strip()
         newest_para_sentence.rating = args.get('rating', ParaSentence.RATING_TYPES['good'])
 
-        para_sentence.update(
-            newest_para_sentence=json.loads(newest_para_sentence.to_json()),
+        para_sentence.custom_update(
+            newest_para_sentence=newest_para_sentence,
             updated_at=time.time(),
             editor=Editor(
                 user_id=user.id,
