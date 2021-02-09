@@ -6,6 +6,7 @@ from database.db import db
 from database.models.user import User
 from database.models.para_document import ParaDocument
 from database.models.data_field import DataField
+from database.models.domain import Domain
 
 RATING_TYPES = {
     'good': 'good',
@@ -66,7 +67,7 @@ class ParaSentence(db.Document):
     creator_id = db.ReferenceField(User)
     editor = db.EmbeddedDocumentField(Editor)
 
-    domain_id = db.ObjectIdField()
+    domain_id =  db.ReferenceField(Domain)
     
     para_document_id = db.ReferenceField(ParaDocument)
 
@@ -128,7 +129,10 @@ class ParaSentence(db.Document):
                 'username': self.editor.user_id.username if self.editor is not None else None,
                 'roles': self.editor.roles if self.editor is not None else None
             },
-            'domain_id': str(self.domain_id),
+            'domain': {
+                'id': str(self.domain_id.id) if self.domain_id is not None else None,
+                'url': str(self.domain_id.url) if self.domain_id is not None else ''
+            },
             'para_document_id': self.para_document_id,
             'last_history_record_id': self.last_history_record_id,
             'created_at': self.created_at,

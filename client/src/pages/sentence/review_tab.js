@@ -51,6 +51,7 @@ const SentenceReview = forwardRef((props, ref) => {
     const [dataSource, setDataSource] = useState([]);
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
+    const [exporting, setExporting] = useState(false);
     
     const [filter, setFilter] = useState({
         domain: '',
@@ -405,10 +406,14 @@ const SentenceReview = forwardRef((props, ref) => {
     }
 
     const exportData = () => {
+        setExporting(true);
+
         paraSentenceAPI.exportFile(filter).then(res => {
             let lang1 = filter.lang1 || 'all';
             let lang2 = filter.lang2 || 'all';
             FileDownload(res.data, `${lang1}-${lang2}.csv`);
+            
+            setExporting(false);
         });
     }
 
@@ -451,6 +456,13 @@ const SentenceReview = forwardRef((props, ref) => {
                                         <Button onClick={ exportData }>
                                             { t('sentencePage.exportData') }
                                         </Button>
+                                    ) : ''
+                                }
+                                {
+                                    allowExport() && exporting ? (
+                                        <div style={{ marginLeft: '10px' }}>
+                                            <Spin />
+                                        </div>
                                     ) : ''
                                 }
                             </div>

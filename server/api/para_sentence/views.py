@@ -97,8 +97,8 @@ def get():
 @require_oauth()
 @status_required(User.USER_STATUS['active'])
 def list_option_field():
-    list_lang1 = ParaSentence.objects.distinct('lang1')
-    list_lang2 = ParaSentence.objects.distinct('lang2')
+    # list_lang1 = ParaSentence.objects.distinct('lang1')
+    # list_lang2 = ParaSentence.objects.distinct('lang2')
     list_rating = [
         ParaSentence.RATING_TYPES['good'],
         ParaSentence.RATING_TYPES['bad'],
@@ -108,8 +108,8 @@ def list_option_field():
     return jsonify(
         code=STATUS_CODES['success'],
         data={
-            "lang1": list_lang1,
-            "lang2" : list_lang2,
+            # "lang1": list_lang1,
+            # "lang2" : list_lang2,
             "rating" : list_rating
         },
         message='success'
