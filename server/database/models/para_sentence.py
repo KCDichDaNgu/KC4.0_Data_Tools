@@ -88,9 +88,9 @@ class ParaSentence(db.Document):
         for key, value in kwargs.items():
             self[key] = value
 
-        self.save()
+        self.save(is_update=True)
 
-    def save(self, is_update=True):
+    def save(self, is_update=False):
         n_words1 = len(re.split("\s+", self.newest_para_sentence.text1.content))
         self.newest_para_sentence.text1.words_count = n_words1
 
