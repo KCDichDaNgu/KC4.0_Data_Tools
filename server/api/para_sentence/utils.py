@@ -330,6 +330,7 @@ def export_csv_file(para_sentences, out_path):
         'Đánh giá',
         'Ngôn ngữ 1',
         'Ngôn ngữ 2',
+        'Tên miền',
         'Thời gian tạo',
         'Cập nhật lần cuối lúc',
         'Cập nhật lần cuối bởi'
@@ -346,6 +347,7 @@ def export_csv_file(para_sentences, out_path):
             RATING_KEY2TEXT[para_sentence['newest_para_sentence'].rating],
             para_sentence['newest_para_sentence'].text1.lang,
             para_sentence['newest_para_sentence'].text2.lang,
+            para_sentence['domain']['url'],
             datetime.utcfromtimestamp(para_sentence['created_at']).strftime('%d/%m/%Y %H:%M'),
             datetime.utcfromtimestamp(para_sentence['updated_at']).strftime('%d/%m/%Y %H:%M'),
             para_sentence['editor']['username']
