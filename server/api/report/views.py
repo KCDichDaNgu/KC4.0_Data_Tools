@@ -9,6 +9,7 @@ from constants.common import STATUS_CODES
 from database.models.user import User
 from database.models.para_sentence_history import ParaSentenceHistory
 from database.models.para_sentence import ParaSentence
+from database.models.setting import Setting
 from .utils import *
 
 from bson import ObjectId
@@ -75,12 +76,23 @@ def get_unrated_count():
     args = request.args
     user = current_token.user
 
+    # filter text1.words_count >= threshold
+    setting = Setting.objects.first()
+
+    if setting is None:
+        min_words = 0
+    else:
+        min_words = setting['content']['min_words_of_vietnamese_sentence']
+
     langs = get_assignment_languages(user)
     
     count_unrated_dict = {}
 
     for lang in langs:
         n_unrated = ParaSentence.objects.filter(__raw__={
+            'newest_para_sentence.text1.words_count': {
+                '$gte': min_words
+            },
             'newest_para_sentence.text2.lang': lang,
             'newest_para_sentence.rating': ParaSentence.RATING_TYPES['unRated']
         }).count()
