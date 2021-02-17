@@ -162,7 +162,8 @@ const SentenceReport = (props) => {
                                             fontSize: '18px'
                                         }}>
                                         (
-                                        { t('sentencePage.reportTab.remain')} { unRatedCount[lang] }&nbsp;
+                                        { t('sentencePage.reportTab.remain')}&nbsp;
+                                        { Number(unRatedCount[lang])?.toLocaleString('vi') }&nbsp;
                                         { t('sentencePage.reportTab.unratedSentences') }
                                         )
                                     </div>

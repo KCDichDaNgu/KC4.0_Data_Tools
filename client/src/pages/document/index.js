@@ -336,6 +336,7 @@ const DocumentPage = (props) => {
                     />
                 </Row>
             ),
+            okText: t('documentPage.okText'),
             width: '80vw',
             style: { maxWidth: '950px' },
             icon: null

@@ -64,6 +64,7 @@
 		"resultUpdateData": "Kết quả cập nhật dữ liệu",
 		"addDataFromFields": "Thêm dữ liệu từ các tệp",
 		"ok": "OK",
+		"okText": "Đóng",
 		"updatedByHigherRole": "Bản ghi này đã được admin chỉnh sửa",
 		"uploadFileModal": {
 			"title": "Tải lên dữ liệu"
@@ -85,7 +86,7 @@
 		"addedError": "Thêm mới cặp văn bản lỗi",
 		"deletedSuccess": "Xóa cặp văn bản thành công",
 		"deletedFailure": "Xóa cặp văn bản thất bại",
-		"confirmDeleteContent":"Bạn có chắc chắn muốn xóa cặp văn bản này?",
+		"confirmDeleteContent": "Bạn có chắc chắn muốn xóa cặp văn bản này?",
 		"delete": "Xóa",
 		"by_machine": "Tự động",
 		"by_user": "Vô danh"
@@ -197,7 +198,7 @@
 	"originalText": "Câu gốc",
 	"vi": "Tiếng Việt",
 	"km": "Tiếng Khmer",
-	"zh":"Tiếng Trung",
+	"zh": "Tiếng Trung",
 	"email": "Email",
 	"username": "Tên đăng nhập",
 	"password": "Mật khẩu",
