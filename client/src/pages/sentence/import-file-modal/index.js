@@ -223,7 +223,8 @@ const ImportFileModal = (props) => {
                 onCancel={ () => setIsModalImportVisible(false)}
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
-                onOk={ () => submitImportFile() }>
+                onOk={ () => submitImportFile() }
+                bodyStyle={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
 
                 <>
                     <Form

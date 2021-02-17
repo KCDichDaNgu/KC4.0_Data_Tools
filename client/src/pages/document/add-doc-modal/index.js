@@ -203,6 +203,7 @@ const AddingDocModal = (props) => {
             visible: isAddingModalVisible,
             width: 1000,
             icon: '',
+            bodyStyle: { paddingRight: 0 },
             content: (
                 <>
                     <Row
@@ -233,7 +234,7 @@ const AddingDocModal = (props) => {
                             <Row
                                 key={ index }
                                 style={{
-                                    padding: '12px 0 12px 12px',
+                                    padding: '12px',
                                     width: '100%',
                                     backgroundColor: index % 2 == 0 ? 'white' : '#f2f2f2'
                                 }} 
@@ -405,7 +406,8 @@ const AddingDocModal = (props) => {
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
                 width={ '10000' }
-                onOk={ () => submitDocPair() }>
+                onOk={ () => submitDocPair() }
+                bodyStyle={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
 
                 <>
                     <Form
