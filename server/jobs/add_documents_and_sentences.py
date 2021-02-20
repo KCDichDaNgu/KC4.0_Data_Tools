@@ -336,7 +336,7 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
         src_lang, tgt_lang = langs
 
         # tạm thời chỉ chạy import việt lào , viet-khmer
-        if (language_pair != 'vi-lo' and language_pair != 'lo-vi') or (language_pair != 'vi-km' and language_pair != 'km-vi'):
+        if language_pair != 'vi-lo' and language_pair != 'lo-vi' and language_pair != 'vi-km' and language_pair != 'km-vi':
             continue
 
         # domain 
