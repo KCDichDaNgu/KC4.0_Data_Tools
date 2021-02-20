@@ -174,8 +174,8 @@ const AddingDocModal = (props) => {
                     `${t('total')} ${data.length} ${t('sentencePair')}`,
                     data.map(e => ({
                         ...e, 
-                        text1: e.source, 
-                        text2: e.target
+                        text1: e.source ?? e.vi_sentence, 
+                        text2: e.target ?? e.zh_sentence
                     })),
                     {
                         lang1: 'vi',
