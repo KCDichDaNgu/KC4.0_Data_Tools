@@ -37,6 +37,6 @@ API_SCORE_DOCUMENT = {
     'vi-lo': 'http://103.124.92.104:9988/scores/document',
     'vi-km': 'http://nmtuet.ddns.net:9111/doc_align',
     'km-vi': 'http://nmtuet.ddns.net:9111/doc_align',
-    'vi-zh': 'http://nmtuet.ddns.net:5423/align_sentences',
-    'zh-vi': 'http://nmtuet.ddns.net:5423/align_sentences'
+    # 'vi-zh': 'http://nmtuet.ddns.net:5423/align_sentences',
+    # 'zh-vi': 'http://nmtuet.ddns.net:5423/align_sentences'
 }

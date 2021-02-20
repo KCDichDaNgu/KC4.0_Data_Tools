@@ -110,17 +110,17 @@ def get_documents_score(src_text, tgt_text, src_lang, tgt_lang):
         
         return res['data']['score']
 
-    elif (src_lang == 'zh' and tgt_lang == 'vi') or (src_lang == 'vi' and tgt_lang == 'zh'):
-        res = requests.post(
-            API_SCORE_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
-            json={
-                "doc_source": src_text,
-                "doc_target": tgt_text,
-                "type": 'zh'
-            }
-        ).json()
+    # elif (src_lang == 'zh' and tgt_lang == 'vi') or (src_lang == 'vi' and tgt_lang == 'zh'):
+    #     res = requests.post(
+    #         API_SCORE_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
+    #         json={
+    #             "doc_source": src_text,
+    #             "doc_target": tgt_text,
+    #             "type": 'zh'
+    #         }
+    #     ).json()
         
-        return res['data']['score']
+    #     return res['data']['score']
 
 
 def create_para_document(src_document_path, tgt_document_path, domain, src_lang, tgt_lang):
@@ -335,9 +335,9 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
         langs = language_pair.split('-')
         src_lang, tgt_lang = langs
 
-        # # tạm thời chỉ chạy import việt lào
-        # if language_pair != 'vi-lo' and language_pair != 'lo-vi':
-        #     continue
+        # tạm thời chỉ chạy import việt lào , viet-khmer
+        if (language_pair != 'vi-lo' and language_pair != 'lo-vi') or (language_pair != 'vi-km' and language_pair != 'km-vi'):
+            continue
 
         # domain 
         domains = os.listdir(f"{bitextor_path}/{language_pair}")
