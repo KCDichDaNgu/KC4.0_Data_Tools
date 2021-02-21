@@ -45,6 +45,8 @@ def get_all_prefixs(filepaths):
         prefix = basename[:-2]
         prefixs.add(prefix)
 
+    prefixs = list(sorted(prefixs))
+
     return prefixs
 
 def check_valid_file_pair(src_document_path, tgt_document_path):
@@ -110,17 +112,21 @@ def get_documents_score(src_text, tgt_text, src_lang, tgt_lang):
         
         return res['data']['score']
 
-    # elif (src_lang == 'zh' and tgt_lang == 'vi') or (src_lang == 'vi' and tgt_lang == 'zh'):
-    #     res = requests.post(
-    #         API_SCORE_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
-    #         json={
-    #             "doc_source": src_text,
-    #             "doc_target": tgt_text,
-    #             "type": 'zh'
-    #         }
-    #     ).json()
+    elif (src_lang == 'zh' and tgt_lang == 'vi') or (src_lang == 'vi' and tgt_lang == 'zh'):
+        res = requests.post(
+            API_SCORE_DOCUMENT[f'{src_lang}-{tgt_lang}'] ,
+            json={
+                "source": src_text,
+                "target": tgt_text,
+                "type": 'vi-zh'
+            }
+        )
+        try:
+            res = res.json()
+        except Exception as err:
+            raise Exception(f"Lỗi API.")
         
-    #     return res['data']['score']
+        return res['data']['score']
 
 
 def create_para_document(src_document_path, tgt_document_path, domain, src_lang, tgt_lang):
@@ -141,9 +147,13 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
         try:
             score = get_documents_score(src_text, tgt_text, src_lang, tgt_lang)
         except Exception as err:
-            print('get score error', err)
-            message += f"\nLỗi lấy điểm cặp câu: {str(err)}"
+            # print('get score error', err)
             score = None
+
+            return {
+                "success": False,
+                "message": f"Lỗi lấy điểm cặp câu: {str(err)}"
+            }
 
         para_doc = ParaDocument(
             newest_para_document=NewestParaDocument(
@@ -212,7 +222,6 @@ def create_para_document(src_document_path, tgt_document_path, domain, src_lang,
         return {
             "success": True,
             "message": "Đã thêm vào cặp văn bản." + message
-
         }
 
     except Exception as err:
@@ -326,7 +335,7 @@ def get_src_tgt_languages_in_filename(sentence_filename):
     return src_lang, tgt_lang
 
 def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_err_path, bitextor_log_path):
-    language_pairs = os.listdir(bitextor_path)
+    language_pairs = sorted(os.listdir(bitextor_path))
 
     today = datetime.today().strftime('%Y-%m-%d-%H-%M-%S')
     log_summary_text = ""
@@ -335,12 +344,12 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
         langs = language_pair.split('-')
         src_lang, tgt_lang = langs
 
-        # tạm thời chỉ chạy import việt lào , viet-khmer
-        if language_pair != 'vi-lo' and language_pair != 'lo-vi' and language_pair != 'vi-km' and language_pair != 'km-vi':
-            continue
+        # # tạm thời chỉ chạy import việt lào , viet-khmer
+        # if language_pair != 'vi-lo' and language_pair != 'lo-vi' and language_pair != 'vi-km' and language_pair != 'km-vi':
+        #     continue
 
         # domain 
-        domains = os.listdir(f"{bitextor_path}/{language_pair}")
+        domains = sorted(os.listdir(f"{bitextor_path}/{language_pair}"))
 
         for domain_url in domains:
             domain = find_or_create_domain(domain_url)
@@ -413,12 +422,26 @@ def add_para_documents_from_local(bitextor_path, bitextor_done_path, bitextor_er
                     f'\n{message}'
                 
     if len(log_summary_text) > 0:
+        # check latest log, if same content => not write
+        latest_log = get_latest_document_log(bitextor_log_path)
+
+        if latest_log is not None:
+            latest_content = open(latest_log, encoding='utf8').read()
+
+            if latest_content == log_summary_text:
+                return
+
         log_summary_fp = open(f"{bitextor_log_path}/document-log-summary-{today}.log", 'w+', encoding='utf8')
         log_summary_fp.write(log_summary_text)
         log_summary_fp.close()
     # else:
     #     log_summary_fp.write('Nothing to do')
     
+def get_latest_document_log(bitextor_log_path):
+    document_log_files = sorted(glob.glob(f"{bitextor_log_path}/document-*"))
+    if len(document_log_files) == 0:
+        return None
+    return document_log_files[-1]
 
 def find_or_create_domain(domain_url):
     domain = Domain.objects(url=domain_url).first()

@@ -49,11 +49,11 @@ export default {
 
             return customAxios({
                 method: 'post',
-                url: `${sent_align_zh_api}/align_sentences`,
+                url: `${sent_align_zh_api}/sentences_align`,
                 data: {
-                    doc_source: data.text1,
-                    doc_target: data.text2,
-                    lg: 'zh'
+                    source: data.text1,
+                    target: data.text2,
+                    type: 'vi-zh'
                 },
                 headers: {
                     'Content-Type': 'application/json',
