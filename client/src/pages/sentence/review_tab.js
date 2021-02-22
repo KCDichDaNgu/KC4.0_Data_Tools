@@ -727,7 +727,12 @@ const SentenceReview = forwardRef((props, ref) => {
                         pageSize: paginationParams.page_size,
                         total: paginationParams.total_items,
                         current: paginationParams.current_page
-                    }}>
+                    }}
+                    footer={() => (
+                        <div style={{ textAlign: 'right', paddingRight: 5 }}>
+                            {`${t('total')} ${paginationParams.total_items} ${t('records').toLowerCase()}`}
+                        </div>
+                    )}>
                 </Table>
             </Card>
             
