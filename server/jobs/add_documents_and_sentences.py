@@ -56,14 +56,14 @@ def check_valid_file_pair(src_document_path, tgt_document_path):
             "message": "Thiếu cặp file. Phải đảm bảo tồn tại 1 cặp file của 2 ngôn ngữ với cùng tiền tố."
         }
 
-    src_lines = open(src_document_path, encoding='utf8').readlines()
-    tgt_lines = open(tgt_document_path, encoding='utf8').readlines()
+    # src_lines = open(src_document_path, encoding='utf8').readlines()
+    # tgt_lines = open(tgt_document_path, encoding='utf8').readlines()
 
-    if len(src_lines) != len(tgt_lines):
-        return {
-            "success": False,
-            "message": "Số dòng của 2 files khác nhau."
-        }
+    # if len(src_lines) != len(tgt_lines):
+    #     return {
+    #         "success": False,
+    #         "message": "Số dòng của 2 files khác nhau."
+    #     }
 
     return {
         "success": True,
