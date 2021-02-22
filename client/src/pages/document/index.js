@@ -412,6 +412,7 @@ const DocumentPage = (props) => {
             if (paraDocument.newest_para_document.rating === 'good') {
                 return (
                     <Button 
+                        key={ paraDocument.id }
                         disabled={ !isAllowedToEdit(paraDocument) }
                         onClick={ () => {
                             setChosenDocForAlignment(paraDocument)

@@ -144,7 +144,7 @@ const AddingDocModal = (props) => {
             })
         }
 
-    }, [alignmentType])
+    }, [alignmentType, chosenDocForAlignment])
 
     const submitDocPair = async () => {
 
@@ -168,7 +168,9 @@ const AddingDocModal = (props) => {
 
             if (result.code == STATUS_CODES.success || result.isvalid) {
             
-                const data = result.data ?? result.sentences;
+                let data = result.data ?? result.sentences;
+
+                data = data.filter(e => e.source !== null && e.source !== undefined);
 
                 createSentAlignSuccessModal(
                     `${t('total')} ${data.length} ${t('sentencePair')}`,
