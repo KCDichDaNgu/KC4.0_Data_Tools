@@ -35,8 +35,8 @@ API_ALIGN_DOCUMENT = {
 
 API_SCORE_DOCUMENT = {
     'vi-lo': 'http://103.124.92.104:9988/scores/document',
-    'vi-km': 'http://nmtuet.ddns.net:9111/doc_align',
-    'km-vi': 'http://nmtuet.ddns.net:9111/doc_align',
-    'vi-zh': 'http://nmtuet.ddns.net:5423/doc_align',
-    'zh-vi': 'http://nmtuet.ddns.net:5423/doc_align'
+    'vi-km': 'http://0.0.0.0:9111/doc_align',
+    'km-vi': 'http://0.0.0.0:9111/doc_align',
+    'vi-zh': 'http://0.0.0.0:5423/doc_align',
+    'zh-vi': 'http://0.0.0.0:5423/doc_align' # change 0.0.0.0 to nmtuet.ddns.net in local pc
 }
