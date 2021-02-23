@@ -326,6 +326,8 @@ def export_csv_file(para_sentences, out_path):
     columns = [
         'Văn bản 1',
         'Văn bản 2',
+        'Văn bản gốc 1',
+        'Văn bản gốc 2',
         'Điểm',
         'Đánh giá',
         'Ngôn ngữ 1',
@@ -343,6 +345,8 @@ def export_csv_file(para_sentences, out_path):
         data_row = [
             para_sentence['newest_para_sentence'].text1.content,
             para_sentence['newest_para_sentence'].text2.content,
+            para_sentence['original_para_sentence'].text1.content,
+            para_sentence['original_para_sentence'].text2.content,
             para_sentence['score']['senAlign'],
             RATING_KEY2TEXT[para_sentence['newest_para_sentence'].rating],
             para_sentence['newest_para_sentence'].text1.lang,
