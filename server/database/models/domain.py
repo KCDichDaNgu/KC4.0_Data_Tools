@@ -13,6 +13,8 @@ class Domain(db.Document):
     creator_id = db.ReferenceField(User)
     editor_id = db.ReferenceField(User)
 
+    job_id = db.StringField(default=None)
+
     created_at = db.IntField(default=time.time, required=True)
     updated_at = db.IntField(default=time.time, required=True)
 
@@ -30,6 +32,7 @@ class Domain(db.Document):
         return {
            'id': str(self.id),
            'url': self.url,
+           'job_id': self.job_id,
            'creator_id': str(self.creator_id),
            'editor_id': str(self.editor_id),
            'created_at': self.created_at,

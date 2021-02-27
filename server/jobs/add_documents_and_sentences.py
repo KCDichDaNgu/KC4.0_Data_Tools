@@ -25,16 +25,7 @@ from database.models.domain import Domain
 from api.document.utils import hash_para_document
 from api.para_sentence.utils import hash_para_sentence
 from constants.common import API_ALIGN_DOCUMENT, API_SCORE_DOCUMENT
-
-def read_env_files(env_path=".env"):
-    env_dict = {}
-
-    with open(env_path) as fp:
-        for line in fp:
-            key, value = line.strip().split("=")
-            env_dict[key] = value
-    
-    return env_dict
+from utils.env import read_env_files
 
 def get_all_prefixs(filepaths):
     filenames = [os.path.basename(filepath) for filepath in filepaths]

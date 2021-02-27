@@ -1,11 +1,13 @@
 import time
+import requests
 from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
-from constants.common import STATUS_CODES
+from constants.common import STATUS_CODES, API_CRAWL
 
 from database.models.domain import Domain
 from database.models.user import User
+from utils.env import read_env_files
 
 from oauth2 import authorization, require_oauth, status_required, role_required
 
@@ -92,3 +94,109 @@ def search():
         message='success'
     )
     
+
+@admin_manage_domain_bp.route('/crawl', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def crawl():
+    lang = request.get_json().get('lang')
+    id = request.get_json().get('id')
+
+    domain = Domain.objects(id=ObjectId(id)).first()
+    
+    env_dict = read_env_files()
+
+    token_api = env_dict['TOKEN_CRAWL_API']
+
+    res = requests.post(
+        f"{API_CRAWL}/run_bitextor",
+        params={
+            'token': token_api,
+            'host': domain.url,
+            'lang': lang
+        }
+    )
+
+    try:
+        res = res.json()
+    except Exception as err:
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='apiError'
+        ) 
+
+    if 'job_id' not in res:
+        if 'job' in res and res['job']['status'] == 'Inprogress':
+            return jsonify(
+                code=STATUS_CODES['failure'],
+                message='runningJob'
+            )
+        elif 'job' in res:
+            return jsonify(
+                code=STATUS_CODES['failure'],
+                message='apiError'
+            )
+        else:
+            return jsonify(
+                code=STATUS_CODES['failure'],
+                message='apiErrorNoJobId'
+            )
+
+    job_id = res['job_id']
+
+    domain.update(job_id=job_id)
+
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            'job_id': job_id
+        },
+        message='success'
+    )
+
+@admin_manage_domain_bp.route('/check_status_bitextor/<id>', methods=['GET'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def check_status_bitextor(id):
+    domain = Domain.objects(id=ObjectId(id)).first()
+
+    env_dict = read_env_files()
+    token_api = env_dict['TOKEN_CRAWL_API']
+
+    res = requests.get(
+        f"{API_CRAWL}/check_status_bitextor",
+        params={
+            'token': token_api,
+            'job_id': domain.job_id
+        }
+    )
+
+    try:
+        res = res.json()
+    except Exception as err:
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='apiError'
+        )
+
+    # print(res)
+    # res['status'] = 'Completed'
+
+    if 'status' not in res:
+        domain.update(job_id=None)
+
+        return jsonify(
+            code=STATUS_CODES['failure'],
+            message='jobNotFound'
+        )
+
+    if res['status'] == 'Completed':
+        domain.update(job_id=None)
+
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data=domain.serialize,
+        message='success'
+    )

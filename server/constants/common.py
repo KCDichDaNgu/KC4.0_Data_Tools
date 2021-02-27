@@ -40,3 +40,5 @@ API_SCORE_DOCUMENT = {
     'vi-zh': 'http://0.0.0.0:5423/doc_align',
     'zh-vi': 'http://0.0.0.0:5423/doc_align' # change 0.0.0.0 to nmtuet.ddns.net in local pc
 }
+
+API_CRAWL = 'http://0.0.0.0:3010'

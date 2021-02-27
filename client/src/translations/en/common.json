@@ -34,7 +34,7 @@
 		"senAlign": "Sentence Align",
 		"text": "Text"
 	},
-	"domain": {
+	"domainPage": {
 		"addDomain": "Add domain",
 		"editDomain": "Edit domain",
 		"deleteDomain": "Delete domain",
@@ -44,7 +44,11 @@
 		"lastUpdate": "Last Update",
 		"crawledDocuments": "Crawled documents",
 		"crawl": "Crawl",
-		"nameNotNull": "Name can't be null"
+		"nameNotNull": "Name can't be null",
+		"apiErrorNoJobId": "Error API not return Job Id",
+		"apiError": "API Error",
+		"crawling": "InProgress",
+		"runningJob": "There is a job running, please wait until it done"
 	},
 	"home": {
 		"title": "Home"
