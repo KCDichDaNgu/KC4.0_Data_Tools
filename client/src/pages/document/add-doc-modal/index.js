@@ -403,6 +403,9 @@ const AddingDocModal = (props) => {
 
     const createDetectLanguageModal = () => {
         let _formData = form.getFieldsValue();
+        if (!isAdmin()) {
+            _formData.lang2 = langList2[0].value;
+        }
 
         const langList = LANGS.map((lang) => lang.value);
 
