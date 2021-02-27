@@ -6,13 +6,14 @@
 	"Language": {
 		"unknown": "Text",
 		"en": "English",
-		"vi": "Vietnamese"
+		"vi": "Vietnamese",
+		"cant_detect": "Unknown language"
 	},
 	"Input": {
 		"requiredField": "This field is required!"
 	},
 	"loadingMessage": "Please wait while we load this page :)",
-	"document": {
+	"documentPage": {
 		"title": "Document",
 		"createNewContent": "Create new document",
 		"draft": "Draft",
@@ -32,7 +33,8 @@
 		"all": "All",
 		"noDomain": "No Domain",
 		"senAlign": "Sentence Align",
-		"text": "Text"
+		"text": "Text",
+		"langNotValid": "Different with selected language"
 	},
 	"domainPage": {
 		"addDomain": "Add domain",
@@ -48,7 +50,8 @@
 		"apiErrorNoJobId": "Error API not return Job Id",
 		"apiError": "API Error",
 		"crawling": "InProgress",
-		"runningJob": "There is a job running, please wait until it done"
+		"runningJob": "There is a job running, please wait until it done",
+		"detectLanguageTitle": "Auto-checking language of uploaded documents"
 	},
 	"home": {
 		"title": "Home"

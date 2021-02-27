@@ -10,7 +10,8 @@
 		"vi": "Tiếng Việt",
 		"km": "Tiếng Khmer",
 		"zh": "Tiếng Trung",
-		"lo": "Tiếng Lào"
+		"lo": "Tiếng Lào",
+		"cant_detect": "Không xác định được ngôn ngữ"
 	},
 	"Input": {
 		"requiredField": "Trường này bắt buộc phải nhập!"
@@ -89,7 +90,9 @@
 		"confirmDeleteContent": "Bạn có chắc chắn muốn xóa cặp văn bản này?",
 		"delete": "Xóa",
 		"by_machine": "Tự động",
-		"by_user": "Vô danh"
+		"by_user": "Vô danh",
+		"detectLanguageTitle": "Kiểm tra ngôn ngữ của văn bản tải lên",
+		"langNotValid": "Khác với ngôn ngữ đã chọn"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",
