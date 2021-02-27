@@ -11,7 +11,11 @@ import {
     Dropdown,
     Tooltip,
     message,
-    Modal
+    Modal,
+    Select,
+    Row,
+    Col,
+    Spin
 } from 'antd';
 
 import { WarningOutlined } from '@ant-design/icons';
@@ -23,7 +27,8 @@ import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '../../../utils/date';
 
-import { STATUS_CODES } from '../../../constants';
+import { LANGS, STATUS_CODES } from '../../../constants';
+
 
 const DomainPage = (props) => {
     
@@ -39,11 +44,24 @@ const DomainPage = (props) => {
     const [searchInput, setSearchInput] = useState('');
     const [isAdding, setIsAdding] = useState(false);
     const [selectedDomainsId, setSelectedDomainsId] = useState([]);
+    const [intervalCheckCrawlList, setIntervalCheckCrawlList] = useState([]);
 
     const [pagination, setPagination] = useState({
         pagination__page: 1,
         pagination__perPage: 5
     });
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            checkCrawlingInterval(domainList.items);
+        }, 5000);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [domainList]);
+
+    const langList2 = LANGS.filter(e => (e.value != 'vi'));
 
     let paginationOptions = {
         showSizeChanger: true,
@@ -149,8 +167,110 @@ const DomainPage = (props) => {
         searchDomain();
     };
 
-    const crawlDomain = () => {
-        return '';
+    const checkCrawlingInterval = (domains) => {
+        intervalCheckCrawlList.map((job) => {
+            if (job !== null) {
+                clearInterval(job);
+            }
+        });
+
+        let jobs = domains.map((domain, idx) => {
+
+            let intervalId = setInterval(() => {
+                if (domain.job_id !== null && domain.job_id !== undefined) {
+                    domainAPI.checkStatusBitextor(domain.id).then(res => {
+                        if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                            if (res.data.data.job_id !== domain.job_id)
+                                setDomainListCrawlingStatus(domain.id, res.data.data.job_id);
+                        } else {
+                            if (res.data.message === 'jobNotFound') {
+                                setDomainListCrawlingStatus(domain.id, null);
+                            }
+                        } 
+                    });
+                }
+            }, 5000);
+
+            return intervalId;
+        });
+
+        setIntervalCheckCrawlList(jobs);
+    }
+
+    const crawlDomain = (domain) => {
+        domainAPI.crawl({
+            'lang': domain.lang,
+            'id': domain.id
+        }).then(res => {
+            if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
+                domain.job_id = res.data.job_id;
+            } else {
+                message.error(t(`domainPage.${res.data.message}`));
+            }
+        });
+    }
+
+    const setDomainListCrawlingStatus = (domain_id, job_id) => {
+        let domains = domainList.items.map((domain) => {
+            if (domain.id === domain_id) {
+                domain.job_id = job_id;
+                return domain;
+            } else {
+                return domain;
+            }
+        });
+
+        let newDomainList = {
+            ...domainList,
+            items: domains
+        };
+
+        setDomainList(newDomainList);
+    }
+    
+    const renderCrawling = (domain) => {
+        domain.lang = langList2[0].value;
+
+        if (domain.job_id !== null && domain.job_id !== undefined) {
+            return (
+                <div className="text-center">
+                    <Spin></Spin>
+                    <i style={{ marginLeft: '10px', display: 'inline-block' }}>
+                        { t('domainPage.crawling') }
+                    </i>
+                </div>
+            );
+        } else {
+            return (
+                <Row>
+                    <Col xs={ 12 }>
+                        <Select
+                            key={ domain.id }
+                            style={{
+                                width: '100%',
+                            }}
+                            
+                            onChange={ e => domain.lang = e }
+                            defaultValue={ langList2[0].value }
+                            // value={ domain.lang }
+                            options={ 
+                                langList2.map(e => ({
+                                    value: e.value, 
+                                    label: t(`Language.${e.label}`)
+                                })
+                            )}>
+                        </Select>
+                    </Col>
+                    <Col xs={ 12 }>
+                        <Button 
+                            type='primary' 
+                            onClick={ () => crawlDomain(domain) }>
+                            { t('domainPage.crawl') }
+                        </Button>
+                    </Col>
+                </Row>
+            );
+        }
     }
 
     const columns = [
@@ -189,15 +309,9 @@ const DomainPage = (props) => {
         },
         {
             title: t('domainPage.crawl'),
-            dataIndex: '',
-            key: 'x',
-            render: () => (
-                <Button 
-                    type='primary' 
-                    onClick={ crawlDomain }>
-                    { t('domainPage.crawl') }
-                </Button>
-            ),
+            dataIndex: 'job_id',
+            key: 'job_id',
+            render: (job_id, domain) => renderCrawling(domain),
         },
     ];
 

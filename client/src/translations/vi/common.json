@@ -101,7 +101,11 @@
 		"lastUpdate": "Cập nhật lần cuối",
 		"crawledDocuments": "Văn bản đã thu thập",
 		"crawl": "Thu nhập",
-		"nameNotNull": "Tên không thể để trống"
+		"nameNotNull": "Tên không thể để trống",
+		"apiErrorNoJobId": "Lỗi API không trả lại job id",
+		"apiError": "Lỗi API",
+		"crawling": "Đang thu thập",
+		"runningJob": "Đang chạy 1 tiến trình thu thập dữ liệu, vui lòng đợi tiến trình hoàn tất"
 	},
 	"homePage": {
 		"title": "Trang chủ"
