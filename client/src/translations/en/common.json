@@ -34,7 +34,9 @@
 		"noDomain": "No Domain",
 		"senAlign": "Sentence Align",
 		"text": "Text",
-		"langNotValid": "Different with selected language"
+		"langNotValid": "Different with selected language",
+		"detected": "Detected",
+		"selected": "Selected"
 	},
 	"domainPage": {
 		"addDomain": "Add domain",
