@@ -25,6 +25,7 @@ import documentAPI from '../../../api/document';
 import sentAlignAPI from '../../../api/sent-align';
 import assignmentAPI from '../../../api/assignment';
 import paraSentenceAPI from '../../../api/para-sentence';
+import langDetectorAPI from '../../../api/language_detector';
 
 import { LANGS, STATUS_CODES } from '../../../constants';
 
@@ -55,6 +56,8 @@ const AddingDocModal = (props) => {
     const [langList2, setLangList2] = useState([]);
 
     const [submittingStatus, setSubmittingStatus] = useState(false);
+
+    const [detectingLanguage, setDetectingLanguage] = useState(false);
 
     const initialValues = {
         dataFieldId: '',
@@ -398,6 +401,62 @@ const AddingDocModal = (props) => {
         });
     }
 
+    const createDetectLanguageModal = () => {
+        let _formData = form.getFieldsValue();
+
+        const langList = LANGS.map((lang) => lang.value);
+
+        setDetectingLanguage(true);
+
+        let lang1 = 'cant_detect';
+        let lang2 = 'cant_detect';
+        let lang1Valid = false;
+        let lang2Valid = false;
+
+        langDetectorAPI.detectLanguage(_formData.text1).then(res => {
+
+            if (res.data.data.status === true && langList.includes(res.data.data.lang)) {
+                lang1 = res.data.data.lang;
+            }
+
+            langDetectorAPI.detectLanguage(_formData.text2).then(res => {
+                if (res.data.data.status === true && langList.includes(res.data.data.lang)) {
+                    lang2 = res.data.data.lang;
+                }
+
+                if (lang1 == 'vi') lang1Valid = true;
+                if (lang2 == _formData.lang2) lang2Valid = true;
+
+                setDetectingLanguage(false);
+
+                const modalInfo = {
+                    title: t('documentPage.detectLanguageTitle'),
+                    content: (
+                        <React.Fragment>
+                            <div key='text1'>
+                                { t('text1') }: { t(`Language.${lang1}`) } {lang1Valid ? '' : ' - ' + t('documentPage.langNotValid') + ' (vi)'}
+                            </div>
+                            <div key='text2'>
+                                { t('text2') }: { t(`Language.${lang2}`) } {lang2Valid ? '' : ' - ' + t('documentPage.langNotValid') + ` (${_formData.lang2})`}
+                            </div>
+                        </React.Fragment>
+                    ),
+                    cancelText: t('cancel'),
+                    okText: t('documentPage.senAlign'),
+                    onOk() {
+                        submitDocPair();
+                    }
+                }
+
+                if (lang1Valid && lang2Valid) {
+                    Modal.info(modalInfo);
+                } else {
+                    Modal.confirm(modalInfo);
+                }
+            });
+        });
+    }
+
     return (
         <React.Fragment>
 
@@ -408,7 +467,7 @@ const AddingDocModal = (props) => {
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
                 width={ '10000' }
-                onOk={ () => submitDocPair() }
+                onOk={ () => createDetectLanguageModal() }
                 bodyStyle={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
 
                 <>
@@ -530,4 +589,4 @@ const AddingDocModal = (props) => {
     );
 };
 
-export default AddingDocModal;
+export default AddingDocModal; 
