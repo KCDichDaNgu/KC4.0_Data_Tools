@@ -432,15 +432,29 @@ const AddingDocModal = (props) => {
 
                 setDetectingLanguage(false);
 
+                let text1Display;
+                if (lang1 === 'cant_detect') {
+                    text1Display = t(`Language.${lang1}`);
+                } else {
+                    text1Display = `${t('documentPage.detected')} ${t(`Language.${lang1}`)}`;
+                }
+
+                let text2Display;
+                if (lang2 === 'cant_detect') {
+                    text2Display = t(`Language.${lang2}`);
+                } else {
+                    text2Display = `${t('documentPage.detected')} ${t(`Language.${lang2}`)}`;
+                }
+
                 const modalInfo = {
                     title: t('documentPage.detectLanguageTitle'),
                     content: (
                         <React.Fragment>
                             <div key='text1'>
-                                { t('text1') }: { t(`Language.${lang1}`) } {lang1Valid ? '' : ' - ' + t('documentPage.langNotValid') + ' (vi)'}
+                                { t('text1') }: {text1Display} - {t('documentPage.selected')}&nbsp;{t(`Language.vi`)}
                             </div>
                             <div key='text2'>
-                                { t('text2') }: { t(`Language.${lang2}`) } {lang2Valid ? '' : ' - ' + t('documentPage.langNotValid') + ` (${_formData.lang2})`}
+                                { t('text2') }: {text2Display} - {t('documentPage.selected')}&nbsp;{t(`Language.${_formData.lang2}`)}
                             </div>
                         </React.Fragment>
                     ),

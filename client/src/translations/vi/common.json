@@ -92,7 +92,9 @@
 		"by_machine": "Tự động",
 		"by_user": "Vô danh",
 		"detectLanguageTitle": "Kiểm tra ngôn ngữ của văn bản tải lên",
-		"langNotValid": "Khác với ngôn ngữ đã chọn"
+		"langNotValid": "Khác với ngôn ngữ đã chọn",
+		"detected": "Phát hiện",
+		"selected": "Đã chọn"
 	},
 	"domainPage": {
 		"addDomain": "Thêm",
