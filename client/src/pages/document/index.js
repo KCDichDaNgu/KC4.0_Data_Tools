@@ -418,7 +418,7 @@ const DocumentPage = (props) => {
                             setChosenDocForAlignment(paraDocument)
                             setAlignmentType(alignmentTypes.fromSavedPairs)
                             setIsAddingModalVisible(!isAddingModalVisible) }
-                        }
+                        } 
                         type='primary'>
                         { t('documentPage.align') }
                     </Button>
@@ -581,6 +581,7 @@ const DocumentPage = (props) => {
                                     isAdmin() || isReviewer() || isEditor() ? (
                                         <Button 
                                             onClick={ () => {
+                                                setChosenDocForAlignment({})
                                                 setAlignmentType(alignmentTypes.fromNewPairs)
                                                 setIsAddingModalVisible(!isAddingModalVisible) 
                                             }} 

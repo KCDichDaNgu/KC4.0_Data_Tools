@@ -26,10 +26,14 @@ const DataFieldSelect = forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
 
         setPreSelectedDataField(data_field_id, name) {
-            setSelectedDataField({
-                id: data_field_id,
-                name: name
-            });
+            if (data_field_id === null) {
+                setSelectedDataField(null);
+            } else {
+                setSelectedDataField({
+                    id: data_field_id,
+                    name: name
+                });
+            }
         }
 
     }));
@@ -70,7 +74,7 @@ const DataFieldSelect = forwardRef((props, ref) => {
 
         }
         
-    }
+    } 
 
     const handleChange = (value) => {
         setSelectedDataField(value);
