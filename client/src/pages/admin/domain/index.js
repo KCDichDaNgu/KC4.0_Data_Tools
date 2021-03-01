@@ -303,9 +303,9 @@ const DomainPage = (props) => {
         },
         {
             title: t('domainPage.crawledDocuments'),
-            dataIndex: 'crawled',
-            key: 'crawled',
-            sorter: (a, b) => a.crawled - b.crawled,
+            dataIndex: 'inserted_documents_count',
+            key: 'inserted_documents_count',
+            sorter: (a, b) => a.inserted_documents_count - b.inserted_documents_count
         },
         {
             title: t('domainPage.crawl'),

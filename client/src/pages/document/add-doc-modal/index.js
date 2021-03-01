@@ -97,6 +97,8 @@ const AddingDocModal = (props) => {
         ]
     };
 
+    const dataFieldSelectRef = useRef();
+
     useEffect(() => {
         
         const fetchData = async () => {
@@ -137,7 +139,13 @@ const AddingDocModal = (props) => {
             form.setFieldsValue({
                 text1: '',
                 text2: '',
-            })
+                lang2: null,
+                dataFieldId: null
+            });
+            try {
+                dataFieldSelectRef.current.setPreSelectedDataField(null, null);
+            } catch {}
+            // dataFieldSelectRef.current.setPreSelectedDataField(null, null);
         } 
         
         if (alignmentType == alignmentTypes.fromSavedPairs) {
@@ -557,6 +565,7 @@ const AddingDocModal = (props) => {
                                     name='dataFieldId'
                                     rules={ rules.dataFieldId }>
                                     <DataFieldSelect
+                                        ref={ dataFieldSelectRef }
                                         setSelectedDataFieldId={ dataFieldId => {
 
                                             form.setFieldsValue({dataFieldId: dataFieldId});

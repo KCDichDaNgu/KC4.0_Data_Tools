@@ -7,6 +7,7 @@ from constants.common import STATUS_CODES, API_CRAWL
 
 from database.models.domain import Domain
 from database.models.user import User
+from database.models.para_document import ParaDocument
 from utils.env import read_env_files
 
 from oauth2 import authorization, require_oauth, status_required, role_required
@@ -82,6 +83,10 @@ def search():
             page=int(request.get_json().get('pagination__page') or 1), 
             per_page=int(request.get_json().get('pagination__perPage') or 5)
         )
+
+    result_domain = [i.serialize for i in result.items]
+    for domain in result_domain:
+        domain['inserted_documents_count'] = ParaDocument.objects(domain_id=domain['id']).count()
         
     return jsonify(
         code=STATUS_CODES['success'],
@@ -89,7 +94,7 @@ def search():
             'total': result.total,
             'page': result.page,
             'perPage': result.per_page,
-            'items': [i.serialize for i in result.items]
+            'items': result_domain
         },
         message='success'
     )
