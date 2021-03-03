@@ -37,8 +37,8 @@ API_SCORE_DOCUMENT = {
     'vi-lo': 'http://103.124.92.104:9988/scores/document',
     'vi-km': 'http://0.0.0.0:9111/doc_align',
     'km-vi': 'http://0.0.0.0:9111/doc_align',
-    'vi-zh': 'http://0.0.0.0:5423/doc_align',
-    'zh-vi': 'http://0.0.0.0:5423/doc_align' # change 0.0.0.0 to nmtuet.ddns.net in local pc
+    'vi-zh': 'http://0.0.0.0:9977/doc_align',
+    'zh-vi': 'http://0.0.0.0:9977/doc_align' # change 0.0.0.0 to nmtuet.ddns.net in local pc
 }
 
 API_CRAWL = 'http://0.0.0.0:3010'
