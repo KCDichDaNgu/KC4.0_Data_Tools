@@ -113,7 +113,11 @@ const SentenceReview = forwardRef((props, ref) => {
                 defaultValue={ lastestContent }
                 onPressEnter={ event => {
                     event.preventDefault();
-                    updateParaSentence(paraSentence, key, event.target.value);
+                    updateParaSentence(index, key, event.target.value);
+                }}
+                onChange={ event => {
+                    event.preventDefault();
+                    handleTextChange(index, key, event.target.value);
                 }}
                 onResize={({ width, height }) => {
                     return height + 10;
@@ -121,6 +125,24 @@ const SentenceReview = forwardRef((props, ref) => {
                 disabled={ disabled }
             />
         );
+    }
+
+    const handleTextChange = (para_index, key, value) => {
+
+        let cloneDataSource = [...dataSource]
+        let newPara = dataSource[para_index]
+
+        if (key == 'text1') {
+            newPara.newest_para_sentence[key].content = value;
+        } 
+     
+        if (key == 'text2') {
+            newPara.newest_para_sentence[key].content = value;
+        }
+
+        cloneDataSource[para_index] = newPara;
+
+        setDataSource([...cloneDataSource])
     }
 
     const renderRating = (rating, paraSentence, index) => {
@@ -132,7 +154,7 @@ const SentenceReview = forwardRef((props, ref) => {
             <Radio.Group
                 key={ paraSentence['id'] } 
                 value={ lastestRating }
-                onChange={ event => updateParaSentence(paraSentence, 'rating', event.target.value) }
+                onChange={ event => updateParaSentence(index, 'rating', event.target.value) }
                 disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
@@ -351,11 +373,19 @@ const SentenceReview = forwardRef((props, ref) => {
         });
     }
 
-    const updateParaSentence = (paraSentence, key, value) => {
+    const updateParaSentence = (paraIndex, key, value) => {
 
         let filterParams = {};
 
         filterParams[key] = value;
+        
+        let paraSentence = dataSource[paraIndex]
+
+        let lastestText1 = paraSentence.newest_para_sentence['text1'].content;
+        let lastestText2 = paraSentence.newest_para_sentence['text2'].content;
+        
+        filterParams['text1'] = lastestText1;
+        filterParams['text2'] = lastestText2;
 
         paraSentenceAPI.updateParaSentence(paraSentence['id'], filterParams).then((res) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
