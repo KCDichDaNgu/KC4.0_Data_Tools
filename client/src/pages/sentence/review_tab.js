@@ -203,7 +203,7 @@ const SentenceReview = forwardRef((props, ref) => {
             title: `${t('sentencePage.score')} / ${t('sentencePage.rating')}`,
             // dataIndex: 'score',
             key: 'score',
-            render: (record, index) => {
+            render: (record, paraSentence, index) => {
                 return (
                     <div style={{
                         width: 'fit-content'
@@ -380,7 +380,7 @@ const SentenceReview = forwardRef((props, ref) => {
         filterParams[key] = value;
         
         let paraSentence = dataSource[paraIndex]
-
+        
         let lastestText1 = paraSentence.newest_para_sentence['text1'].content;
         let lastestText2 = paraSentence.newest_para_sentence['text2'].content;
         
