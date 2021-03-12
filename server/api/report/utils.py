@@ -1,4 +1,5 @@
 from database.models.para_sentence_history import ParaSentenceHistory
+from database.models.para_sentence import ParaSentence
 from database.models.user import User
 from database.models.para_sentence import LANGS
 from database.models.assignment import Assignment
@@ -133,41 +134,29 @@ def report_all_users_edited(lang, from_date=None, to_date=None, user_id=None):
     return user_edited_count
 
 def report_all_users_only_rate(lang, from_date=None, to_date=None, user_id=None):
-    match_query = build_match_query(lang, from_date, to_date, user_id)
-
-    user_only_rate = ParaSentenceHistory.objects.aggregate(
-        [
-            match_query,
-            {
-                '$group': { # group by parasentence x user_id because 1 parasentence can be edited many times by an user
-                    '_id': {
-                        'para_sentence_id': '$para_sentence_id', 
-                        'user_id': '$editor.user_id'
-                    },
-                    'total_edit_distance': {'$sum': '$edit_distance'}
-                }
-            },
-            { # select para sentences which have edit distance = 0
-                '$match': {
-                    'total_edit_distance': 0
-                }
-            },
-            {
-                '$group': { # count number of parasentences group by user_id
-                    '_id': '$_id.user_id', 
-                    'n_only_rate': {'$sum': 1}
-                }
-            },
-            {
-                '$project': {  # convert _id -> str(user_id)
-                    '_id': 0,
-                    'user_id': '$_id',
-                    # 'user_id': { '$convert': { 'input': '$_id', 'to': 'string' } },
-                    'n_only_rate': 1
-                }
+    user_only_rate = ParaSentence.objects.aggregate([
+        {
+            '$match': {
+                'editor.user_id': {'$exists': True},
+                'edit_distance': 0,
+                'newest_para_sentence.text2.lang': lang
             }
-        ]
-    )
+        },
+        {
+            '$group': { # count number of parasentences group by user_id
+                '_id': '$editor.user_id', 
+                'n_only_rate': {'$sum': 1}
+            }
+        },
+        {
+            '$project': {  # convert _id -> str(user_id)
+                '_id': 0,
+                'user_id': '$_id',
+                # 'user_id': { '$convert': { 'input': '$_id', 'to': 'string' } },
+                'n_only_rate': 1
+            }
+        }
+    ])
 
     user_only_rate = list(user_only_rate)
 
@@ -177,36 +166,28 @@ def report_all_users_only_rate(lang, from_date=None, to_date=None, user_id=None)
     return user_only_rate
 
 def report_all_users_total_edit_distance(lang, from_date=None, to_date=None, user_id=None):
-    match_query = build_match_query(lang, from_date, to_date, user_id)
-
-    user_total_edit_distance = ParaSentenceHistory.objects.aggregate(
-        [
-            match_query,
-            {
-                '$group': { # group by parasentence x user_id because 1 parasentence can be edited many times by an user
-                    '_id': {
-                        'para_sentence_id': '$para_sentence_id', 
-                        'user_id': '$editor.user_id'
-                    },
-                    'total_edit_distance_per_para_sentence': {'$sum': '$edit_distance'}
-                }
-            },
-            {
-                '$group': { # count number of parasentences group by user_id
-                    '_id': '$_id.user_id', 
-                    'total_edit_distance': {'$sum': '$total_edit_distance_per_para_sentence'}
-                }
-            },
-            {
-                '$project': {  # convert _id -> str(user_id)
-                    '_id': 0,
-                    'user_id': '$_id',
-                    # 'user_id': { '$convert': { 'input': '$_id', 'to': 'string' } },
-                    'total_edit_distance': 1
-                }
+    user_total_edit_distance = ParaSentence.objects.aggregate([
+        {
+            '$match': {
+                'editor.user_id': {'$exists': True},
+                'newest_para_sentence.text2.lang': lang
             }
-        ]
-    )
+        },
+        {
+            '$group': { # count number of parasentences group by user_id
+                '_id': '$editor.user_id', 
+                'total_edit_distance': {'$sum': '$edit_distance'}
+            }
+        },
+        {
+            '$project': {  # convert _id -> str(user_id)
+                '_id': 0,
+                'user_id': '$_id',
+                # 'user_id': { '$convert': { 'input': '$_id', 'to': 'string' } },
+                'total_edit_distance': 1
+            }
+        }
+    ])
 
     user_total_edit_distance = list(user_total_edit_distance)
 
