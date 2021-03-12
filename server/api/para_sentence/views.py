@@ -238,6 +238,8 @@ def update(_id):
         newest_para_sentence.text1.content = args.get('text1', newest_para_sentence.text1.content).strip()
         newest_para_sentence.text2.content = args.get('text2', newest_para_sentence.text2.content).strip()
         newest_para_sentence.rating = args.get('rating', ParaSentence.RATING_TYPES['good'])
+        
+        para_sentence_history.save()
 
         # update editdistance
         para_sentence_history.edit_distance = ParaSentenceHistory.compute_edit_distance(
