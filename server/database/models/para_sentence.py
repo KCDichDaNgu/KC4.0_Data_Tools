@@ -115,10 +115,10 @@ class ParaSentence(db.Document):
 
         # update editdistance
         self.edit_distance = ParaSentence.compute_edit_distance(
-            self.original_para_sentence.text1.content, 
-            self.original_para_sentence.text2.content,
-            self.newest_para_sentence.text1.content, 
-            self.newest_para_sentence.text2.content,
+            self.original_para_sentence.text1.content.strip(), 
+            self.original_para_sentence.text2.content.strip(),
+            self.newest_para_sentence.text1.content.strip(), 
+            self.newest_para_sentence.text2.content.strip(),
         )
 
         if is_update:
