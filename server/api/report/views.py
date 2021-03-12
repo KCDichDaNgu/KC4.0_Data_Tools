@@ -40,14 +40,26 @@ def get():
             user_edited_count = report_all_users_edited(lang, from_date, to_date)
             # số lượng bị sửa bởi reviewer
             user_be_edited_count = report_all_users_be_edited(lang, from_date, to_date)
+            # số lượng chỉ đánh giá không sửa text, edit distance = 0
+            user_only_rate = report_all_users_only_rate(lang, from_date, to_date)
+            # tổng số edit distanace
+            user_total_edit_distance = report_all_users_total_edit_distance(lang, from_date, to_date)
         elif User.USER_ROLES['member'] in user.roles:
             # số lượng sửa
             user_edited_count = report_all_users_edited(lang, from_date, to_date, user_id=user.id)
             # số lượng bị sửa bởi reviewer
             user_be_edited_count = report_all_users_be_edited(lang, from_date, to_date, user_id=user.id)
+            # số lượng chỉ đánh giá không sửa text, edit distance = 0
+            user_only_rate = report_all_users_only_rate(lang, from_date, to_date, user_id=user.id)
+            # tổng số edit distanace
+            user_total_edit_distance = report_all_users_total_edit_distance(lang, from_date, to_date, user_id=user.id)
 
         # merge 2 dictionary to 1
-        user_report = merge_query_user_list([user_edited_count, user_be_edited_count])
+        user_report = merge_query_user_list([
+            user_edited_count, 
+            user_be_edited_count,
+            user_only_rate,
+            user_total_edit_distance])
         username_dict = get_username_by_user_ids(user_report.keys())
         
         for user_id, report in user_report.items():
