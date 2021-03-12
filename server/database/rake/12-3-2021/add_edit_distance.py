@@ -22,7 +22,7 @@ def add_edit_distance_to_history():
     # sort each group by updated_at
     # for each group, compute edit distance
     for para_id in tqdm(para_id2histories.keys(), desc="Updating"):
-        sorted_histories = sorted(para_id2histories[para_id])
+        sorted_histories = sorted(para_id2histories[para_id], key=lambda x: x['updated_at'])
         # find last updated
         para_sentence = db['para_sentence'].find_one({'_id': para_id})
         
