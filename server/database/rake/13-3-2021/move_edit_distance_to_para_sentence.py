@@ -12,10 +12,10 @@ def move_edit_distance_to_para_sentence():
 
     for para_sentence in tqdm(db['para_sentence'].find()):
         edit_distance = compute_edit_distance(
-            para_sentence['original_para_sentence']['text1']['content'],
-            para_sentence['original_para_sentence']['text2']['content'],
-            para_sentence['newest_para_sentence']['text1']['content'],
-            para_sentence['newest_para_sentence']['text2']['content'],
+            para_sentence['original_para_sentence']['text1']['content'].strip(),
+            para_sentence['original_para_sentence']['text2']['content'].strip(),
+            para_sentence['newest_para_sentence']['text1']['content'].strip(),
+            para_sentence['newest_para_sentence']['text2']['content'].strip(),
         )
         db['para_sentence'].update_one(
             {'_id': para_sentence['_id']},
