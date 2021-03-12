@@ -134,14 +134,13 @@ def report_all_users_edited(lang, from_date=None, to_date=None, user_id=None):
     return user_edited_count
 
 def report_all_users_only_rate(lang, from_date=None, to_date=None, user_id=None):
+    match_query = build_match_query(lang, from_date, to_date, user_id)
+    match_query['$match']['edit_distance'] = 0
+    if user_id is None:
+        match_query['$match']['editor.user_id'] = {'$exists': True}
+
     user_only_rate = ParaSentence.objects.aggregate([
-        {
-            '$match': {
-                'editor.user_id': {'$exists': True},
-                'edit_distance': 0,
-                'newest_para_sentence.text2.lang': lang
-            }
-        },
+        match_query,
         {
             '$group': { # count number of parasentences group by user_id
                 '_id': '$editor.user_id', 
@@ -166,13 +165,12 @@ def report_all_users_only_rate(lang, from_date=None, to_date=None, user_id=None)
     return user_only_rate
 
 def report_all_users_total_edit_distance(lang, from_date=None, to_date=None, user_id=None):
+    match_query = build_match_query(lang, from_date, to_date, user_id)
+    if user_id is None:
+        match_query['$match']['editor.user_id'] = {'$exists': True}
+
     user_total_edit_distance = ParaSentence.objects.aggregate([
-        {
-            '$match': {
-                'editor.user_id': {'$exists': True},
-                'newest_para_sentence.text2.lang': lang
-            }
-        },
+        match_query,
         {
             '$group': { # count number of parasentences group by user_id
                 '_id': '$editor.user_id', 
