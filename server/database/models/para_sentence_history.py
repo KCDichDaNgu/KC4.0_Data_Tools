@@ -34,8 +34,6 @@ class ParaSentenceHistory(db.Document):
 
     newest_para_sentence = db.EmbeddedDocumentField(NewestParaSentence, required=True)
 
-    edit_distance = db.IntField(required=True)
-
     editor = db.EmbeddedDocumentField(Editor)
 
     updated_at = db.IntField(default=int(time.time()), required=True)
