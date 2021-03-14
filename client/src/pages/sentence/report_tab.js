@@ -94,6 +94,18 @@ const SentenceReport = (props) => {
             render: (n_be_edited) => {return n_be_edited ? n_be_edited : 0}
         },
         {
+            title: `${t('sentencePage.reportTab.numberOnlyRate')}`,
+            dataIndex: "n_only_rate",
+            key: "n_only_rate",
+            render: (n_only_rate) => {return n_only_rate ? n_only_rate : 0}
+        },
+        {
+            title: `${t('sentencePage.reportTab.numberEditDistance')}`,
+            dataIndex: "total_edit_distance",
+            key: "total_edit_distance",
+            render: (total_edit_distance) => {return total_edit_distance ? total_edit_distance : 0}
+        },
+        {
             title: `${t('sentencePage.reportTab.viewDetails')}`,
             dataIndex: "view_details",
             key: "view_details",

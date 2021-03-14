@@ -102,7 +102,9 @@
 			"viewDetails": "View details",
 			"filter": "Filter",
 			"unratedSentences": "unrated sentences",
-			"remain": ""
+			"remain": "",
+			"numberOnlyRate": "# Only rate not edit text",
+			"numberEditDistance": "# Editted characters (insert/update)"
 		},
 		"reviewTab": {
 			"title": "Sentence"

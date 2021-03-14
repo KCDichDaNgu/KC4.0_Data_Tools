@@ -1,4 +1,5 @@
 import time
+import editdistance
 
 from database.db import db
 
@@ -38,6 +39,12 @@ class ParaSentenceHistory(db.Document):
     updated_at = db.IntField(default=int(time.time()), required=True)
 
     meta = {'collection': 'para_sentence_history'}
+
+    @staticmethod
+    def compute_edit_distance(old_text1, old_text2, new_text1, new_text2):
+        editdistance1 = editdistance.eval(old_text1, new_text1)
+        editdistance2 = editdistance.eval(old_text2, new_text2)
+        return editdistance1 + editdistance2
     
     @property
     def serialize(self):

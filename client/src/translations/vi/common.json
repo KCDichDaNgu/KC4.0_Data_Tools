@@ -177,7 +177,9 @@
 			"viewDetails": "Xem chi tiết",
 			"filter": "Lọc",
 			"unratedSentences": "câu chưa đánh giá",
-			"remain": "Còn"
+			"remain": "Còn",
+			"numberOnlyRate": "Số lượng câu chỉ đánh giá không sửa",
+			"numberEditDistance": "Tổng số thao tác cập nhật văn bản"
 		},
 		"reviewTab": {
 			"title": "Cặp câu"

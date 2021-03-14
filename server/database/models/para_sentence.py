@@ -1,5 +1,6 @@
 import time
 import re
+import editdistance
 
 from database.db import db
 
@@ -83,7 +84,15 @@ class ParaSentence(db.Document):
 
     ignore_users_id = db.ListField(db.ReferenceField(User), default=[])
 
+    edit_distance = db.IntField(required=True)
+
     meta = {'collection': 'para_sentence'}
+
+    @staticmethod
+    def compute_edit_distance(old_text1, old_text2, new_text1, new_text2):
+        editdistance1 = editdistance.eval(old_text1, new_text1)
+        editdistance2 = editdistance.eval(old_text2, new_text2)
+        return editdistance1 + editdistance2
 
     def custom_update(self, **kwargs):
         for key, value in kwargs.items():
@@ -103,6 +112,14 @@ class ParaSentence(db.Document):
 
         n_words_ori2 = len(re.split("\s+", self.original_para_sentence.text2.content))
         self.original_para_sentence.text2.words_count = n_words2
+
+        # update editdistance
+        self.edit_distance = ParaSentence.compute_edit_distance(
+            self.original_para_sentence.text1.content.strip(), 
+            self.original_para_sentence.text2.content.strip(),
+            self.newest_para_sentence.text1.content.strip(), 
+            self.newest_para_sentence.text2.content.strip(),
+        )
 
         if is_update:
             return super(ParaSentence, self).save()
@@ -138,5 +155,6 @@ class ParaSentence(db.Document):
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'viewer_id': str(self.viewer_id),
-            'view_due_date': self.view_due_date
+            'view_due_date': self.view_due_date,
+            'edit_distance': self.edit_distance
         }
