@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import SiteLayout from '../../layout/site-layout';
 
-import { UploadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, ExclamationCircleOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/date';
 import { clonedStore } from '../../store';
@@ -224,7 +224,8 @@ const DocumentPage = (props) => {
                         record.creator.id ? record.creator.username : t(`documentPage.${record.created_by}`)
                     } ({ formatDate(record.updated_at) })
                 </div>
-            )
+            ),
+            align: 'center'
         },
         {
             title: `${t('documentPage.score')} / ${t('documentPage.rating')}`,
@@ -233,13 +234,12 @@ const DocumentPage = (props) => {
             render: (record, index) => {
                 return (
                     <div style={{
-                        width: 'fit-content'
+                        width: '100%',
                     }}>
                         <div style={{ 
                             textAlign: 'center',
                             fontSize: '14px',
                             fontWeight: 600,
-                            marginBottom: '10px'
                         }}>
                             { Number(record.score?.docAlign).toFixed(2) }
                         </div>
@@ -252,7 +252,8 @@ const DocumentPage = (props) => {
             },
             sorter: (a, b, sortOrder) => { },
             width: '15%',
-            sortDirections: ['ascend', 'descend', 'ascend']
+            sortDirections: ['ascend', 'descend', 'ascend'],
+            align: 'center'
         },
         {
             title: t('documentPage.status'),
@@ -264,7 +265,8 @@ const DocumentPage = (props) => {
                         { renderAlignmentStatus(alignment_status, record, index) }
                     </div>
                 )
-            }
+            },
+            align: 'center'
         },
         {
             title: t('documentPage.delete'),
@@ -281,7 +283,8 @@ const DocumentPage = (props) => {
                 </Button>
                 
             ),
-            width: '5%'
+            width: '5%',
+            align: 'center'
         }
     ];
 
@@ -339,7 +342,8 @@ const DocumentPage = (props) => {
             okText: t('documentPage.okText'),
             width: '80vw',
             style: { maxWidth: '950px' },
-            icon: null
+            icon: null,
+            centered: true
         })
     }
 
@@ -579,7 +583,8 @@ const DocumentPage = (props) => {
                             <Col className='import-button-wrapper' xs={ 24 } md={ 10 }>
                                 {
                                     isAdmin() || isReviewer() || isEditor() ? (
-                                        <Button 
+                                        <Button
+                                            style={{display: "flex", alignItems: "center", fontSize: "15px"}} 
                                             onClick={ () => {
                                                 setChosenDocForAlignment({})
                                                 setAlignmentType(alignmentTypes.fromNewPairs)
@@ -717,6 +722,7 @@ const DocumentPage = (props) => {
                                     ] : null 
                                 }
                                 onChange={ date => handleFilterChange(date, 'updatedAt') }
+                                separator={<ArrowRightOutlined style={{display: "flex", color: "#bfbfbf"}}/>}
                             />
                         </Col>
                         

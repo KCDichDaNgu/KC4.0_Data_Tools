@@ -18,6 +18,8 @@ import {
     DatePicker
 } from "antd";
 
+import { ArrowRightOutlined } from "@ant-design/icons"
+
 import { useTranslation } from 'react-i18next';
 import moment, { lang } from 'moment';
 
@@ -188,11 +190,12 @@ const SentenceReport = (props) => {
                                         style={{ textAlign: 'right' }} 
                                         xs={ 24 } md={ 18 }>
                                         <DatePicker.RangePicker 
-                                            style={{ width: '100%' }}
+                                            style={{ width: "fit-content" }}
                                             locale={ locale }
                                             allowClear={ true }
                                             defaultValue={ [startDate, endDate] }
                                             onChange={ date => handleFilterDate(date, lang) }
+                                            separator={<ArrowRightOutlined style={{display: "flex"}}/>}
                                         />
                                     </Col>
 

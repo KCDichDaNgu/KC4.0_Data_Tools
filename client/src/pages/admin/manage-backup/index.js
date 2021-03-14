@@ -137,7 +137,8 @@ const ManageBackUpPage = (props) => {
             title: t('backupDatabase.createdAt'),
             dataIndex: "created_at",
             key: "created_at",
-            render: (created_at) => formatDateTime(created_at)
+            render: (created_at) => formatDateTime(created_at),
+            align: 'center'
         },
         {
             title: t('backupDatabase.createdBy'),
@@ -145,13 +146,15 @@ const ManageBackUpPage = (props) => {
             key: "creator",
             render: (creator, backup, index) => (
                 backup['type'] === 'by_user' ? creator['username'] : t('backupDatabase.machine')
-            )
+            ),
+            align: 'center'
         },
         {
             title: t('backupDatabase.type'),
             dataIndex: "type",
             key: "type",
-            render: (type) => t(`backupDatabase.${ type }`)
+            render: (type) => t(`backupDatabase.${ type }`),
+            align: 'center'
         },
         {
             title: t('backupDatabase.url'),
@@ -159,16 +162,18 @@ const ManageBackUpPage = (props) => {
             key: "hash_name",
             render: (hash_name, backup) => (
                 <a href={backupAPI.downloadBackupURL(backup['type'], hash_name)}
+                    style={{display: 'flex', justifyContent: 'center'}}
                     target='_blank'>
                     <Button 
                         type="primary" 
-                        shape="round" 
-                        icon={<DownloadOutlined />} 
-                        size='small'>
+                        shape="round"
+                        style={{display: "flex", alignItems: "center", fontSize: "15px"}} 
+                        icon={<DownloadOutlined />} >
                         { t('backupDatabase.download') }
                     </Button>
                 </a>
-            )
+            ),
+            align: 'center'
         },
         {
             title: t('backupDatabase.delete'),
@@ -182,8 +187,8 @@ const ManageBackUpPage = (props) => {
                     onClick={() => openModelConfirmDelete(backup)}
                     block>
                 </Button>
-                
-            )
+            ),
+            align: 'center'
         },
     ];
 

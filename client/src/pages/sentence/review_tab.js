@@ -24,7 +24,7 @@ import {
     Divider
 } from 'antd';
 
-import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons';
 
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -223,14 +223,12 @@ const SentenceReview = forwardRef((props, ref) => {
             render: (record, paraSentence, index) => {
                 return (
                     <div style={{
-                        width: 'fit-content',
-                        background: "#123123"
+                        width: '100%',
                     }}>
                         <div style={{ 
                             textAlign: 'center',
                             fontSize: '14px',
                             fontWeight: 600,
-                            marginBottom: '10px'
                         }}>
                             { Number(record.score.senAlign).toFixed(2) }
                         </div>
@@ -492,7 +490,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 {
                                     allowImportFiles() ? (
                                         <Button
-                                            style={{ marginRight: '10px' }}
+                                            style={{display: "flex", alignItems: "center", fontSize: "15px", marginRight: "10px"}} 
                                             onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
                                             icon={ <UploadOutlined /> }
                                         >
@@ -503,7 +501,7 @@ const SentenceReview = forwardRef((props, ref) => {
 
                                 {
                                     allowExport() ? (
-                                        <Button onClick={ exportData }>
+                                        <Button style={{fontSize: "15px"}} onClick={ exportData }>
                                             { t('sentencePage.exportData') }
                                         </Button>
                                     ) : ''
@@ -611,6 +609,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 ] : null 
                             }
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
+                            separator={<ArrowRightOutlined style={{display: "flex", color: "#bfbfbf"}}/>}
                         />
                     </Col>
 
