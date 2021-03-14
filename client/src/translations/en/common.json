@@ -111,7 +111,11 @@
 		"exportData": "Export data",
 		"byEditor": "Editor",
 		"searchByEditor": "Enter editor's username...",
-		"noMoreResults": "No more results"
+		"noMoreResults": "No more results",
+		"delete": "Delete",
+		"deleteSentences": "Delete sentences",
+		"deleteSentencesConfirmation": "Do you want to delete # sentence(s)?",
+		"cancel": "Cancel"
 	},
 	"backupDatabase": {
 		"title": "Backups management",

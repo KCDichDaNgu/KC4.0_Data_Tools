@@ -38,7 +38,10 @@ const CustomTextArea = ({ defaultValue, ...props }) => {
                 { ...props }
                 className='border-none'
                 value={ state.value }
-                onChange={ trimOnChange }
+                onChange={ (e) => {
+                    props.onChange(e)
+                    trimOnChange(e) 
+                }}
             />
             
             <div style={{ color: 'rgba(0, 0, 0, 0.45)', textAlign: 'right'}}>

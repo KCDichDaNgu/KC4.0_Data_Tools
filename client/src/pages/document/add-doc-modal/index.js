@@ -33,6 +33,8 @@ import { useForm } from 'antd/lib/form/Form';
 import DataFieldSelect from '../../../components/data-field-select';
 
 import { isAdmin, isReviewer, isEditor } from '../../../utils/auth';
+import { useSetState } from 'react-use';
+import UploadButton from '../../../components/upload-file-button'
 
 const alignmentTypes = {
     fromNewPairs: 'fromNewPairs',
@@ -481,7 +483,23 @@ const AddingDocModal = (props) => {
             });
         });
     }
-
+    
+    const handelUploadFile = (file, field) => {
+        console.log(field);
+        var reader = new FileReader();
+        reader.onload = function(){
+            if (field == 1){
+                form.setFieldsValue({
+                    text1: reader.result
+                })
+            } else if (field == 2) {
+                form.setFieldsValue({
+                    text2: reader.result
+                })
+            }
+        };
+        reader.readAsText(file);
+    }
     return (
         <React.Fragment>
 
@@ -491,9 +509,11 @@ const AddingDocModal = (props) => {
                 onCancel={ () => setIsAddingModalVisible(false)}
                 cancelText={ t('cancel') }
                 okText={ t('submit') }
-                width={ '10000' }
+                width={ '60%' }
                 onOk={ () => createDetectLanguageModal() }
-                bodyStyle={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+                centered={ true }
+                // bodyStyle={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}
+            >
 
                 <>
                     <Form
@@ -514,39 +534,41 @@ const AddingDocModal = (props) => {
                         <Row gutter={{ xs: 0, sm: 0, md: 24, lg: 32 }}>
 
                             <Col md={ 12 } xs={ 24 }>
-                                <div style={{ 
-                                    marginBottom: '10px',
-                                    fontSize: '20px',
-                                    fontWeight: 500
-                                }}>
-                                    { t(`Language.${formData.lang1}`) }
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div style={{ 
+                                        fontSize: '20px',
+                                        fontWeight: 500,
+                                    }}>
+                                        { t(`Language.${formData.lang1}`) }
+                                    </div>
+                                    <UploadButton index={1} onUpload={handelUploadFile}></UploadButton>
                                 </div>
-                                
                                 <Form.Item
                                     name='text1'
                                     rules={ rules.text1 }>
                                     <Input.TextArea
                                         disabled={ disableContentEditing() }
-                                        autoSize={{ minRows: 4 }}>
+                                        autoSize={{ minRows: 9, maxRows: 9 }}>
                                     </Input.TextArea>
                                 </Form.Item>
                             </Col>
 
                             <Col md={ 12 } xs={ 24 }>
-                                <div style={{ 
-                                    marginBottom: '10px',
-                                    fontSize: '20px',
-                                    fontWeight: 500
-                                }}>
-                                    { formData.lang2 ? t(`Language.${formData.lang2}`) : t('text2') }
-                                </div>
-                                
+                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div style={{ 
+                                        fontSize: '20px',
+                                        fontWeight: 500
+                                    }}>
+                                        { formData.lang2 ? t(`Language.${formData.lang2}`) : t('text2') }
+                                    </div>
+                                    <UploadButton index={2} onUpload={handelUploadFile}></UploadButton>
+                                </div>    
                                 <Form.Item
                                     name='text2'
                                     rules={ rules.text2 }>
                                     <Input.TextArea
                                         disabled={ disableContentEditing() }
-                                        autoSize={{ minRows: 4 }}>
+                                        autoSize={{ minRows: 9, maxRows: 9 }}>
                                     </Input.TextArea>
                                 </Form.Item>
                             </Col>
@@ -554,7 +576,6 @@ const AddingDocModal = (props) => {
                             <Col xs={ 24 }>
                                 <div 
                                     style={{ 
-                                        marginBottom: "10px",
                                         fontSize: '20px',
                                         fontWeight: 500
                                     }}>
@@ -582,7 +603,6 @@ const AddingDocModal = (props) => {
                             { isAdmin() ?
                                 <Col xs={ 24 }>
                                     <div style={{ 
-                                        marginBottom: '10px',
                                         fontSize: '20px',
                                         fontWeight: 500
                                     }}>

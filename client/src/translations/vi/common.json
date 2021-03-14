@@ -186,7 +186,11 @@
 		"exportData": "Xuất dữ liệu",
 		"byEditor": "Người chỉnh sửa",
 		"searchByEditor": "Nhập tên người dùng...",
-		"noMoreResults": "Không tìm thấy kết quả"
+		"noMoreResults": "Không tìm thấy kết quả",
+		"delete": "Xóa",
+		"deleteSentences": "Xóa cặp câu",
+		"deleteSentencesConfirmation": "Bạn có muốn xóa # cặp câu?",
+		"cancel": "Hủy"
 	},
 	"manageUserPage": {
 		"title": "Người dùng",

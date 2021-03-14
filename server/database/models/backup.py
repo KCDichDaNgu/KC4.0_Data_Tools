@@ -98,14 +98,14 @@ class Backup(db.Document):
         if not os.path.isdir(backup_dir):
             os.makedirs(backup_dir)
 
-        command = ['mongodump', '--db=data-tool', '--gzip',
-            f'--archive={backup_dir}/{document.hash_name}']
-        result = subprocess.run(
-            command, 
-            # stdout=subprocess.PIPE, 
-            # stderr=subprocess.PIPE
-        )
-        print(result)
+        # command = ['mongodump', '--db=data-tool', '--gzip',
+        #     f'--archive={backup_dir}/{document.hash_name}']
+        # result = subprocess.run(
+        #     command, 
+        #     # stdout=subprocess.PIPE, 
+        #     # stderr=subprocess.PIPE
+        # )
+        # print(result)
         
         document.create_at = time.time()
 

@@ -24,7 +24,7 @@ import {
     Divider
 } from 'antd';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
@@ -36,6 +36,7 @@ import { LANGS, STATUS_CODES } from '../../constants';
 import { isAdmin, isReviewer } from '../../utils/auth';
 import UserSelect from '../../components/user-select';
 import CustomTextArea from '../../components/custom-textarea';
+import ConfirmDeleteModal from './confirm-delete-modal/index'
 
 import assignmentAPI from '../../api/assignment';
 
@@ -52,6 +53,7 @@ const SentenceReview = forwardRef((props, ref) => {
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     const [exporting, setExporting] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     
     const [filter, setFilter] = useState({
         domain: '',
@@ -98,6 +100,17 @@ const SentenceReview = forwardRef((props, ref) => {
     }));
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
+    const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState(false);
+
+    // on select checkbox
+    const onSelectChange = selectedRowKeys => {
+        setSelectedRowKeys(selectedRowKeys);
+    };
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    }
 
     const renderText = (key, paraSentence, index) => {
 
@@ -113,7 +126,11 @@ const SentenceReview = forwardRef((props, ref) => {
                 defaultValue={ lastestContent }
                 onPressEnter={ event => {
                     event.preventDefault();
-                    updateParaSentence(paraSentence, key, event.target.value);
+                    updateParaSentence(index, key, event.target.value);
+                }}
+                onChange={ event => {
+                    event.preventDefault();
+                    handleTextChange(index, key, event.target.value);
                 }}
                 onResize={({ width, height }) => {
                     return height + 10;
@@ -121,6 +138,24 @@ const SentenceReview = forwardRef((props, ref) => {
                 disabled={ disabled }
             />
         );
+    }
+
+    const handleTextChange = (para_index, key, value) => {
+
+        let cloneDataSource = [...dataSource]
+        let newPara = dataSource[para_index]
+
+        if (key == 'text1') {
+            newPara.newest_para_sentence[key].content = value;
+        } 
+     
+        if (key == 'text2') {
+            newPara.newest_para_sentence[key].content = value;
+        }
+
+        cloneDataSource[para_index] = newPara;
+
+        setDataSource([...cloneDataSource])
     }
 
     const renderRating = (rating, paraSentence, index) => {
@@ -132,7 +167,7 @@ const SentenceReview = forwardRef((props, ref) => {
             <Radio.Group
                 key={ paraSentence['id'] } 
                 value={ lastestRating }
-                onChange={ event => updateParaSentence(paraSentence, 'rating', event.target.value) }
+                onChange={ event => updateParaSentence(index, 'rating', event.target.value) }
                 disabled={ disabled }>
                 {
                     ratingList.map((rating) => {
@@ -163,6 +198,10 @@ const SentenceReview = forwardRef((props, ref) => {
         return isAdmin()
     }
 
+    const allowDelete = () => {
+        return isAdmin() || isReviewer()
+    }
+
     const columns = [
         {
             title: t(`Language.${filter.lang1}`) ,
@@ -181,10 +220,11 @@ const SentenceReview = forwardRef((props, ref) => {
             title: `${t('sentencePage.score')} / ${t('sentencePage.rating')}`,
             // dataIndex: 'score',
             key: 'score',
-            render: (record, index) => {
+            render: (record, paraSentence, index) => {
                 return (
                     <div style={{
-                        width: 'fit-content'
+                        width: 'fit-content',
+                        background: "#123123"
                     }}>
                         <div style={{ 
                             textAlign: 'center',
@@ -203,6 +243,7 @@ const SentenceReview = forwardRef((props, ref) => {
             },
             sorter: (a, b, sortOrder) => { },
             width: '15%',
+            align: 'center',
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         {
@@ -217,6 +258,7 @@ const SentenceReview = forwardRef((props, ref) => {
             },
             sorter: (a, b, sortOrder) => { },
             width: '10%',
+            align: 'center',
             sortDirections: ['ascend', 'descend', 'ascend']
         }
     ]; 
@@ -351,11 +393,19 @@ const SentenceReview = forwardRef((props, ref) => {
         });
     }
 
-    const updateParaSentence = (paraSentence, key, value) => {
+    const updateParaSentence = (paraIndex, key, value) => {
 
         let filterParams = {};
 
         filterParams[key] = value;
+        
+        let paraSentence = dataSource[paraIndex]
+        
+        let lastestText1 = paraSentence.newest_para_sentence['text1'].content;
+        let lastestText2 = paraSentence.newest_para_sentence['text2'].content;
+        
+        filterParams['text1'] = lastestText1;
+        filterParams['text2'] = lastestText2;
 
         paraSentenceAPI.updateParaSentence(paraSentence['id'], filterParams).then((res) => {
             if (res.data.code == process.env.REACT_APP_CODE_SUCCESS) {
@@ -648,6 +698,7 @@ const SentenceReview = forwardRef((props, ref) => {
 
             <Card className='card-body-padding-0'>
                 <Table
+                    rowSelection={ allowDelete() ? rowSelection : null}
                     scroll={{ x: 'max-content' }}
                     rowKey={ record => record.id } 
                     rowClassName={ record => getTableRowClassName(record)}
@@ -729,8 +780,21 @@ const SentenceReview = forwardRef((props, ref) => {
                         current: paginationParams.current_page
                     }}
                     footer={() => (
-                        <div style={{ textAlign: 'right', paddingRight: 5 }}>
-                            {`${t('total')} ${paginationParams.total_items} ${t('records').toLowerCase()}`}
+                        <div style={{display: "flex", justifyContent: "space-between"}}>
+                            { selectedRowKeys.length > 0 ? 
+                                <Button 
+                                    style={{display: "flex", alignItems: "center", fontSize: "15px"}} 
+                                    icon={ <DeleteOutlined/> } 
+                                    type="primary" 
+                                    onClick={() => setIsConfirmDeleteModalVisible(!isConfirmDeleteModalVisible)}
+                                    danger
+                                >
+                                    {t("sentencePage.delete")}
+                                </Button> 
+                                : <div></div>}
+                            <div style={{lineHeight: "32px"}}>
+                                {`${t('total')} ${paginationParams.total_items} ${t('records').toLowerCase()}`}
+                            </div>
                         </div>
                     )}>
                 </Table>
@@ -745,6 +809,14 @@ const SentenceReview = forwardRef((props, ref) => {
                     currentFilter={ filter }>
                 </ImportFileModal>
                 : null 
+            }
+            { allowDelete() ?
+                <ConfirmDeleteModal
+                    isVisible={ isConfirmDeleteModalVisible }
+                    setVisible={ setIsConfirmDeleteModalVisible }
+                    deleteData={ selectedRowKeys }
+                /> 
+                : null
             }
         </React.Fragment>
     );
