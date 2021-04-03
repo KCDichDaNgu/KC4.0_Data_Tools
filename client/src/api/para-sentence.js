@@ -1,7 +1,6 @@
 import { customAxios } from "../utils/custom-axios";
 import axios from "axios";
 import qs from "querystring";
-import { method } from "lodash-es";
 
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
 
