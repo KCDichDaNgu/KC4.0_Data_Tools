@@ -16,7 +16,7 @@ const UploadFileButton = props => (
                 onChange={ e => {
                     props.onUpload(e.target.files[0], props.index)
                 }}
-                onClick={ e => {e.target.value = null}}
+                onClick={ e => {e.target.value = null} }
             >
             </input>
         </div>

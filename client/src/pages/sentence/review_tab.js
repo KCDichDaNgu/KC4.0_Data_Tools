@@ -26,6 +26,7 @@ import {
 
 import { UploadOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons';
 
+import { ToastContainer, toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { formatDate } from '../../utils/date';
@@ -196,10 +197,6 @@ const SentenceReview = forwardRef((props, ref) => {
 
     const allowExport = () => {
         return isAdmin()
-    }
-
-    const allowDelete = () => {
-        return isAdmin() || isReviewer()
     }
 
     const columns = [
@@ -697,79 +694,80 @@ const SentenceReview = forwardRef((props, ref) => {
 
             <Card className='card-body-padding-0'>
                 <Table
-                    rowSelection={ allowDelete() ? rowSelection : null}
+                    rowSelection={ isAdmin() ? rowSelection : null}
                     scroll={{ x: 'max-content' }}
                     rowKey={ record => record.id } 
                     rowClassName={ record => getTableRowClassName(record)}
-                    expandable={{
-                        expandedRowRender: record => {
-                            return (
-                                <div style={{
-                                    padding: '20px'
-                                }}>
-                                    <div style={{ marginBottom: '20px' }}>
-                                        <label 
-                                            style={{
-                                                fontSize: '16px',
-                                                marginBottom: '10px',
-                                                fontWeight: 600
-                                            }}>
-                                            { t('originalText') } { t(record.original_para_sentence.text1.lang) }
-                                        </label>
-                                        <div>
-                                            { record.original_para_sentence.text1.content }
-                                        </div>
-                                    </div>
+                    style={{padding: "0px 10px"}}
+                    // expandable={{
+                    //     expandedRowRender: record => {
+                    //         return (
+                    //             <div style={{
+                    //                 padding: '20px'
+                    //             }}>
+                    //                 <div style={{ marginBottom: '20px' }}>
+                    //                     <label 
+                    //                         style={{
+                    //                             fontSize: '16px',
+                    //                             marginBottom: '10px',
+                    //                             fontWeight: 600
+                    //                         }}>
+                    //                         { t('originalText') } { t(record.original_para_sentence.text1.lang) }
+                    //                     </label>
+                    //                     <div>
+                    //                         { record.original_para_sentence.text1.content }
+                    //                     </div>
+                    //                 </div>
 
-                                    <div style={{ marginBottom: '20px' }}>
-                                        <label 
-                                            style={{
-                                                fontSize: '16px',
-                                                marginBottom: '10px',
-                                                fontWeight: 600
-                                            }}>
-                                            { t('originalText') } { t(record.original_para_sentence.text2.lang) }
-                                        </label>
+                    //                 <div style={{ marginBottom: '20px' }}>
+                    //                     <label 
+                    //                         style={{
+                    //                             fontSize: '16px',
+                    //                             marginBottom: '10px',
+                    //                             fontWeight: 600
+                    //                         }}>
+                    //                         { t('originalText') } { t(record.original_para_sentence.text2.lang) }
+                    //                     </label>
 
-                                        <div>
-                                            { record.original_para_sentence.text2.content }
-                                        </div>
-                                    </div>
+                    //                     <div>
+                    //                         { record.original_para_sentence.text2.content }
+                    //                     </div>
+                    //                 </div>
 
-                                    <div style={{ marginBottom: '20px' }}>
-                                        <label 
-                                            style={{
-                                                fontSize: '16px',
-                                                marginBottom: '10px',
-                                                fontWeight: 600
-                                            }}>
-                                            { t('sentencePage.lastUpdate') } { t('sentencePage.by') }
-                                            &nbsp;{ record.editor?.id === currentUserId ? t('sentencePage.you') : record.editor.username }
-                                        </label>
+                    //                 <div style={{ marginBottom: '20px' }}>
+                    //                     <label 
+                    //                         style={{
+                    //                             fontSize: '16px',
+                    //                             marginBottom: '10px',
+                    //                             fontWeight: 600
+                    //                         }}>
+                    //                         { t('sentencePage.lastUpdate') } { t('sentencePage.by') }
+                    //                         &nbsp;{ record.editor?.id === currentUserId ? t('sentencePage.you') : record.editor.username }
+                    //                     </label>
                                         
-                                        <div>
-                                            { formatDate(record.updated_at) }
-                                        </div>
-                                    </div>
+                    //                     <div>
+                    //                         { formatDate(record.updated_at) }
+                    //                     </div>
+                    //                 </div>
 
-                                    <div>
-                                        <label 
-                                            style={{
-                                                fontSize: '16px',
-                                                marginBottom: '10px',
-                                                fontWeight: 600
-                                            }}>
-                                            { t('sentencePage.createdTime') } 
-                                        </label>
-                                        <div>
-                                            { formatDate(record.created_at) }
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        },
-                        rowExpandable: record => { return !!record.editor?.id },
-                    }}
+                    //                 <div>
+                    //                     <label 
+                    //                         style={{
+                    //                             fontSize: '16px',
+                    //                             marginBottom: '10px',
+                    //                             fontWeight: 600
+                    //                         }}>
+                    //                         { t('sentencePage.createdTime') } 
+                    //                     </label>
+                    //                     <div>
+                    //                         { formatDate(record.created_at) }
+                    //                     </div>
+                    //                 </div>
+                    //             </div>
+                    //         )
+                    //     },
+                    //     rowExpandable: record => { return !!record.editor?.id },
+                    // }}
                     dataSource={ dataSource }
                     columns={ columns }
                     onChange={ handleTableChange } 
@@ -809,14 +807,20 @@ const SentenceReview = forwardRef((props, ref) => {
                 </ImportFileModal>
                 : null 
             }
-            { allowDelete() ?
+            { isAdmin() ?
                 <ConfirmDeleteModal
                     isVisible={ isConfirmDeleteModalVisible }
                     setVisible={ setIsConfirmDeleteModalVisible }
                     deleteData={ selectedRowKeys }
+                    toast={ toast }
+                    reloadSentenceData={ setDataSource }
+                    reloadPaginationParams={ setPaginationParams }
+                    currentFilter={ filter }
+                    currentPagination = { paginationParams }
                 /> 
                 : null
             }
+            <ToastContainer/>
         </React.Fragment>
     );
 });

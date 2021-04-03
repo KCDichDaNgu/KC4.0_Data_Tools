@@ -1,0 +1,27 @@
+.upload-container {
+    border-radius: 5px; 
+    background: rgba(94,94,94,.1);
+    height: 150px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #666666;
+    animation: file-icon 0.5s linear 0s infinite alternate;
+}
+
+.upload-container-active {
+    border: 2px dashed #666666;
+}
+
+@keyframes file-icon {
+    from {font-size: 30px}
+    to {font-size: 40px}
+}
+
+.upload-title {
+    font-size: 15px;
+    margin-top: 5px;
+}

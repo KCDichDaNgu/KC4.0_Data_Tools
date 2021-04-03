@@ -3,7 +3,7 @@ from blinker import Signal
 
 from database.db import db
 from database.models.user import User
-from constants.common import STATUS_CODES, BACKUP_USER_DIR, BACKUP_SERVER_DIR
+from constants.common import STATUS_CODES, BACKUP_USER_DIR, BACKUP_SERVER_DIR, RESTORE_DIR
 
 import subprocess
 import os
@@ -50,6 +50,16 @@ def create_backup(name='auto-backup', user_id=None, type='by_server'):
         backup.save()
 
     return backup
+
+def restoreDb(file):
+    file.save(f"{RESTORE_DIR}{file.filename}")
+    command = ['mongorestore', '--db=data-tool', '--gzip',
+            f'--archive={RESTORE_DIR}{file.filename}']
+    result = subprocess.run(
+        command
+    )
+    os.remove(f"{RESTORE_DIR}{file.filename}")
+    return result.returncode == 0
 
 class Backup(db.Document):
     BACKUP_TYPES = {
@@ -98,14 +108,14 @@ class Backup(db.Document):
         if not os.path.isdir(backup_dir):
             os.makedirs(backup_dir)
 
-        # command = ['mongodump', '--db=data-tool', '--gzip',
-        #     f'--archive={backup_dir}/{document.hash_name}']
-        # result = subprocess.run(
-        #     command, 
-        #     # stdout=subprocess.PIPE, 
-        #     # stderr=subprocess.PIPE
-        # )
-        # print(result)
+        command = ['mongodump', '--db=data-tool', '--gzip',
+            f'--archive={backup_dir}{document.hash_name}']
+        result = subprocess.run(
+            command, 
+            # stdout=subprocess.PIPE, 
+            # stderr=subprocess.PIPE
+        )
+        print(result)
         
         document.create_at = time.time()
 

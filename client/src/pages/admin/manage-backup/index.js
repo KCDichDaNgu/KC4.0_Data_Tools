@@ -19,6 +19,8 @@ import backupAPI from '../../../api/admin/backup';
 import { formatDateTime } from '../../../utils/date';
 import { useTranslation } from 'react-i18next';
 import { relativeTimeRounding, localeData } from 'moment';
+import RestoreModal from './restore-modal/index';
+import { ToastContainer, toast } from 'react-toastify';
 
 const ManageBackUpPage = (props) => {
     
@@ -28,6 +30,7 @@ const ManageBackUpPage = (props) => {
     const [backUps, setBackUps] = useState([]);
     const [paginationParams, setPaginationParams] = useState({});
     const [backupProcessing, setBackupProcessing] = useState(false);
+    const [isRestoreModalVisible, setIsRestoreModalVisible] = useState(false);
 
     useEffect(() => {
         searchBackups();
@@ -212,9 +215,16 @@ const ManageBackUpPage = (props) => {
                         </div>
                         
                         <Button 
-                            style={{ display: 'inline-block' }}
+                            style={{ display: 'inline-block', marginRight: "5px" }}
                             onClick={() => setIsAdding(!isAdding)}>
                             { t('backupDatabase.addBackUp') }
+                        </Button>
+
+                        <Button 
+                            style={{ display: 'inline-block' }}
+                            onClick={() => setIsRestoreModalVisible(!isRestoreModalVisible)}
+                        >
+                            { t('backupDatabase.restore') }
                         </Button>
                     </div>
 
@@ -256,6 +266,12 @@ const ManageBackUpPage = (props) => {
                     </Table>
                 </Card>
             </SiteLayout>
+            <RestoreModal
+                isVisible={ isRestoreModalVisible }
+                setVisible={ setIsRestoreModalVisible }
+                toast={ toast }
+            />
+            <ToastContainer/>
         </React.Fragment>
     );
 };

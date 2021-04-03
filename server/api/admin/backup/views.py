@@ -5,7 +5,7 @@ from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES
 
 from database.models.user import User
-from database.models.backup import Backup, create_backup
+from database.models.backup import Backup, create_backup, restoreDb
 
 from oauth2 import authorization, require_oauth, status_required, role_required
 
@@ -106,3 +106,28 @@ def put(id):
         code=STATUS_CODES['success'],
         message='success'
     )
+
+@admin_manage_backup_bp.route('/restore', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def restore():
+    try:
+        file = request.files['file']
+        result = restoreDb(file)
+        if result:
+            return jsonify({
+                'code': STATUS_CODES['success'],
+                'message': 'success'
+            })
+        else:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'restoreFailure'
+            })
+    except Exception as ex:
+        print(ex)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'restoreFailure'
+        })

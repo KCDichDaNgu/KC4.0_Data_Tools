@@ -46,4 +46,14 @@ export default {
 
     downloadBackupURL: (type, hash_name) => 
         `${server_endpoint}/public/backups/${type}/${hash_name}`,
+
+    restore: file => {
+        let formData = new FormData();
+        formData.append('file', file)
+        return customAxios({
+            method: 'post',
+            url: `${server_endpoint}/api/admin/backup/restore`,
+            data: formData
+        })
+    },
 };

@@ -240,7 +240,6 @@ const ImportFileModal = (props) => {
                             { isAdmin() ?
                                 <Col xs={ 24 }>
                                     <div style={{ 
-                                        marginBottom: '10px',
                                         fontSize: '20px',
                                         fontWeight: 500
                                     }}>
@@ -269,7 +268,6 @@ const ImportFileModal = (props) => {
                             <Col xs={ 24 }>
                                 <div 
                                     style={{ 
-                                        marginBottom: "10px",
                                         fontSize: '20px',
                                         fontWeight: 500
                                     }}>
@@ -303,7 +301,10 @@ const ImportFileModal = (props) => {
                                 onChange={ ({ fileList }) => {
                                     setFiles(fileList);
                                 }}>
-                                <Button icon={ <UploadOutlined /> }>
+                                <Button 
+                                    icon={ <UploadOutlined /> }
+                                    style={{display: "flex", alignItems: "center", fontSize: "15px"}}
+                                >
                                     { t('chooseDirectory') }
                                 </Button>
                             </Upload>

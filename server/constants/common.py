@@ -7,6 +7,7 @@ IMPORT_FROM_FILE_DIR = "data/import_from_file/"
 
 BACKUP_SERVER_DIR = "public/backups/by_server/"
 BACKUP_USER_DIR = "public/backups/by_user/"
+RESTORE_DIR = "public/restore/"
 BACKUP_SCHEDULE_HOURS = 8
 ADD_LOCAL_DATA_SCHEDULE_MINUTES = 5
 

@@ -1,6 +1,7 @@
 import { customAxios } from "../utils/custom-axios";
 import axios from "axios";
 import qs from "querystring";
+import { method } from "lodash-es";
 
 const server_endpoint = process.env.REACT_APP_SERVER_ENDPOINT;
 
@@ -74,5 +75,15 @@ export default {
 			url: `${server_endpoint}/api/para-sentence/export`,
 			params: data,
 			responseType: 'blob'
+		}),
+
+	deleteSentencesByIds: data => 
+		customAxios({
+			method: "post",
+			url: `${server_endpoint}/api/para-sentence/detele-sentences`,
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+			}
 		}),
 };

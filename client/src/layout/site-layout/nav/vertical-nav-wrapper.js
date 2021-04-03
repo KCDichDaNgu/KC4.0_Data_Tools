@@ -47,29 +47,35 @@ const Nav = () => {
                             to: 'document',
                         },
                         {
-                            icon: 'pe-7s-server',
-                            label: t('backupDatabase.title'),
-                            to: '/manage-backup',
-                        },
-                        {
-                            icon: 'pe-7s-users',
-                            label: t('manageUserPage.title'),
-                            to: '/manage-user',
-                        },
-                        {
-                            icon: 'pe-7s-global',
-                            label: t('domainPage.title'),
-                            to: 'domain',
-                        },
-                        {
-                            icon: 'pe-7s-global',
-                            label: t('dataFieldPage.title'),
-                            to: 'data-field',
-                        },
-                        {
-                            icon: 'pe-7s-settings',
-                            label: t('settingPage.title'),
-                            to: 'setting',
+                            icon: 'pe-7s-user',
+                            label: t('admin.title'),     
+                            content: [
+                                {
+                                    icon: 'pe-7s-server',
+                                    label: "         "+t('backupDatabase.title'),
+                                    to: '/manage-backup',
+                                },
+                                {
+                                    icon: 'pe-7s-users',
+                                    label: "         "+t('manageUserPage.title'),
+                                    to: '/manage-user',
+                                },
+                                {
+                                    icon: 'pe-7s-global',
+                                    label: "         "+t('domainPage.title'),
+                                    to: 'domain',
+                                },
+                                {
+                                    icon: 'pe-7s-global',
+                                    label: "         "+t('dataFieldPage.title'),
+                                    to: 'data-field',
+                                },
+                                {
+                                    icon: 'pe-7s-settings',
+                                    label: "         "+t('settingPage.title'),
+                                    to: 'setting',
+                                },
+                            ]     
                         },
                     ])
                 }

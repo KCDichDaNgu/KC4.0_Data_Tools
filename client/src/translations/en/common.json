@@ -117,7 +117,9 @@
 		"delete": "Delete",
 		"deleteSentences": "Delete sentences",
 		"deleteSentencesConfirmation": "Do you want to delete # sentence(s)?",
-		"cancel": "Cancel"
+		"cancel": "Cancel",
+		"deleteSuccess": "Delete # sentence(s) successfully!",
+		"deleteFail": "Delete failingly!"
 	},
 	"backupDatabase": {
 		"title": "Backups management",
@@ -141,6 +143,13 @@
 		"notFound": "Not found record in the database",
 		"editedSuccess": "Edited successfully",
 		"errorUpdate": "Edited failure",
-		"notAllowed": "Can not edit this record"
+		"notAllowed": "Can not edit this record",
+		"restore": "Restore",
+		"restoreSuccess": "Restore successfully!",
+		"restoreFail": "Restore failingly! Recheck your file!",
+		"noFile": "No file is selected!"
+	},
+	"admin": {
+		"title": "administrator"
 	}
 }
