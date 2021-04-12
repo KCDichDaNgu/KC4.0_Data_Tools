@@ -111,6 +111,11 @@ const SentenceReview = forwardRef((props, ref) => {
     const rowSelection = {
         selectedRowKeys,
         onChange: onSelectChange,
+        getCheckboxProps: record => {
+            return {
+                disabled: record.newest_para_sentence.rating !== "unRated"
+            }
+        }
     }
 
     const renderText = (key, paraSentence, index) => {
@@ -699,75 +704,75 @@ const SentenceReview = forwardRef((props, ref) => {
                     rowKey={ record => record.id } 
                     rowClassName={ record => getTableRowClassName(record)}
                     style={{padding: "0px 10px"}}
-                    // expandable={{
-                    //     expandedRowRender: record => {
-                    //         return (
-                    //             <div style={{
-                    //                 padding: '20px'
-                    //             }}>
-                    //                 <div style={{ marginBottom: '20px' }}>
-                    //                     <label 
-                    //                         style={{
-                    //                             fontSize: '16px',
-                    //                             marginBottom: '10px',
-                    //                             fontWeight: 600
-                    //                         }}>
-                    //                         { t('originalText') } { t(record.original_para_sentence.text1.lang) }
-                    //                     </label>
-                    //                     <div>
-                    //                         { record.original_para_sentence.text1.content }
-                    //                     </div>
-                    //                 </div>
+                    expandable={{
+                        expandedRowRender: record => {
+                            return (
+                                <div style={{
+                                    padding: '20px'
+                                }}>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label 
+                                            style={{
+                                                fontSize: '16px',
+                                                marginBottom: '10px',
+                                                fontWeight: 600
+                                            }}>
+                                            { t('originalText') } { t(record.original_para_sentence.text1.lang) }
+                                        </label>
+                                        <div>
+                                            { record.original_para_sentence.text1.content }
+                                        </div>
+                                    </div>
 
-                    //                 <div style={{ marginBottom: '20px' }}>
-                    //                     <label 
-                    //                         style={{
-                    //                             fontSize: '16px',
-                    //                             marginBottom: '10px',
-                    //                             fontWeight: 600
-                    //                         }}>
-                    //                         { t('originalText') } { t(record.original_para_sentence.text2.lang) }
-                    //                     </label>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label 
+                                            style={{
+                                                fontSize: '16px',
+                                                marginBottom: '10px',
+                                                fontWeight: 600
+                                            }}>
+                                            { t('originalText') } { t(record.original_para_sentence.text2.lang) }
+                                        </label>
 
-                    //                     <div>
-                    //                         { record.original_para_sentence.text2.content }
-                    //                     </div>
-                    //                 </div>
+                                        <div>
+                                            { record.original_para_sentence.text2.content }
+                                        </div>
+                                    </div>
 
-                    //                 <div style={{ marginBottom: '20px' }}>
-                    //                     <label 
-                    //                         style={{
-                    //                             fontSize: '16px',
-                    //                             marginBottom: '10px',
-                    //                             fontWeight: 600
-                    //                         }}>
-                    //                         { t('sentencePage.lastUpdate') } { t('sentencePage.by') }
-                    //                         &nbsp;{ record.editor?.id === currentUserId ? t('sentencePage.you') : record.editor.username }
-                    //                     </label>
+                                    <div style={{ marginBottom: '20px' }}>
+                                        <label 
+                                            style={{
+                                                fontSize: '16px',
+                                                marginBottom: '10px',
+                                                fontWeight: 600
+                                            }}>
+                                            { t('sentencePage.lastUpdate') } { t('sentencePage.by') }
+                                            &nbsp;{ record.editor?.id === currentUserId ? t('sentencePage.you') : record.editor.username }
+                                        </label>
                                         
-                    //                     <div>
-                    //                         { formatDate(record.updated_at) }
-                    //                     </div>
-                    //                 </div>
+                                        <div>
+                                            { formatDate(record.updated_at) }
+                                        </div>
+                                    </div>
 
-                    //                 <div>
-                    //                     <label 
-                    //                         style={{
-                    //                             fontSize: '16px',
-                    //                             marginBottom: '10px',
-                    //                             fontWeight: 600
-                    //                         }}>
-                    //                         { t('sentencePage.createdTime') } 
-                    //                     </label>
-                    //                     <div>
-                    //                         { formatDate(record.created_at) }
-                    //                     </div>
-                    //                 </div>
-                    //             </div>
-                    //         )
-                    //     },
-                    //     rowExpandable: record => { return !!record.editor?.id },
-                    // }}
+                                    <div>
+                                        <label 
+                                            style={{
+                                                fontSize: '16px',
+                                                marginBottom: '10px',
+                                                fontWeight: 600
+                                            }}>
+                                            { t('sentencePage.createdTime') } 
+                                        </label>
+                                        <div>
+                                            { formatDate(record.created_at) }
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        },
+                        rowExpandable: record => { return !!record.editor?.id },
+                    }}
                     dataSource={ dataSource }
                     columns={ columns }
                     onChange={ handleTableChange } 

@@ -38,7 +38,7 @@ const ConfirmDeleteModal = props => {
                 reloadPaginationParams(newSentenceData.data.data.pagination);
             }
             setVisible(false)
-            toast.success(t("sentencePage.deleteSuccess").replace('#', deleteData.length), {
+            toast.success(t("sentencePage.deleteSuccess").replace('#', response.data.data), {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
