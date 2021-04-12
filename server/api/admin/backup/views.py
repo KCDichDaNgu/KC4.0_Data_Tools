@@ -114,6 +114,13 @@ def put(id):
 def restore():
     try:
         file = request.files['file']
+        backup = Backup.objects.filter(__raw__ = {"hash_name": file.filename})
+        if len(backup) == 0:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'restoreFailure'
+            })
+        
         result = restoreDb(file)
         if result:
             return jsonify({

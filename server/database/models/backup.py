@@ -108,7 +108,7 @@ class Backup(db.Document):
         if not os.path.isdir(backup_dir):
             os.makedirs(backup_dir)
 
-        command = ['mongodump', '--db=data-tool', '--gzip',
+        command = ['mongodump', '--db=data-tool', '--excludeCollection=backup', '--gzip',
             f'--archive={backup_dir}{document.hash_name}']
         result = subprocess.run(
             command, 

@@ -310,12 +310,9 @@ def export():
 @role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def delete_para_sentence():
-    print("into delete")
     ids_to_delete = request.json['ids']
-    print('Sentence\'s id to delete: ', ids_to_delete)
     try:
-        result = ParaSentence.objects(id__in=ids_to_delete).delete()
-        print("delete result: ", result)
+        result = ParaSentence.objects(id__in=ids_to_delete).filter(__raw__ = {'newest_para_sentence.rating': 'unRated'}).delete()
         return jsonify({
             'code': STATUS_CODES['success'], 
             'message': 'Deleted sucessfully',
