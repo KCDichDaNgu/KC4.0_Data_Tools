@@ -2,7 +2,7 @@ import time
 from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
-from constants.common import STATUS_CODES
+from constants.common import STATUS_CODES, VERSION_COUNT_FILE_PATH, CURRENT_VERSION_FILE_PATH
 
 from database.models.user import User
 from database.models.backup import Backup, create_backup, restoreDb
@@ -18,19 +18,37 @@ admin_manage_backup_bp = Blueprint(__name__, 'backup')
 @role_required(['admin'])
 @status_required(User.USER_STATUS['active'])
 def create():
-    args = request.get_json()
+    try:
+        args = request.get_json()
 
-    user = current_token.user
+        user = current_token.user
 
-    backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'])
+        # increase version
+        version_file = open(VERSION_COUNT_FILE_PATH, 'r+')
+        version = version_file.read().split('.')
+        version[1] = int(version[1]) + 1
+        new_version = version[0]+'.'+str(version[1])
 
-    # backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'])
+        # backup database
+        backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'], new_version)
 
-    return jsonify(
-        code=STATUS_CODES['success'],
-        data=backup.id,
-        message='success'
-    )
+        # update version file
+        version_file.seek(0)
+        version_file.write(new_version)
+        version_file.truncate()
+        version_file.close()
+
+        return jsonify(
+            code=STATUS_CODES['success'],
+            data=backup.id,
+            message='success'
+        )
+    except Exception as ex:
+        print(ex)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'createFailure'
+        })
     
 @admin_manage_backup_bp.route('/', methods=['GET'])
 @require_oauth()
@@ -54,6 +72,22 @@ def get():
                 'page_size': backups.per_page,
                 'total_items': backups.total
             }
+        },
+        message='success'
+    )
+
+@admin_manage_backup_bp.route('/current-version', methods=['GET'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def get_current_verion():
+    version_file = open(CURRENT_VERSION_FILE_PATH, 'r')
+    current_version = version_file.read()
+
+    return jsonify(
+        code=STATUS_CODES['success'],
+        data={
+            'current_version': current_version
         },
         message='success'
     )
@@ -114,15 +148,35 @@ def put(id):
 def restore():
     try:
         file = request.files['file']
+        # will return 1 record
         backup = Backup.objects.filter(__raw__ = {"hash_name": file.filename})
+
+        # if backup's length is equal to 0, this mean requested backup file is not valid
         if len(backup) == 0:
             return jsonify({
                 'code': STATUS_CODES['failure'], 
-                'message': 'restoreFailure'
+                'message': 'Không có thông tin bản sao lưu trong cơ sở dữ liệu!'
             })
         
+        # check backup version
+        current_version_file = open(CURRENT_VERSION_FILE_PATH, 'r+')
+        current_version = current_version_file.read()
+        current_version_postfix = int(current_version.split('.')[1])
+        upcomming_version_postfix = int(backup[0].version.split('.')[1])
+        if upcomming_version_postfix < current_version_postfix:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'Phiên bản cần sao lưu phải mới hơn hoặc bằng phiên bản hiện tại!'
+            })
+
+        # restore
         result = restoreDb(file)
         if result:
+            # current update version file
+            current_version_file.seek(0)
+            current_version_file.write(backup[0].version)
+            current_version_file.truncate()
+            current_version_file.close()
             return jsonify({
                 'code': STATUS_CODES['success'],
                 'message': 'success'

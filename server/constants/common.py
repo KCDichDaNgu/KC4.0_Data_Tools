@@ -43,3 +43,6 @@ API_SCORE_DOCUMENT = {
 }
 
 API_CRAWL = 'http://0.0.0.0:3010'
+
+VERSION_COUNT_FILE_PATH='api/admin/backup/version_count'
+CURRENT_VERSION_FILE_PATH='api/admin/backup/current_version'

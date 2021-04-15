@@ -10,13 +10,13 @@ import os
 
 from mongoengine.signals import pre_save, post_save, post_delete
 
-def create_backup(name='auto-backup', user_id=None, type='by_server'):
+def create_backup(name='auto-backup', user_id=None, type='by_server', version=None):
     created_at = time.time()
-
     if type == Backup.BACKUP_TYPES['by_server']:
         backup = Backup(
             name=name,
             type=Backup.BACKUP_TYPES['by_server'],
+            version=version,
             hash_name=str(created_at),
             created_at=created_at
         )
@@ -43,6 +43,7 @@ def create_backup(name='auto-backup', user_id=None, type='by_server'):
         backup = Backup(
             name=name,
             type=Backup.BACKUP_TYPES[type],
+            version=version,
             creator_id=user_id,
             hash_name=str(created_at),
             created_at=created_at
@@ -73,6 +74,8 @@ class Backup(db.Document):
         choices=BACKUP_TYPES.values()
     )
 
+    version = db.StringField(required=True)
+
     creator_id = db.ReferenceField(User)
     hash_name = db.StringField()
     created_at = db.FloatField(default=time.time(), required=True)
@@ -82,11 +85,11 @@ class Backup(db.Document):
 
     @property
     def serialize(self):
-        
         return {
            'id': str(self.id),
            'name': self.name,
            'type': self.type,
+           'version': self.version,
            'creator': {
                'id': str(self.creator_id.id) if self.creator_id is not None else None,
                'username': self.creator_id.username if self.creator_id is not None else None
