@@ -147,7 +147,9 @@
 		"restore": "Restore",
 		"restoreSuccess": "Restore successfully!",
 		"restoreFail": "Restore failingly! Recheck your file!",
-		"noFile": "No file is selected!"
+		"noFile": "No file is selected!",
+		"version": "Version",
+		"currentVersion": "Current version"
 	},
 	"admin": {
 		"title": "administrator"

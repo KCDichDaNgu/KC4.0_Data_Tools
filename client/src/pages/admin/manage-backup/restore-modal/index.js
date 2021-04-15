@@ -14,7 +14,7 @@ import backupAPI from '../../../../api/admin/backup';
 const RestoreModal = props => {
     const { t } = useTranslation(['common']);
 
-    const {isVisible, setVisible, toast} = props
+    const {isVisible, setVisible, getCurrentVersion, toast} = props
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [files, setFiles] = useState([])
 
@@ -33,6 +33,7 @@ const RestoreModal = props => {
         let response = await backupAPI.restore(files[0])
         setConfirmLoading(false)
         if (response.status == 200 && response.data.code == 1) {
+            getCurrentVersion()
             setFiles([])
             setVisible(false)
             toast.success(t("backupDatabase.restoreSuccess"), {
@@ -43,7 +44,7 @@ const RestoreModal = props => {
             })
         } else {
             setFiles([])
-            toast.error(t("backupDatabase.restoreFail"), {
+            toast.error(response.data.message, {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,

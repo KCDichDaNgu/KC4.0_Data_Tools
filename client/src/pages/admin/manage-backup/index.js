@@ -12,7 +12,7 @@ import {
     Spin,
     Modal,
 } from "antd";
-import { DownloadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownloadOutlined, DeleteTwoTone, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../../layout/site-layout';
 import backupAPI from '../../../api/admin/backup';
@@ -28,12 +28,14 @@ const ManageBackUpPage = (props) => {
 
     const [isAdding, setIsAdding] = useState(false);
     const [backUps, setBackUps] = useState([]);
+    const [currentVersion, setCurrentVersion] = useState('')
     const [paginationParams, setPaginationParams] = useState({});
     const [backupProcessing, setBackupProcessing] = useState(false);
     const [isRestoreModalVisible, setIsRestoreModalVisible] = useState(false);
 
     useEffect(() => {
         searchBackups();
+        getCurrentVersion();
     }, []);
 
     const searchBackups = () => {
@@ -41,6 +43,11 @@ const ManageBackUpPage = (props) => {
             setBackUps(res.data.data.backups);
             setPaginationParams(res.data.data.pagination);
         });
+    }
+
+    const getCurrentVersion = async () => {
+        let res = await backupAPI.getCurrentVersion();
+        setCurrentVersion(res.data.data.current_version)
     }
 
     const addBackup = (backupName) => {
@@ -160,6 +167,13 @@ const ManageBackUpPage = (props) => {
             align: 'center'
         },
         {
+            title: t('backupDatabase.version'),
+            dataIndex: "version",
+            key: "version",
+            render: version => version == null ? 'NaN' : version,
+            align: 'center'
+        },
+        {
             title: t('backupDatabase.url'),
             dataIndex: "hash_name",
             key: "hash_name",
@@ -185,7 +199,7 @@ const ManageBackUpPage = (props) => {
             render: (row_value, backup) => (
                 <Button 
                     type="link" 
-                    icon={<DeleteOutlined />} 
+                    icon={<DeleteTwoTone twoToneColor="red" style={{fontSize: '18px'}}/>} 
                     size='small'
                     onClick={() => openModelConfirmDelete(backup)}
                     block>
@@ -205,7 +219,13 @@ const ManageBackUpPage = (props) => {
                 />
 
                 <Card>
-                    <div style={{ float: 'right', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <div>
+                            <div style={{fontSize: "16px", fontWeight: "bold"}}>
+                                {t('backupDatabase.currentVersion') + ': ' + currentVersion}
+                            </div>
+                        </div>
+                        <div>
                         <div style={{ marginRight: '10px', display: 'inline-block' }}>
                             {
                                 backupProcessing ? (
@@ -226,6 +246,7 @@ const ManageBackUpPage = (props) => {
                         >
                             { t('backupDatabase.restore') }
                         </Button>
+                        </div>
                     </div>
 
                     { 
@@ -269,6 +290,7 @@ const ManageBackUpPage = (props) => {
             <RestoreModal
                 isVisible={ isRestoreModalVisible }
                 setVisible={ setIsRestoreModalVisible }
+                getCurrentVersion={ getCurrentVersion }
                 toast={ toast }
             />
             <ToastContainer/>

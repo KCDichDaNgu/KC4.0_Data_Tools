@@ -56,4 +56,10 @@ export default {
             data: formData
         })
     },
+
+    getCurrentVersion: () => 
+        customAxios({
+            method: 'get',
+            url: `${server_endpoint}/api/admin/backup/current-version`,
+        }),
 };

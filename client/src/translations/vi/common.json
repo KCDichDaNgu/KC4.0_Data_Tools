@@ -276,7 +276,9 @@
 		"restore": "Khôi phục",
 		"restoreSuccess": "Khôi phục thành công!",
 		"restoreFail": "Khôi phục thất bại! Kiểm tra lại tệp!",
-		"noFile": "Chưa chọn tệp!"
+		"noFile": "Chưa chọn tệp!",
+		"version": "Phiên bản",
+		"currentVersion": "Phiên bản hiện tại"
 	},
 	"fieldRequired": "Trường dữ liệu này là bắt buộc",
 	"lang": "Ngôn ngữ",
