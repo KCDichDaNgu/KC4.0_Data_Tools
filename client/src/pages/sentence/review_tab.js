@@ -24,7 +24,7 @@ import {
     Divider
 } from 'antd';
 
-import { UploadOutlined, DeleteOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, ArrowRightOutlined, WarningOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { ToastContainer, toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -73,6 +73,8 @@ const SentenceReview = forwardRef((props, ref) => {
         editorId: ''
     });
 
+    let [isShowingDeleteAll, setShowingDeleteAll] = useState(filter.rating=='unRated')
+
     // sử dụng useRef để gọi function setSelectedUser trong UserSelect,
     // sử dụng khi người dùng bấm xem chi tiết ở tab report, fill user_name vào select.
     const userSelectRef = useRef();
@@ -102,6 +104,7 @@ const SentenceReview = forwardRef((props, ref) => {
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
     const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState(false);
+    const [isConfirmDeleteAllModalVisible, setIsConfirmDeleteAllModalVisible] = useState(false);
 
     // on select checkbox
     const onSelectChange = selectedRowKeys => {
@@ -311,6 +314,7 @@ const SentenceReview = forwardRef((props, ref) => {
         paraSentenceAPI.getSentences(newFilter).then(res => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
+            setShowingDeleteAll(newFilter.rating == 'unRated')
         });
     };
     
@@ -679,17 +683,27 @@ const SentenceReview = forwardRef((props, ref) => {
                 </Row>
 
                 <div style={{ 
-                    float: 'right'
+                    display: 'flex',
+                    justifyContent: 'space-between'
                 }}>
-                        
+                    {
+                        isAdmin() && isShowingDeleteAll && filter.rating=='unRated' && paginationParams.total_items > 0?    
+                        <Button
+                            showSearch='true'
+                            style={{display: "flex", alignItems: "center", fontSize: "15px", padding: "4px 12px"}}
+                            type='danger'
+                            icon={<WarningOutlined/>}
+                            onClick={ () => setIsConfirmDeleteAllModalVisible(!isConfirmDeleteAllModalVisible) }
+                        >
+                            { t('sentencePage.deleteAll') }
+                        </Button>
+                        : <div></div>
+                    }
                     <Button
-                        showsearchshowsearch='true'
-                        style={{ 
-                            width: '100px', 
-                            background: '#384AD7', 
-                            borderColor: '#384AD7'
-                        }}
+                        showSearch='true'
+                        style={{display: "flex", alignItems: "center", fontSize: "15px", padding: "4px 12px"}}
                         type='primary'
+                        icon={<SearchOutlined/>}
                         onClick={ () => searchParaSentence() }
                     >
                         { t('sentencePage.search') }
@@ -814,9 +828,24 @@ const SentenceReview = forwardRef((props, ref) => {
             }
             { isAdmin() ?
                 <ConfirmDeleteModal
+                    key={ 1 }
                     isVisible={ isConfirmDeleteModalVisible }
                     setVisible={ setIsConfirmDeleteModalVisible }
                     deleteData={ selectedRowKeys }
+                    toast={ toast }
+                    reloadSentenceData={ setDataSource }
+                    reloadPaginationParams={ setPaginationParams }
+                    currentFilter={ filter }
+                    currentPagination = { paginationParams }
+                /> 
+                : null
+            }
+            { isAdmin() ?
+                <ConfirmDeleteModal
+                    key={ 2 }
+                    isDeleteAll={ true }
+                    isVisible={ isConfirmDeleteAllModalVisible }
+                    setVisible={ setIsConfirmDeleteAllModalVisible }
                     toast={ toast }
                     reloadSentenceData={ setDataSource }
                     reloadPaginationParams={ setPaginationParams }

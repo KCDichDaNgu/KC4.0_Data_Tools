@@ -194,7 +194,13 @@
 		"deleteSentencesConfirmation": "Bạn có muốn xóa # cặp câu?",
 		"cancel": "Hủy",
 		"deleteSuccess": "Xóa thành công # cặp câu!",
-		"deleteFail": "Xóa thất bại!"
+		"deleteFail": "Xóa thất bại!",
+		"deleteAll": "Xóa tất cả",
+		"deleteAllConfirmation": "Bạn có muốn xóa tất cả #1 cặp câu #2?",
+		"enterPasswordToDelete": "Nhập mật khẩu để xóa",
+		"passwordPlaceholder": "Nhập nhật khẩu",
+		"emptyPasswordWarning": "Bạn phải nhập mật khẩu để xóa tất cả câu!",
+		"incorrectPassword": "Mật khẩu không đúng!"
 	},
 	"manageUserPage": {
 		"title": "Người dùng",

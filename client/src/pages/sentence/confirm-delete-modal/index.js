@@ -1,7 +1,8 @@
 import './style.module.scss';
-import React from 'react'
+import React, { useState } from 'react'
 import {
-    Modal
+    Modal,
+    Input
 } from 'antd'
 
 import { useTranslation } from 'react-i18next';
@@ -12,20 +13,65 @@ const ConfirmDeleteModal = props => {
     const { t } = useTranslation(['common']);
 
     const {
+        isDeleteAll,
         isVisible,
         setVisible,
         deleteData,
         reloadSentenceData,
         reloadPaginationParams,
         currentFilter,
-        currentPagination
+        currentPagination,
     } = props
 
-    const handleOk = async () => {
+    const [password, setPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
+    const [isConfirming, setIsConfirming] = useState(true)
+
+    const handleDeleteAll = async () => {
+        setIsLoading(true)
+        if (password && password != ""){
+            let response = await paraSentenceAPI.deleteAllSentences({
+                password: password,
+                delete_filter: currentFilter
+            })
+            if (response.status == 200 && response.data.code == 1){
+                currentFilter.page = 1;
+                let newSentenceData = await paraSentenceAPI.getSentences(currentFilter)
+                reloadSentenceData(newSentenceData.data.data.para_sentences);
+                reloadPaginationParams(newSentenceData.data.data.pagination);
+                
+                setPassword("")
+                setVisible(false)
+                toast.success(t(`sentencePage.${response.data.message}`).replace('#', response.data.data), {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                })
+            } else {
+                toast.error(t(`sentencePage.${response.data.message}`), {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                })
+            }
+        } else {
+            toast.warn(t("sentencePage.emptyPasswordWarning"), {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+            })
+        }
+        setIsLoading(false)
+    }
+
+    const handleDelete = async () => {
+        setIsLoading(true)
         let response = await paraSentenceAPI.deleteSentencesByIds({ids: deleteData})
         if (response.status == 200 && response.data.code == 1){
             let currentPage = 0;
-            console.log(currentPagination)
             if ((currentPagination.total_pages == currentPagination.current_page) && (currentPagination.total_items%currentPagination.page_size == deleteData.length || currentPagination.page_size == deleteData.length)){
                 currentPage = currentPagination.current_page - 1
             } else {
@@ -38,39 +84,71 @@ const ConfirmDeleteModal = props => {
                 reloadPaginationParams(newSentenceData.data.data.pagination);
             }
             setVisible(false)
-            toast.success(t("sentencePage.deleteSuccess").replace('#', response.data.data), {
+            toast.success(t(`sentencePage.${response.data.message}`).replace('#', response.data.data), {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
             })
         } else {
-            toast.error(t("sentencePage.deleteFail"), {
+            toast.error(t(`sentencePage.${response.data.message}`), {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
             })
         }
+        setIsLoading(false)
     };
 
     const handleCancel = () => {
+        setPassword("")
+        setIsLoading(false);
         setVisible(false);
     };
-    return (
-        <Modal
-            title={t("sentencePage.deleteSentences")}
-            centered={true}
-            visible={isVisible}
-            onOk={() => handleOk()}
-            onCancel={() => handleCancel()}
-            okType="danger primary"
-            okText={t("sentencePage.delete")}
-            cancelText={t("sentencePage.cancel")}
-        >
-            <p>{t("sentencePage.deleteSentencesConfirmation").replace('#', deleteData.length)}</p>
-        </Modal>
-    );
+
+    if (isDeleteAll) {
+        return (
+            <Modal
+                title={t("sentencePage.deleteAll")}
+                centered={true}
+                visible={isVisible}
+                onOk={() => handleDeleteAll()}
+                onCancel={() => handleCancel()}
+                okType="danger primary"
+                okText={t("sentencePage.deleteAll")}
+                cancelText={t("sentencePage.cancel")}
+                confirmLoading={isLoading}
+            >
+                <div>{t("sentencePage.deleteAllConfirmation").replace('#1', currentPagination.total_items).replace('#2', t(`sentencePage.${currentFilter.rating}`).toLocaleLowerCase())}</div>
+                <br/>
+                <div>{t('sentencePage.enterPasswordToDelete')}</div>
+                <Input.Password 
+                    placeholder={t('sentencePage.passwordPlaceholder')}
+                    value={password}
+                    onChange={ e => {
+                        setPassword(e.target.value)
+                    }}
+                />
+            </Modal>
+        );
+    } else {
+        return (
+            <Modal
+                title={t("sentencePage.deleteSentences")}
+                centered={true}
+                visible={isVisible}
+                onOk={() => handleDelete()}
+                onCancel={() => handleCancel()}
+                okType="danger primary"
+                okText={t("sentencePage.delete")}
+                cancelText={t("sentencePage.cancel")}
+                confirmLoading={isLoading}
+            >
+                <p>{t("sentencePage.deleteSentencesConfirmation").replace('#', deleteData.length)}</p>
+            </Modal>
+        );
+    }
 }
 
 export default ConfirmDeleteModal

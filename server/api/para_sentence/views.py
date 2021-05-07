@@ -315,12 +315,42 @@ def delete_para_sentence():
         result = ParaSentence.objects(id__in=ids_to_delete).filter(__raw__ = {'newest_para_sentence.rating': 'unRated'}).delete()
         return jsonify({
             'code': STATUS_CODES['success'], 
-            'message': 'Deleted sucessfully',
+            'message': 'deleteSuccess',
             'data': result
         })
     except Exception as ex:
         print(ex)
         return jsonify({
             'code': STATUS_CODES['failure'], 
-            'message': 'deletedFailure'
+            'message': 'deleteFail'
+        })
+
+@para_sentence_bp.route('/detele-all-sentences', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def delete_all_para_sentence():
+    try:
+        password = request.json['password']
+        if password != current_token.user.password:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'incorrectPassword'
+            })
+
+        delete_filter = request.json['delete_filter']
+        delete_filter['rating']="unRated"
+        query = build_query_params(delete_filter)
+        result = ParaSentence.objects.filter(__raw__ = query).delete()
+
+        return jsonify({
+            'code': STATUS_CODES['success'], 
+            'message': 'deleteSuccess',
+            'data': result
+        }) 
+    except Exception as ex:
+        print(ex)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'deleteFail'
         })

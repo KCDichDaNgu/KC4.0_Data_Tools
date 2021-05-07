@@ -85,4 +85,14 @@ export default {
 				'Content-Type': 'application/json',
 			}
 		}),
+	
+	deleteAllSentences: data => 
+		customAxios({
+			method: "post",
+			url: `${server_endpoint}/api/para-sentence/detele-all-sentences`,
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		}),
 };
