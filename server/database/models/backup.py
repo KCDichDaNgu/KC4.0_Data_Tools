@@ -3,20 +3,27 @@ from blinker import Signal
 
 from database.db import db
 from database.models.user import User
-from constants.common import STATUS_CODES, BACKUP_USER_DIR, BACKUP_SERVER_DIR, RESTORE_DIR
+from constants.common import STATUS_CODES, BACKUP_USER_DIR, BACKUP_SERVER_DIR, RESTORE_DIR, VERSION_COUNT_FILE_PATH
 
 import subprocess
 import os
 
 from mongoengine.signals import pre_save, post_save, post_delete
 
-def create_backup(name='auto-backup', user_id=None, type='by_server', version=None):
+def create_backup(name='auto-backup', user_id=None, type='by_server'):
     created_at = time.time()
+
+    # increase version
+    version_file = open(VERSION_COUNT_FILE_PATH, 'r+')
+    version = version_file.read().split('.')
+    version[1] = int(version[1]) + 1
+    new_version = version[0]+'.'+str(version[1])
+
     if type == Backup.BACKUP_TYPES['by_server']:
         backup = Backup(
             name=name,
             type=Backup.BACKUP_TYPES['by_server'],
-            version=version,
+            version=new_version,
             hash_name=str(created_at),
             created_at=created_at
         )
@@ -43,12 +50,18 @@ def create_backup(name='auto-backup', user_id=None, type='by_server', version=No
         backup = Backup(
             name=name,
             type=Backup.BACKUP_TYPES[type],
-            version=version,
+            version=new_version,
             creator_id=user_id,
             hash_name=str(created_at),
             created_at=created_at
         )
         backup.save()
+
+    # update version file
+    version_file.seek(0)
+    version_file.write(new_version)
+    version_file.truncate()
+    version_file.close()
 
     return backup
 

@@ -2,7 +2,7 @@ import time
 from flask import Blueprint, request, session
 from flask import jsonify
 from authlib.integrations.flask_oauth2 import current_token
-from constants.common import STATUS_CODES, VERSION_COUNT_FILE_PATH, CURRENT_VERSION_FILE_PATH
+from constants.common import STATUS_CODES, CURRENT_VERSION_FILE_PATH
 
 from database.models.user import User
 from database.models.backup import Backup, create_backup, restoreDb
@@ -23,20 +23,8 @@ def create():
 
         user = current_token.user
 
-        # increase version
-        version_file = open(VERSION_COUNT_FILE_PATH, 'r+')
-        version = version_file.read().split('.')
-        version[1] = int(version[1]) + 1
-        new_version = version[0]+'.'+str(version[1])
-
         # backup database
-        backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'], new_version)
-
-        # update version file
-        version_file.seek(0)
-        version_file.write(new_version)
-        version_file.truncate()
-        version_file.close()
+        backup = create_backup(args['name'], user.id, Backup.BACKUP_TYPES['by_user'])
 
         return jsonify(
             code=STATUS_CODES['success'],
