@@ -24,8 +24,9 @@ import {
     Divider
 } from 'antd';
 
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, ArrowRightOutlined, WarningOutlined, SearchOutlined } from '@ant-design/icons';
 
+import { ToastContainer, toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import { formatDate } from '../../utils/date';
@@ -36,6 +37,7 @@ import { LANGS, STATUS_CODES } from '../../constants';
 import { isAdmin, isReviewer } from '../../utils/auth';
 import UserSelect from '../../components/user-select';
 import CustomTextArea from '../../components/custom-textarea';
+import ConfirmDeleteModal from './confirm-delete-modal/index'
 
 import assignmentAPI from '../../api/assignment';
 
@@ -52,6 +54,7 @@ const SentenceReview = forwardRef((props, ref) => {
     const [paginationParams, setPaginationParams] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     const [exporting, setExporting] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     
     const [filter, setFilter] = useState({
         domain: '',
@@ -69,6 +72,8 @@ const SentenceReview = forwardRef((props, ref) => {
         score__to: '',
         editorId: ''
     });
+
+    let [isShowingDeleteAll, setShowingDeleteAll] = useState(filter.rating=='unRated')
 
     // sử dụng useRef để gọi function setSelectedUser trong UserSelect,
     // sử dụng khi người dùng bấm xem chi tiết ở tab report, fill user_name vào select.
@@ -98,6 +103,23 @@ const SentenceReview = forwardRef((props, ref) => {
     }));
     
     const [isModalImportVisible, setIsModalImportVisible] = useState(false);
+    const [isConfirmDeleteModalVisible, setIsConfirmDeleteModalVisible] = useState(false);
+    const [isConfirmDeleteAllModalVisible, setIsConfirmDeleteAllModalVisible] = useState(false);
+
+    // on select checkbox
+    const onSelectChange = selectedRowKeys => {
+        setSelectedRowKeys(selectedRowKeys);
+    };
+
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+        getCheckboxProps: record => {
+            return {
+                disabled: record.newest_para_sentence.rating !== "unRated"
+            }
+        }
+    }
 
     const renderText = (key, paraSentence, index) => {
 
@@ -206,13 +228,12 @@ const SentenceReview = forwardRef((props, ref) => {
             render: (record, paraSentence, index) => {
                 return (
                     <div style={{
-                        width: 'fit-content'
+                        width: '100%',
                     }}>
                         <div style={{ 
                             textAlign: 'center',
                             fontSize: '14px',
                             fontWeight: 600,
-                            marginBottom: '10px'
                         }}>
                             { Number(record.score.senAlign).toFixed(2) }
                         </div>
@@ -225,6 +246,7 @@ const SentenceReview = forwardRef((props, ref) => {
             },
             sorter: (a, b, sortOrder) => { },
             width: '15%',
+            align: 'center',
             sortDirections: ['ascend', 'descend', 'ascend']
         },
         {
@@ -239,6 +261,7 @@ const SentenceReview = forwardRef((props, ref) => {
             },
             sorter: (a, b, sortOrder) => { },
             width: '10%',
+            align: 'center',
             sortDirections: ['ascend', 'descend', 'ascend']
         }
     ]; 
@@ -291,6 +314,7 @@ const SentenceReview = forwardRef((props, ref) => {
         paraSentenceAPI.getSentences(newFilter).then(res => {
             setDataSource(res.data.data.para_sentences);
             setPaginationParams(res.data.data.pagination);
+            setShowingDeleteAll(newFilter.rating == 'unRated')
         });
     };
     
@@ -472,7 +496,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 {
                                     allowImportFiles() ? (
                                         <Button
-                                            style={{ marginRight: '10px' }}
+                                            style={{display: "flex", alignItems: "center", fontSize: "15px", marginRight: "10px"}} 
                                             onClick={ () => setIsModalImportVisible(!isModalImportVisible) } 
                                             icon={ <UploadOutlined /> }
                                         >
@@ -483,7 +507,7 @@ const SentenceReview = forwardRef((props, ref) => {
 
                                 {
                                     allowExport() ? (
-                                        <Button onClick={ exportData }>
+                                        <Button style={{fontSize: "15px"}} onClick={ exportData }>
                                             { t('sentencePage.exportData') }
                                         </Button>
                                     ) : ''
@@ -591,6 +615,7 @@ const SentenceReview = forwardRef((props, ref) => {
                                 ] : null 
                             }
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
+                            separator={<ArrowRightOutlined style={{display: "flex", color: "#bfbfbf"}}/>}
                         />
                     </Col>
 
@@ -658,17 +683,27 @@ const SentenceReview = forwardRef((props, ref) => {
                 </Row>
 
                 <div style={{ 
-                    float: 'right'
+                    display: 'flex',
+                    justifyContent: 'space-between'
                 }}>
-                        
+                    {
+                        isAdmin() && isShowingDeleteAll && filter.rating=='unRated' && paginationParams.total_items > 0?    
+                        <Button
+                            showSearch='true'
+                            style={{display: "flex", alignItems: "center", fontSize: "15px", padding: "4px 12px"}}
+                            type='danger'
+                            icon={<WarningOutlined/>}
+                            onClick={ () => setIsConfirmDeleteAllModalVisible(!isConfirmDeleteAllModalVisible) }
+                        >
+                            { t('sentencePage.deleteAll') }
+                        </Button>
+                        : <div></div>
+                    }
                     <Button
-                        showsearchshowsearch='true'
-                        style={{ 
-                            width: '100px', 
-                            background: '#384AD7', 
-                            borderColor: '#384AD7'
-                        }}
+                        showSearch='true'
+                        style={{display: "flex", alignItems: "center", fontSize: "15px", padding: "4px 12px"}}
                         type='primary'
+                        icon={<SearchOutlined/>}
                         onClick={ () => searchParaSentence() }
                     >
                         { t('sentencePage.search') }
@@ -678,9 +713,11 @@ const SentenceReview = forwardRef((props, ref) => {
 
             <Card className='card-body-padding-0'>
                 <Table
+                    rowSelection={ isAdmin() ? rowSelection : null}
                     scroll={{ x: 'max-content' }}
                     rowKey={ record => record.id } 
                     rowClassName={ record => getTableRowClassName(record)}
+                    style={{padding: "0px 10px"}}
                     expandable={{
                         expandedRowRender: record => {
                             return (
@@ -759,8 +796,21 @@ const SentenceReview = forwardRef((props, ref) => {
                         current: paginationParams.current_page
                     }}
                     footer={() => (
-                        <div style={{ textAlign: 'right', paddingRight: 5 }}>
-                            {`${t('total')} ${paginationParams.total_items} ${t('records').toLowerCase()}`}
+                        <div style={{display: "flex", justifyContent: "space-between"}}>
+                            { selectedRowKeys.length > 0 ? 
+                                <Button 
+                                    style={{display: "flex", alignItems: "center", fontSize: "15px"}} 
+                                    icon={ <DeleteOutlined/> } 
+                                    type="primary" 
+                                    onClick={() => setIsConfirmDeleteModalVisible(!isConfirmDeleteModalVisible)}
+                                    danger
+                                >
+                                    {t("sentencePage.delete")}
+                                </Button> 
+                                : <div></div>}
+                            <div style={{lineHeight: "32px"}}>
+                                {`${t('total')} ${paginationParams.total_items} ${t('records').toLowerCase()}`}
+                            </div>
                         </div>
                     )}>
                 </Table>
@@ -776,6 +826,35 @@ const SentenceReview = forwardRef((props, ref) => {
                 </ImportFileModal>
                 : null 
             }
+            { isAdmin() ?
+                <ConfirmDeleteModal
+                    key={ 1 }
+                    isVisible={ isConfirmDeleteModalVisible }
+                    setVisible={ setIsConfirmDeleteModalVisible }
+                    deleteData={ selectedRowKeys }
+                    toast={ toast }
+                    reloadSentenceData={ setDataSource }
+                    reloadPaginationParams={ setPaginationParams }
+                    currentFilter={ filter }
+                    currentPagination = { paginationParams }
+                /> 
+                : null
+            }
+            { isAdmin() ?
+                <ConfirmDeleteModal
+                    key={ 2 }
+                    isDeleteAll={ true }
+                    isVisible={ isConfirmDeleteAllModalVisible }
+                    setVisible={ setIsConfirmDeleteAllModalVisible }
+                    toast={ toast }
+                    reloadSentenceData={ setDataSource }
+                    reloadPaginationParams={ setPaginationParams }
+                    currentFilter={ filter }
+                    currentPagination = { paginationParams }
+                /> 
+                : null
+            }
+            <ToastContainer/>
         </React.Fragment>
     );
 });

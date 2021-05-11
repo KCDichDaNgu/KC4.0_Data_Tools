@@ -3,7 +3,7 @@ from flask import Blueprint, request, session
 from flask import jsonify, send_file
 from authlib.integrations.flask_oauth2 import current_token
 from constants.common import STATUS_CODES, IMPORT_FROM_FILE_DIR, EXPORT_FILE_DIR
-from oauth2 import authorization, require_oauth, status_required
+from oauth2 import authorization, require_oauth, status_required, role_required
 
 from database.models.para_sentence import ParaSentence, Editor, NewestParaSentence, ParaSentenceText
 from database.models.para_sentence_history import ParaSentenceHistory
@@ -304,3 +304,53 @@ def export():
     export_csv_file(para_sentences, filepath)
 
     return send_file(filepath)
+
+@para_sentence_bp.route('/detele-sentences', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def delete_para_sentence():
+    ids_to_delete = request.json['ids']
+    try:
+        result = ParaSentence.objects(id__in=ids_to_delete).filter(__raw__ = {'newest_para_sentence.rating': 'unRated'}).delete()
+        return jsonify({
+            'code': STATUS_CODES['success'], 
+            'message': 'deleteSuccess',
+            'data': result
+        })
+    except Exception as ex:
+        print(ex)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'deleteFail'
+        })
+
+@para_sentence_bp.route('/detele-all-sentences', methods=['POST'])
+@require_oauth()
+@role_required(['admin'])
+@status_required(User.USER_STATUS['active'])
+def delete_all_para_sentence():
+    try:
+        password = request.json['password']
+        if password != current_token.user.password:
+            return jsonify({
+                'code': STATUS_CODES['failure'], 
+                'message': 'incorrectPassword'
+            })
+
+        delete_filter = request.json['delete_filter']
+        delete_filter['rating']="unRated"
+        query = build_query_params(delete_filter)
+        result = ParaSentence.objects.filter(__raw__ = query).delete()
+
+        return jsonify({
+            'code': STATUS_CODES['success'], 
+            'message': 'deleteSuccess',
+            'data': result
+        }) 
+    except Exception as ex:
+        print(ex)
+        return jsonify({
+            'code': STATUS_CODES['failure'], 
+            'message': 'deleteFail'
+        })

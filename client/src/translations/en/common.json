@@ -113,7 +113,19 @@
 		"exportData": "Export data",
 		"byEditor": "Editor",
 		"searchByEditor": "Enter editor's username...",
-		"noMoreResults": "No more results"
+		"noMoreResults": "No more results",
+		"delete": "Delete",
+		"deleteSentences": "Delete sentences",
+		"deleteSentencesConfirmation": "Do you want to delete # sentence(s)?",
+		"cancel": "Cancel",
+		"deleteSuccess": "Delete # sentence(s) successfully!",
+		"deleteFail": "Delete failingly!",
+		"deleteAll": "Delete all",
+		"deleteAllConfirmation": "Do you want to deleta all #1 #2 sentence(s)?",
+		"enterPasswordToDelete": "Enter password to delete",
+		"passwordPlaceholder": "Enter password",
+		"emptyPasswordWarning": "You have to enter password to delete all sentences!",
+		"incorrectPassword": "Password is incorrect!"
 	},
 	"backupDatabase": {
 		"title": "Backups management",
@@ -137,6 +149,15 @@
 		"notFound": "Not found record in the database",
 		"editedSuccess": "Edited successfully",
 		"errorUpdate": "Edited failure",
-		"notAllowed": "Can not edit this record"
+		"notAllowed": "Can not edit this record",
+		"restore": "Restore",
+		"restoreSuccess": "Restore successfully!",
+		"restoreFail": "Restore failingly! Recheck your file!",
+		"noFile": "No file is selected!",
+		"version": "Version",
+		"currentVersion": "Current version"
+	},
+	"admin": {
+		"title": "administrator"
 	}
 }

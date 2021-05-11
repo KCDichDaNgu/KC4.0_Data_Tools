@@ -75,4 +75,24 @@ export default {
 			params: data,
 			responseType: 'blob'
 		}),
+
+	deleteSentencesByIds: data => 
+		customAxios({
+			method: "post",
+			url: `${server_endpoint}/api/para-sentence/detele-sentences`,
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		}),
+	
+	deleteAllSentences: data => 
+		customAxios({
+			method: "post",
+			url: `${server_endpoint}/api/para-sentence/detele-all-sentences`,
+			data: data,
+			headers: {
+				'Content-Type': 'application/json',
+			}
+		}),
 };

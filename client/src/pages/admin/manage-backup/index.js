@@ -12,13 +12,15 @@ import {
     Spin,
     Modal,
 } from "antd";
-import { DownloadOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { DownloadOutlined, DeleteTwoTone, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import SiteLayout from '../../../layout/site-layout';
 import backupAPI from '../../../api/admin/backup';
 import { formatDateTime } from '../../../utils/date';
 import { useTranslation } from 'react-i18next';
 import { relativeTimeRounding, localeData } from 'moment';
+import RestoreModal from './restore-modal/index';
+import { ToastContainer, toast } from 'react-toastify';
 
 const ManageBackUpPage = (props) => {
     
@@ -26,11 +28,14 @@ const ManageBackUpPage = (props) => {
 
     const [isAdding, setIsAdding] = useState(false);
     const [backUps, setBackUps] = useState([]);
+    const [currentVersion, setCurrentVersion] = useState('')
     const [paginationParams, setPaginationParams] = useState({});
     const [backupProcessing, setBackupProcessing] = useState(false);
+    const [isRestoreModalVisible, setIsRestoreModalVisible] = useState(false);
 
     useEffect(() => {
         searchBackups();
+        getCurrentVersion();
     }, []);
 
     const searchBackups = () => {
@@ -38,6 +43,11 @@ const ManageBackUpPage = (props) => {
             setBackUps(res.data.data.backups);
             setPaginationParams(res.data.data.pagination);
         });
+    }
+
+    const getCurrentVersion = async () => {
+        let res = await backupAPI.getCurrentVersion();
+        setCurrentVersion(res.data.data.current_version)
     }
 
     const addBackup = (backupName) => {
@@ -137,7 +147,8 @@ const ManageBackUpPage = (props) => {
             title: t('backupDatabase.createdAt'),
             dataIndex: "created_at",
             key: "created_at",
-            render: (created_at) => formatDateTime(created_at)
+            render: (created_at) => formatDateTime(created_at),
+            align: 'center'
         },
         {
             title: t('backupDatabase.createdBy'),
@@ -145,13 +156,22 @@ const ManageBackUpPage = (props) => {
             key: "creator",
             render: (creator, backup, index) => (
                 backup['type'] === 'by_user' ? creator['username'] : t('backupDatabase.machine')
-            )
+            ),
+            align: 'center'
         },
         {
             title: t('backupDatabase.type'),
             dataIndex: "type",
             key: "type",
-            render: (type) => t(`backupDatabase.${ type }`)
+            render: (type) => t(`backupDatabase.${ type }`),
+            align: 'center'
+        },
+        {
+            title: t('backupDatabase.version'),
+            dataIndex: "version",
+            key: "version",
+            render: version => version == null ? 'NaN' : version,
+            align: 'center'
         },
         {
             title: t('backupDatabase.url'),
@@ -159,16 +179,18 @@ const ManageBackUpPage = (props) => {
             key: "hash_name",
             render: (hash_name, backup) => (
                 <a href={backupAPI.downloadBackupURL(backup['type'], hash_name)}
+                    style={{display: 'flex', justifyContent: 'center'}}
                     target='_blank'>
                     <Button 
                         type="primary" 
-                        shape="round" 
-                        icon={<DownloadOutlined />} 
-                        size='small'>
+                        shape="round"
+                        style={{display: "flex", alignItems: "center", fontSize: "15px"}} 
+                        icon={<DownloadOutlined />} >
                         { t('backupDatabase.download') }
                     </Button>
                 </a>
-            )
+            ),
+            align: 'center'
         },
         {
             title: t('backupDatabase.delete'),
@@ -177,13 +199,13 @@ const ManageBackUpPage = (props) => {
             render: (row_value, backup) => (
                 <Button 
                     type="link" 
-                    icon={<DeleteOutlined />} 
+                    icon={<DeleteTwoTone twoToneColor="red" style={{fontSize: '18px'}}/>} 
                     size='small'
                     onClick={() => openModelConfirmDelete(backup)}
                     block>
                 </Button>
-                
-            )
+            ),
+            align: 'center'
         },
     ];
 
@@ -197,7 +219,13 @@ const ManageBackUpPage = (props) => {
                 />
 
                 <Card>
-                    <div style={{ float: 'right', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                        <div>
+                            <div style={{fontSize: "16px", fontWeight: "bold"}}>
+                                {t('backupDatabase.currentVersion') + ': ' + currentVersion}
+                            </div>
+                        </div>
+                        <div>
                         <div style={{ marginRight: '10px', display: 'inline-block' }}>
                             {
                                 backupProcessing ? (
@@ -207,10 +235,18 @@ const ManageBackUpPage = (props) => {
                         </div>
                         
                         <Button 
-                            style={{ display: 'inline-block' }}
+                            style={{ display: 'inline-block', marginRight: "5px" }}
                             onClick={() => setIsAdding(!isAdding)}>
                             { t('backupDatabase.addBackUp') }
                         </Button>
+
+                        <Button 
+                            style={{ display: 'inline-block' }}
+                            onClick={() => setIsRestoreModalVisible(!isRestoreModalVisible)}
+                        >
+                            { t('backupDatabase.restore') }
+                        </Button>
+                        </div>
                     </div>
 
                     { 
@@ -251,6 +287,13 @@ const ManageBackUpPage = (props) => {
                     </Table>
                 </Card>
             </SiteLayout>
+            <RestoreModal
+                isVisible={ isRestoreModalVisible }
+                setVisible={ setIsRestoreModalVisible }
+                getCurrentVersion={ getCurrentVersion }
+                toast={ toast }
+            />
+            <ToastContainer/>
         </React.Fragment>
     );
 };

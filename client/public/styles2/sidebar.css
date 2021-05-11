@@ -117,7 +117,7 @@
     position: relative;
     border-radius: 0.25rem;
     color: #343a40;
-    white-space: nowrap;
+    white-space: pre-wrap;
 }
 
 .vertical-nav-menu .metismenu-container .metismenu-link:hover {

@@ -188,7 +188,19 @@
 		"exportData": "Xuất dữ liệu",
 		"byEditor": "Người chỉnh sửa",
 		"searchByEditor": "Nhập tên người dùng...",
-		"noMoreResults": "Không tìm thấy kết quả"
+		"noMoreResults": "Không tìm thấy kết quả",
+		"delete": "Xóa",
+		"deleteSentences": "Xóa cặp câu",
+		"deleteSentencesConfirmation": "Bạn có muốn xóa # cặp câu?",
+		"cancel": "Hủy",
+		"deleteSuccess": "Xóa thành công # cặp câu!",
+		"deleteFail": "Xóa thất bại!",
+		"deleteAll": "Xóa tất cả",
+		"deleteAllConfirmation": "Bạn có muốn xóa tất cả #1 cặp câu #2?",
+		"enterPasswordToDelete": "Nhập mật khẩu để xóa",
+		"passwordPlaceholder": "Nhập nhật khẩu",
+		"emptyPasswordWarning": "Bạn phải nhập mật khẩu để xóa tất cả câu!",
+		"incorrectPassword": "Mật khẩu không đúng!"
 	},
 	"manageUserPage": {
 		"title": "Người dùng",
@@ -266,7 +278,13 @@
 		"notFound": "Không tìm thấy bản ghi dữ liệu",
 		"editedSuccess": "Đã chỉnh sửa thành công",
 		"editedFailure": "Chỉnh sửa thất bại",
-		"notAllowed": "Không thể chỉnh sửa bản ghi này"
+		"notAllowed": "Không thể chỉnh sửa bản ghi này",
+		"restore": "Khôi phục",
+		"restoreSuccess": "Khôi phục thành công!",
+		"restoreFail": "Khôi phục thất bại! Kiểm tra lại tệp!",
+		"noFile": "Chưa chọn tệp!",
+		"version": "Phiên bản",
+		"currentVersion": "Phiên bản hiện tại"
 	},
 	"fieldRequired": "Trường dữ liệu này là bắt buộc",
 	"lang": "Ngôn ngữ",
@@ -299,5 +317,8 @@
 		"title": "Thiết lập"
 	},
 	"update": "Cập nhật",
-	"records": "Bản ghi"
+	"records": "Bản ghi",
+	"admin": {
+		"title": "Quản trị viên"
+	}
 }
