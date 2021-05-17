@@ -20,6 +20,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
+import AdminReviewerRoute from './routeGuards/AdminReviewerRoute'
 
 import { withTranslation, Trans } from 'react-i18next';
 
@@ -125,7 +126,7 @@ const App = ({ location, initialReduxState }) => {
                                     component={ SentencePage } 
                                 />
 
-                                <AuthRoute 
+                                <AdminReviewerRoute 
                                     location={ location } 
                                     exact 
                                     path="/single-language-data" 
