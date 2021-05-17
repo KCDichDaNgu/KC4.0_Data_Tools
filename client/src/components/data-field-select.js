@@ -47,6 +47,11 @@ const DataFieldSelect = forwardRef((props, ref) => {
             };
             
             dataFieldAPI.search(params).then(res => {
+                res.data.items.forEach(item => {
+                    if (item.name === "Chung") {
+                        handleChange(item);
+                    }
+                });
                 setDataFieldList(res.data);
             });
         }, 750)

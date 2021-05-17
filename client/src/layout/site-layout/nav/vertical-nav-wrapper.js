@@ -13,6 +13,11 @@ const Nav = () => {
     let [ isClient, setIsClient ] = useState(false)
     let [ mainNav, setMainNav ] = useState([
         {
+            icon: 'pe-7s-file',
+            label: t('singleLanguageDataPage.title'),
+            to: 'single-language-data',
+        },
+        {
             icon: 'pe-7s-copy-file',
             label: t('sentencePage.title'),
             to: 'sentence',
@@ -36,6 +41,11 @@ const Nav = () => {
                 if (isAdmin()) {
 
                     setMainNav([
+                        {
+                            icon: 'pe-7s-file',
+                            label: t('singleLanguageDataPage.title'),
+                            to: 'single-language-data',
+                        },
                         {
                             icon: 'pe-7s-copy-file',
                             label: t('sentencePage.title'),

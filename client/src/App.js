@@ -5,6 +5,7 @@ import HomePage from './pages/home';
 
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
+import singleLanguageDataPage from './pages/single-language-data';
 
 import SettingPage from './pages/admin/setting';
 import ManageUserPage from './pages/admin/manage-user';
@@ -122,6 +123,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/sentence" 
                                     component={ SentencePage } 
+                                />
+
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/single-language-data" 
+                                    component={ singleLanguageDataPage } 
                                 />
 
                                 <Route 

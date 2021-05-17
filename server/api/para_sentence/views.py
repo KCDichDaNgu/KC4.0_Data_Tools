@@ -327,7 +327,7 @@ def delete_para_sentence():
 
 @para_sentence_bp.route('/detele-all-sentences', methods=['POST'])
 @require_oauth()
-@role_required(['admin'])
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def delete_all_para_sentence():
     try:

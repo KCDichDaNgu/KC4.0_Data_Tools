@@ -7,8 +7,12 @@
 		"unknown": "Text",
 		"en": "English",
 		"vi": "Vietnamese",
+		"km": "Khmer",
+		"zh": "Chinese",
+		"lo": "Laos",
 		"cant_detect": "Unknown language"
 	},
+	"language": "Language",
 	"Input": {
 		"requiredField": "This field is required!"
 	},
@@ -159,5 +163,25 @@
 	},
 	"admin": {
 		"title": "administrator"
+	},
+	"singleLanguageDataPage": {
+		"title": "Single language sentence",
+		"reportTab": {
+			"title": "Report"
+		},
+		"reviewTab": {
+			"title": "Single sentence"
+		},
+		"corpus": "Corpus",
+		"numberOrder": "NO",
+		"doc": "Document",
+		"source": "Source",
+		"field": "Field",
+		"action": "Action",
+		"uploadSuccess": "File(s) uploaded successfully",
+		"uploadFail": "File(s) uploaded fail",
+		"deleteSentenceConfirmation": "Do you want to delete?",
+		"deleteSuccess": "Delete successfully!",
+		"deleteFail": "Delete fail!"
 	}
 }

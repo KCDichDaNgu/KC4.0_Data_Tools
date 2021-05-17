@@ -258,6 +258,7 @@ def setup_app(app):
     # migrate = Migrate(app, db)
 
     from api.auth.views import auth_bp
+    from api.single_language_data.views import single_language_data_bp
     from api.para_sentence.views import para_sentence_bp
     from api.assignment.views import assignment_bp
     from api.data_field.views import data_field_bp
@@ -265,6 +266,7 @@ def setup_app(app):
     from api.document.views import document_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(single_language_data_bp, url_prefix='/api/single-language-data')
     app.register_blueprint(assignment_bp, url_prefix='/api/assignment') 
     app.register_blueprint(para_sentence_bp, url_prefix='/api/para-sentence') 
     app.register_blueprint(data_field_bp, url_prefix='/api/data-field') 

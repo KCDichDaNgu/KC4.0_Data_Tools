@@ -320,5 +320,25 @@
 	"records": "Bản ghi",
 	"admin": {
 		"title": "Quản trị viên"
+	},
+	"singleLanguageDataPage": {
+		"title": "Dữ liệu đơn ngữ",
+		"reportTab": {
+			"title": "Thống kê"
+		},
+		"reviewTab": {
+			"title": "Dữ liệu đơn ngữ"
+		},
+		"corpus": "Ngữ liệu",
+		"numberOrder": "STT",
+		"doc": "Văn bản",
+		"source": "Nguồn",
+		"field": "Miền",
+		"action": "Thao tác",
+		"uploadSuccess": "Tải lên tệp thành công",
+		"uploadFail": "Tải lên tệp thất bại",
+		"deleteSentenceConfirmation": "Bạn có muốn xóa?",
+		"deleteSuccess": "Xóa thành công!",
+		"deleteFail": "Xóa thất bại!"
 	}
 }
