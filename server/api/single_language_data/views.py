@@ -24,6 +24,7 @@ single_language_data_bp = Blueprint(__name__, 'single_language_data')
 
 @single_language_data_bp.route('/upload', methods=['post'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def upload():
     try:
@@ -96,6 +97,7 @@ def upload():
 
 @single_language_data_bp.route('', methods=['get'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def get():
     try:
@@ -132,6 +134,7 @@ def get():
 
 @single_language_data_bp.route('/delete-sentence', methods=['post'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def delete_by_id():
     try:
@@ -152,6 +155,7 @@ def delete_by_id():
 
 @single_language_data_bp.route('/download/<id>', methods=['get'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def download(id):
     try:
@@ -172,6 +176,7 @@ def download(id):
 
 @single_language_data_bp.route('/export', methods=['get'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def export():
     try:
@@ -199,6 +204,7 @@ def export():
 
 @single_language_data_bp.route('/report', methods=['get'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def get_report():
     try:
@@ -243,6 +249,7 @@ def get_report():
 
 @single_language_data_bp.route('/field-report', methods=['get'])
 @require_oauth()
+@role_required(['admin', 'reviewer'])
 @status_required(User.USER_STATUS['active'])
 def get_domain_report():
     try:

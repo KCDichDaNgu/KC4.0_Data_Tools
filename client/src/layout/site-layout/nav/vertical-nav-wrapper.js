@@ -2,7 +2,7 @@ import React, { Component, Fragment, useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import MetisMenu from 'react-metismenu';
-import { isAdmin } from '../../../utils/auth';
+import { isAdmin, isReviewer } from '../../../utils/auth';
 import { clonedStore } from '../../../store';
 
 import { useTranslation } from 'react-i18next';
@@ -12,11 +12,6 @@ const Nav = () => {
 
     let [ isClient, setIsClient ] = useState(false)
     let [ mainNav, setMainNav ] = useState([
-        {
-            icon: 'pe-7s-file',
-            label: t('singleLanguageDataPage.title'),
-            to: 'single-language-data',
-        },
         {
             icon: 'pe-7s-copy-file',
             label: t('sentencePage.title'),
@@ -87,6 +82,24 @@ const Nav = () => {
                                 },
                             ]     
                         },
+                    ])
+                } else if (isReviewer()) {
+                    setMainNav([
+                        {
+                            icon: 'pe-7s-file',
+                            label: t('singleLanguageDataPage.title'),
+                            to: 'single-language-data',
+                        },
+                        {
+                            icon: 'pe-7s-copy-file',
+                            label: t('sentencePage.title'),
+                            to: 'sentence',
+                        },
+                        {
+                            icon: 'pe-7s-news-paper',
+                            label: t('documentPage.title'),
+                            to: 'document',
+                        }
                     ])
                 }
 
