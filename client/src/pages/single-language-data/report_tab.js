@@ -205,7 +205,7 @@ const SentenceReport = (props) => {
                                     }
                                 },
                                 noData: {
-                                    text: "Không có dữ liệu",
+                                    text: t("noData"),
                                     align: 'center',
                                     verticalAlign: 'middle',
                                     offsetX: 0,

@@ -340,5 +340,7 @@
 		"deleteSentenceConfirmation": "Bạn có muốn xóa?",
 		"deleteSuccess": "Xóa thành công!",
 		"deleteFail": "Xóa thất bại!"
-	}
+	},
+	"defaultField": "Chung",
+	"noData": "Không có dữ liệu"
 }

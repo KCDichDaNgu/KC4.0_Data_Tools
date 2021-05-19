@@ -183,5 +183,7 @@
 		"deleteSentenceConfirmation": "Do you want to delete?",
 		"deleteSuccess": "Delete successfully!",
 		"deleteFail": "Delete fail!"
-	}
+	},
+	"defaultField": "General",
+	"noData": "No data"
 }
