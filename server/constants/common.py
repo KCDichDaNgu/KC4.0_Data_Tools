@@ -4,6 +4,7 @@ STATUS_CODES = {
 }
 
 IMPORT_FROM_FILE_DIR = "data/import_from_file/"
+IMPORT_SINGLE_LANGUAGE_DATA_DIR = "data/import_single_language_data"
 
 BACKUP_SERVER_DIR = "public/backups/by_server/"
 BACKUP_USER_DIR = "public/backups/by_user/"

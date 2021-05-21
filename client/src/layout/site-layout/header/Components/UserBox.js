@@ -9,7 +9,7 @@ import {
     NavLink
 } from 'reactstrap'
 
-import avatar1 from '../../../../../public/images/avatars/1.jpg';
+import avatar from '../../../../../public/images/avatars/avatar.jpg';
 import { clonedStore } from '../../../../store';
 
 import { userLogout } from '../../../../store/user/action';
@@ -62,7 +62,7 @@ const UserBox = () => {
                                     <img 
                                         width={ 42 } 
                                         className="rounded-circle" 
-                                        src={ userDetail.profile_picture || avatar1 } alt=""
+                                        src={ userDetail.profile_picture || avatar } alt=""
                                     />
                                         
                                     {/* <FontAwesomeIcon 

@@ -687,7 +687,7 @@ const SentenceReview = forwardRef((props, ref) => {
                     justifyContent: 'space-between'
                 }}>
                     {
-                        isAdmin() && isShowingDeleteAll && filter.rating=='unRated' && paginationParams.total_items > 0?    
+                        (isAdmin() || isReviewer()) && isShowingDeleteAll && filter.rating=='unRated' && paginationParams.total_items > 0?    
                         <Button
                             showSearch='true'
                             style={{display: "flex", alignItems: "center", fontSize: "15px", padding: "4px 12px"}}

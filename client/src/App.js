@@ -5,6 +5,7 @@ import HomePage from './pages/home';
 
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
+import singleLanguageDataPage from './pages/single-language-data';
 
 import SettingPage from './pages/admin/setting';
 import ManageUserPage from './pages/admin/manage-user';
@@ -19,6 +20,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 
 import AuthRoute from './routeGuards/AuthRoute';
 import AdminRoute from './routeGuards/AdminRoute';
+import AdminReviewerRoute from './routeGuards/AdminReviewerRoute'
 
 import { withTranslation, Trans } from 'react-i18next';
 
@@ -122,6 +124,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/sentence" 
                                     component={ SentencePage } 
+                                />
+
+                                <AdminReviewerRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/single-language-data" 
+                                    component={ singleLanguageDataPage } 
                                 />
 
                                 <Route 
