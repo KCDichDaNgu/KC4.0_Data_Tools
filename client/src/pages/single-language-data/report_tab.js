@@ -1,31 +1,25 @@
 import "./style.module.scss";
 
-import React, { useEffect, useState, useRef } from "react";
-import PageTitle from "../../layout/site-layout/main/PageTitle";
+import React, { useEffect, useState } from "react";
 import singleLanguageDataAPI from "../../api/single-language-data";
 import assignmentAPI from '../../api/assignment';
 
-import locale from 'antd/es/date-picker/locale/vi_VN';
 import { LANGS, STATUS_CODES } from '../../constants';
 
 import Chart from 'react-apexcharts';
 
 import {
-    Button,
     Row,
     Col,
     Card,
     Select,
-    Input,
-    message,
     Table,
-    DatePicker
 } from "antd";
 
-import { ArrowRightOutlined } from "@ant-design/icons"
-import { isAdmin, isReviewer } from '../../utils/auth';
+import { isAdmin } from '../../utils/auth';
 import { useTranslation } from 'react-i18next';
-import moment from 'moment';
+import { randomColors } from '../../utils/generate-color'
+import { getConfirmLocale } from "antd/lib/modal/locale";
 
 const SentenceReport = (props) => {
     const { t } = useTranslation(['common']);
@@ -56,10 +50,12 @@ const SentenceReport = (props) => {
         "word_num_avg": 0,
         "word_count": []
     });
-    let fieldReportData = [];
+    const [totalFieldReportData, setTotalFieldReportData] = useState({});
+    const [currentField, setCurrentField] = useState([]);
     const [chartData, setChartData] = useState({
         series: [],
-        labels: []
+        labels: [],
+        colors: ["#ffffff"]
     });
 
     const updateChart = data => {
@@ -69,9 +65,11 @@ const SentenceReport = (props) => {
             newSeries.push(e.count)
             newLables.push(e.field.name)
         });
+
         setChartData({
             series: newSeries,
-            labels: newLables
+            labels: newLables,
+            colors: randomColors(data.length)
         })
     }
 
@@ -114,10 +112,11 @@ const SentenceReport = (props) => {
 
             let reportRes = await singleLanguageDataAPI.getReport(filter)
             setReportData(reportRes.data.data)
+            setTotalFieldReportData(reportRes.data.data)
 
             let fieldReportRes = await singleLanguageDataAPI.getFieldReport({lang: filter.lang})
-            fieldReportData = fieldReportRes.data.data;           
-            updateChart(fieldReportData)
+            setCurrentField(fieldReportRes.data.data)
+            updateChart(fieldReportRes.data.data)
         }
 
         fetchData()
@@ -134,10 +133,24 @@ const SentenceReport = (props) => {
         
         let reportRes = await singleLanguageDataAPI.getReport(cloneFilter)
         setReportData(reportRes.data.data)
+        setTotalFieldReportData(reportRes.data.data)
         let fieldReportRes = await singleLanguageDataAPI.getFieldReport({lang: cloneFilter.lang})
-        fieldReportData = fieldReportRes.data.data;
-        updateChart(fieldReportData)
+        setCurrentField(fieldReportRes.data.data)
+        updateChart(fieldReportRes.data.data)
     };
+
+    const selectField = async (event, chartContext, config) => {
+        let selectedField = config.dataPointIndex;
+        let selectedFieldId = currentField[selectedField].field._id.$oid
+        if (filter.field !== selectedFieldId){
+            filter.field = selectedFieldId
+            let reportRes = await singleLanguageDataAPI.getReport(filter)
+            setReportData(reportRes.data.data)
+        } else if (filter.field === selectedFieldId){
+            filter.field = ""
+            setReportData(totalFieldReportData)
+        }
+    }
 
     return (
         <React.Fragment>
@@ -194,13 +207,16 @@ const SentenceReport = (props) => {
                     >
                         <Chart 
                             options={{
+                                colors: chartData.colors,
                                 labels: chartData.labels,
+                                stroke: {
+                                    width: 1
+                                },
                                 chart: {
                                     events: {
-                                        dataPointSelection: (event, chartContext, config) => {
-                                            console.log(event);
-                                            console.log(chartContext);
-                                            console.log(config);
+                                        dataPointSelection: selectField,
+                                        updated: (chartContext, config) => {
+                                            config.globals.selectedDataPoints = []
                                         }
                                     }
                                 },
