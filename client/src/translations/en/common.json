@@ -185,5 +185,20 @@
 		"deleteFail": "Delete fail!"
 	},
 	"defaultField": "General",
-	"noData": "No data"
+	"noData": "No data",
+	"toolStatus": {
+		"title": "Status of tools",
+		"running": "Running",
+		"stopping": "Stopping",
+		"error": "Error",
+		"table": {
+			"name": "Name",
+			"url": "Address",
+			"manager": "Manager",
+			"phone": "Phone number",
+			"status": "Status",
+			"recheck": "Recheck",
+			"checking": "Checking"
+		}
+	}
 }

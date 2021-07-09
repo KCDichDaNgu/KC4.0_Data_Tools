@@ -58,12 +58,12 @@ const Nav = () => {
                                 {
                                     icon: 'pe-7s-server',
                                     label: "         "+t('backupDatabase.title'),
-                                    to: '/manage-backup',
+                                    to: 'manage-backup',
                                 },
                                 {
                                     icon: 'pe-7s-users',
                                     label: "         "+t('manageUserPage.title'),
-                                    to: '/manage-user',
+                                    to: 'manage-user',
                                 },
                                 {
                                     icon: 'pe-7s-global',
@@ -79,6 +79,11 @@ const Nav = () => {
                                     icon: 'pe-7s-settings',
                                     label: "         "+t('settingPage.title'),
                                     to: 'setting',
+                                },
+                                {
+                                    icon: 'pe-7s-tools',
+                                    label: "         "+t('toolStatus.title'),
+                                    to: 'tool-status',
                                 },
                             ]     
                         },

@@ -342,5 +342,20 @@
 		"deleteFail": "Xóa thất bại!"
 	},
 	"defaultField": "Chung",
-	"noData": "Không có dữ liệu"
+	"noData": "Không có dữ liệu",
+	"toolStatus": {
+		"title": "Tình trạng tools",
+		"running": "Đang hoạt động",
+		"stopping": "Đang tắt",
+		"error": "Đang lỗi",
+		"table": {
+			"name": "Tên",
+			"url": "Địa chỉ",
+			"manager": "Người quản lý",
+			"phone": "Số điện thoại",
+			"status": "Tình trạng",
+			"recheck": "Kiểm tra lại",
+			"checking": "Đang kiểm tra"
+		}
+	}
 }
