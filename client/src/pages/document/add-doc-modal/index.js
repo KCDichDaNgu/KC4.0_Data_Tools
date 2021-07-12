@@ -485,7 +485,6 @@ const AddingDocModal = (props) => {
     }
     
     const handelUploadFile = (file, field) => {
-        console.log(field);
         var reader = new FileReader();
         reader.onload = function(){
             if (field == 1){

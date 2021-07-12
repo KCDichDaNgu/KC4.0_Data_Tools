@@ -1,0 +1,55 @@
+.tool-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.tool-stopping {
+    color: red;
+    font-size: 24px;
+}
+
+.tool-error {
+    color: yellow;
+    font-size: 24px;
+}
+
+.tool-running {
+    color: rgb(72, 255, 0);
+    font-size: 24px;
+}
+
+.tool-icon-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid grey;
+    padding: 4px;
+    opacity: 0.4;
+    animation: rounding 1.2s linear infinite;
+}
+
+@keyframes rounding{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.reload-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid grey;
+    padding: 4px;
+}
+
+.reload-button:hover {
+    border-color: #40A9FF;
+    color: #40A9FF;
+}

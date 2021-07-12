@@ -12,6 +12,7 @@ import ManageUserPage from './pages/admin/manage-user';
 import DomainPage from './pages/admin/domain';
 import DataFieldPage from './pages/admin/data-field';
 import ManageBackupPage from './pages/admin/manage-backup';
+import ToolStatus from './pages/admin/tool-status'
 
 import { useStore, cloneStore } from './store';
 import { persistStore } from 'redux-persist';
@@ -82,6 +83,13 @@ const App = ({ location, initialReduxState }) => {
                                     exact 
                                     path="/domain" 
                                     component={ DomainPage } 
+                                />
+
+                                <AdminRoute
+                                    location={ location }
+                                    exact
+                                    path="/tool-status"
+                                    component={ ToolStatus }
                                 />
 
                                 <AdminRoute 
