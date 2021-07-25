@@ -189,10 +189,10 @@ const ToolStatus = (props) => {
                     <div
                         id={`tool-url-${record.id}`}
                         onClick={() => {
-                            navigator.clipboard.writeText(data)
                             window.getSelection().selectAllChildren(
                                 document.getElementById(`tool-url-${record.id}`)
                             );
+                            document.execCommand("copy");
                         }}
                         style={{cursor: 'default'}}
                     >
@@ -212,10 +212,10 @@ const ToolStatus = (props) => {
                     <div
                         id={`manager-name-${record.id}`}
                         onClick={() => {
-                            navigator.clipboard.writeText(data)
                             window.getSelection().selectAllChildren(
                                 document.getElementById(`manager-name-${record.id}`)
                             );
+                            document.execCommand("copy");
                         }}
                         style={{cursor: 'default'}}
                     >
@@ -235,10 +235,10 @@ const ToolStatus = (props) => {
                     <div
                         id={`manager-phone-${record.id}`}
                         onClick={() => {
-                            navigator.clipboard.writeText(data)
                             window.getSelection().selectAllChildren(
                                 document.getElementById(`manager-phone-${record.id}`)
                             );
+                            document.execCommand("copy");
                         }}
                         style={{cursor: 'default'}}
                     >
@@ -301,7 +301,6 @@ const ToolStatus = (props) => {
             <SiteLayout>
                 <PageTitle
                     heading={ t('toolStatus.title') }
-                    // subheading='Create new content...'
                     icon='pe-7s-home icon-gradient bg-happy-itmeo'
                 />
 
