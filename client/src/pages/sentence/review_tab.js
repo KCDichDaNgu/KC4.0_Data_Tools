@@ -279,6 +279,14 @@ const SentenceReview = forwardRef((props, ref) => {
             let fromDate = searchData == null ? null : searchData[0].valueOf();
             let toDate = searchData == null ? null : searchData[1].valueOf();
 
+            fromDate = new Date(fromDate);
+            fromDate.setHours(0,0,0,0);
+            fromDate = fromDate.getTime();
+
+            toDate = new Date(toDate);
+            toDate.setHours(0,0,0,0);
+            toDate = toDate.getTime();
+
             setFilter({
                 ...filter,
                 updatedAt__fromDate: fromDate,
@@ -608,12 +616,12 @@ const SentenceReview = forwardRef((props, ref) => {
                             style={{ width: '100%' }}
                             locale={ locale }
                             allowClear={ true }
-                            value={
-                                filter.updatedAt__fromDate && filter.updatedAt__toDate ? [
-                                    moment(filter.updatedAt__fromDate), 
-                                    moment(filter.updatedAt__toDate),
-                                ] : null 
-                            }
+                            // value={
+                            //     filter.updatedAt__fromDate && filter.updatedAt__toDate ? [
+                            //         filter.updatedAt__fromDate, 
+                            //         filter.updatedAt__toDate,
+                            //     ] : null 
+                            // }
                             onChange={ date => handleFilterChange(date, 'updatedAt') }
                             separator={<ArrowRightOutlined style={{display: "flex", color: "#bfbfbf"}}/>}
                         />

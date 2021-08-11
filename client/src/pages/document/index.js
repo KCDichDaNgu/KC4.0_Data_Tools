@@ -454,6 +454,14 @@ const DocumentPage = (props) => {
             let fromDate = searchData == null ? null : searchData[0].valueOf();
             let toDate = searchData == null ? null : searchData[1].valueOf();
 
+            fromDate = new Date(fromDate);
+            fromDate.setHours(0,0,0,0);
+            fromDate = fromDate.getTime();
+
+            toDate = new Date(toDate);
+            toDate.setHours(0,0,0,0);
+            toDate = toDate.getTime();
+
             setFilter({
                 ...filter,
                 updatedAt__fromDate: fromDate,

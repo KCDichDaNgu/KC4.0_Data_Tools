@@ -130,6 +130,14 @@ const SentenceReport = (props) => {
         let fromDate = searchData == null ? null : searchData[0].valueOf(); // timestamp
         let toDate = searchData == null ? null : searchData[1].valueOf();
 
+        fromDate = new Date(fromDate);
+        fromDate.setHours(0,0,0,0);
+        fromDate = fromDate.getTime();
+
+        toDate = new Date(toDate);
+        toDate.setHours(0,0,0,0);
+        toDate = toDate.getTime();
+
         filterDict[lang] = {
             'fromDate': fromDate,
             'toDate': toDate
