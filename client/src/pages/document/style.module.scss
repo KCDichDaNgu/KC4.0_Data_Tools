@@ -1,0 +1,60 @@
+.RRT__panel {
+    padding: 1em 0 0 0;
+    border: 0;
+}
+
+.RRT__tab {
+    border: 0;
+}
+
+.RRT__tab--selected {
+    background: transparent !important;
+}
+
+.RRT__tab {
+    background: transparent !important;
+}
+
+.table-striped-rows tr:nth-child(2n-1) td {
+    background-color: #f2f2f2 !important;
+}
+.table-striped-rows thead {
+    background-color: #f2f2f2 !important;
+}
+
+.search-input-box {
+    width: 10% !important;
+    margin-bottom: 20px !important;
+}
+
+.domain-table-card {
+    position: relative;
+}
+
+.import-button-wrapper {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+    padding-top: 8px;
+}
+
+.full-doc-modal-lang {
+    font-weight: 600;
+    font-size: 18px;
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+
+@media (max-width: 375px) {
+    .import-button-wrapper {
+        position: relative !important;
+        text-align: left;
+    }
+}
+
+@media (max-width: 767px) {
+    .full-doc-modal-lang {
+        position: static;
+    }
+}

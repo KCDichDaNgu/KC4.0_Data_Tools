@@ -49,7 +49,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
-
+/flask-sentinal
 # Project specific ignores
 *.swp
 *.bak
@@ -59,3 +59,11 @@ example.db
 .idea/
 clients/*/swagger.json
 clients/*/dist
+backend/run.sh
+/.env/
+server/data/import_from_file
+server/data/import_single_sentence
+server/data/export_file
+server/data/doc-alignment
+server/public/backups
+server/data/ParaCrawl

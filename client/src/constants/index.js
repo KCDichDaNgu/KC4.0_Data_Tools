@@ -1,5 +1,40 @@
 import sideBar6 from '../../public/images/sidebar/city1.jpg';
 
+export const STATUS_CODES = {
+    failure: 0,
+    success: 1
+}
+
+export const USER_STATUS = {
+    active: 'active',
+    inactive: 'inactive'
+}
+
+export const USER_ROLES = {
+    admin: 'admin',
+    member: 'member',
+    reviewer: 'reviewer'
+}
+
+export const LANGS = [
+    {
+        value: 'vi',
+        label: 'vi'
+    },
+    {
+        value: 'km',
+        label: 'km'
+    },
+    {
+        value: 'zh',
+        label: 'zh'
+    },
+    {
+        value: 'lo',
+        label: 'lo'
+    }
+]
+
 export const defaultThemeOption = {
     backgroundColor: 'bg-royal sidebar-text-light',
     headerBackgroundColor: 'bg-strong-bliss header-text-light',

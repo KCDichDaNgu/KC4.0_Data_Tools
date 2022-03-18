@@ -37,6 +37,14 @@
   border-radius: 50%;
   animation: sp-anime 0.8s infinite linear;
 }
+
+.ant-modal-confirm-body {
+  max-height: calc(100vh - 350px);
+  overflow-y: auto;
+	padding-right: 12px;
+	overflow-x: hidden;
+}
+
 @keyframes sp-anime {
   100% {
       transform: rotate(360deg);

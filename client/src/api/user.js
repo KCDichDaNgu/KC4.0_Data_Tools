@@ -1,4 +1,4 @@
-import { customAxios } from "../utils/customAxios";
+import { customAxios } from "../utils/custom-axios";
 import axios from 'axios'
 import qs from 'querystring';
 
@@ -22,25 +22,23 @@ export default {
 
     login: credentials => axios({
         method: 'post',
-        url: `${server_endpoint}/auth/oauth2/token?grant_type=password&client_id=docs&username=${credentials.username}&password=${credentials.password}`,
+        url: `${server_endpoint}/api/auth/oauth2/token`,
         data: qs.stringify({
-            // grant_type: 'password',
-            // client_id: 'docs',
-            // username: credentials.username,
-            // password: credentials.password,
-            // scope: 'profile'
+            grant_type: 'password',
+            username: credentials.username,
+            password: credentials.password,
+            scope: 'profile'
         }),
         headers: {
             Authorization: `Basic ${toUnicode(toBase64('12345678:12345678'))}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Access-Control-Allow-Origin' : 'http://127.0.0.1:5000'
+            'Content-Type': 'application/x-www-form-urlencoded'
         }
     }).
     then(res => { return res.data; }),
 
     getNewAccessToken: token => axios({
         method: 'post',
-        url: `${server_endpoint}/api/oauth/token`,
+        url: `${server_endpoint}/api/auth/oauth2/token`,
         data: qs.stringify({
             grant_type: 'refresh_token',
             refresh_token: token,
@@ -51,7 +49,7 @@ export default {
 
     revokeToken: token => axios({
         method: 'post',
-        url: `${server_endpoint}/api/oauth/revoke`,
+        url: `${server_endpoint}/api/auth/oauth2/revoke`,
         data: `token=${token}`,
         headers: {
             Authorization: `Basic ${toUnicode(toBase64('12345678:12345678'))}`
@@ -61,7 +59,7 @@ export default {
 
     currentUser: () => customAxios({
         method: 'get',
-        url: `${server_endpoint}/api/me`,
+        url: `${server_endpoint}/api/auth/me`,
         data: `scope=profile`,
     }).then(res => { return res.data.data; })
 }

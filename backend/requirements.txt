@@ -1,4 +1,0 @@
--r tasks/requirements.txt
--r app/requirements.txt
-# pymongo
-# sqlalchemy
