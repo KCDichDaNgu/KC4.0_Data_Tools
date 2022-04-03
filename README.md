@@ -165,7 +165,7 @@ Dưới đây là những bước chi tiết để cài đặt hệ thống
     virtualenv ./.env
     ```
     ```sh
-    source .venv/bin/activate
+    source .env/bin/activate
     ```
 4.  Cài đặt các gói thư viện
     ```sh
