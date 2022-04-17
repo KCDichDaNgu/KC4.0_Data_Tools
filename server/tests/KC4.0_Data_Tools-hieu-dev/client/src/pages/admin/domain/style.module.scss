@@ -1,0 +1,43 @@
+.RRT__panel {
+    padding: 1em 0 0 0;
+    border: 0;
+}
+
+.RRT__tab {
+    border: 0;
+}
+
+.RRT__tab--selected {
+    background: transparent !important;
+}
+
+.RRT__tab {
+    background: transparent !important;
+}
+
+.table-striped-rows tr:nth-child(2n-1) td {
+    background-color: #f2f2f2 !important;
+}
+.table-striped-rows thead {
+    background-color: #f2f2f2 !important;
+}
+
+.search-input-box {
+    width: 10% !important;
+    margin-bottom: 20px !important;
+}
+
+.domain-table-card {
+    position: relative;
+}
+
+.header-controller {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.domain-input {
+    color: black !important;
+    cursor: text !important;
+}

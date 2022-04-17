@@ -1,0 +1,172 @@
+.language-icon {
+    border-radius: 30px;
+    position: relative;
+    z-index: 4;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.header-btn-lg::before {
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    background: rgba(255, 255, 255, 0.7);;
+    width: 1px;
+    height: 30px;
+    margin-top: -15px;
+    content: '';
+}
+
+.header-btn-lg {
+    padding: 0 0 0 1.5rem;
+    margin-left: 1.5rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.app-header .app-header__content .header-menu .nav-link i {
+    color: #ffffff;
+}
+
+/*
+ * Scrollbar rail styles
+ */
+
+.ps:hover > .ps__rail-x, .ps:hover > .ps__rail-y, .ps--focus > .ps__rail-x, .ps--focus > .ps__rail-y, .ps--scrolling-x > .ps__rail-x, .ps--scrolling-y > .ps__rail-y {
+    opacity: 0.6!important;
+}
+
+.app-sidebar.sidebar-text-light .ps__rail-y:hover .ps__thumb-y {
+    background: rgba(255, 255, 255, 0.2)!important;
+}
+
+.ps__rail-y:hover > .ps__thumb-y, .ps__rail-y:focus > .ps__thumb-y {
+    width: 11px;
+}
+
+.vertical-nav-menu ul > li > a .metismenu-icon {
+    display: initial!important;
+}
+
+.loader-container {
+    align-items: center;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    width: 100vw;
+    text-align: center;
+    line-height: 1.6rem;
+}
+
+.loader-container .loader-container-inner {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 1.5rem;
+}
+
+.loader-container small {
+    margin: 10px 0 0;
+    display: block;
+    color: #868e96;
+    font-weight: normal;
+}
+
+.loader-container h3 {
+    text-align: center;
+    display: block;
+}
+
+.modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.app-login-box h4 div {
+    opacity: .6;
+}
+
+.app-login-box h4 span {
+    font-size: 1.1rem;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+    color: #fff;
+    background-color: #2e38cb!important;
+    border-color: #2c35c0!important;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #353ed1!important;
+    border-color: #2e38cb!important;
+}
+
+.app-header.header-text-light .app-header-right > .header-btn-lg .widget-content-left .btn-group > .btn, .app-header.header-text-light .app-header-right > .header-btn-lg .widget-heading, .app-header.header-text-light .app-header-right > .header-btn-lg .widget-subheading {
+    color: rgba(255, 255, 255, 0.8)!important;
+}
+.footer-link {
+    position: relative;
+    margin-left: 2rem;
+    display: block;
+    padding: 0.5rem 0rem;
+    color: #607d8b;
+    font-weight: 600;
+    text-align:left ;
+}
+.footer-link:hover {
+    color:inherit;
+    text-decoration:initial;
+}
+.footer-sign {
+    color: #334c58;
+    font-weight: 550;
+    padding-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+.text-bold {
+    color: #607d8b;
+    font-weight: 600;
+    text-align:left;
+}
+.text-bold:hover {
+    color:inherit;
+}
+
+.upload-image-area {
+    border: dashed 4px #ddd;  
+    border-radius: 1em;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-dash {
+    border: dashed 1px #ddd;  
+    border-radius: 1em;
+}
+.image-close {
+    position: absolute;
+    background: #f1f4f6 ;
+    border-radius: 50%;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+.image-close:hover {
+    background: #fffffe;
+    opacity: .5;
+    cursor: pointer;
+}
+
+.btn-upload-file {
+    margin-left: 30px;
+}
+
+.disabled-row {
+    background-color: #dcdcdc;
+    pointer-events: none;
+}
