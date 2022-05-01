@@ -2,7 +2,7 @@ import requests
 import json
 import unittest2
 import os
-
+# nhom 15
 def read(URL):
     response = requests.get(URL, stream= True)
     if response.status_code != 200:
