@@ -1,2 +1,0 @@
-testproject-python-sdk==1.2.3
-pytest
