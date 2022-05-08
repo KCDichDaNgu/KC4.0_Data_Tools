@@ -7,6 +7,7 @@ from flask_mongoengine import Pagination
 from flask import Blueprint, request, session
 from flask import jsonify, send_file, make_response
 from authlib.integrations.flask_oauth2 import current_token
+from bson.objectid import ObjectId
 from mongoengine.queryset.transform import query
 from constants.common import STATUS_CODES, IMPORT_SINGLE_LANGUAGE_DATA_DIR
 from oauth2 import authorization, require_oauth, status_required, role_required
@@ -216,7 +217,7 @@ def get_report():
         if lang != None and lang != '':
             query["$and"].append({'sentence_data.lang': lang})
         if field != None and field != '':
-            query["$and"].append({'data_field': field})
+            query["$and"].append({'data_field': ObjectId(field)})
 
         if len(query['$and']) == 0:
             del query['$and']
