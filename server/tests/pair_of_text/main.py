@@ -1,7 +1,7 @@
 import unittest
 import requests
 import json
-from server.utils.env import read_env_files
+from utils.env import read_env_files
 
 class TestPairOfText(unittest.TestCase):
     def __init__(self, *args, **kwargs):

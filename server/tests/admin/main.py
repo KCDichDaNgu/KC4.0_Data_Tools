@@ -1,7 +1,6 @@
 import unittest
 import requests
 import json
-import pair_of_sentences
 from utils.env import read_env_files
 
 
