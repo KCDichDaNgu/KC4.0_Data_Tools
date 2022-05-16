@@ -1,12 +1,15 @@
 import unittest
 import requests
 import json
+from utils.env import read_env_files
 
 class TestPairOfSentences(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestPairOfSentences, self).__init__(*args, **kwargs)
+        env_dict = read_env_files()
+
         url="http://localhost:6011/api/para-sentence"
-        headers = { "Authorization": "Bearer y51VxtFNvnfA0sTm2mMUsyZTFL4HwOFeM0f5rMW1Ka" }
+        headers = { "Authorization": "Bearer " + env_dict['BEAR_TOKEN'] }
         params = { "rating": "all", "lang1": "vi", "page": 1 }
         self.url = url
         self.headers = headers

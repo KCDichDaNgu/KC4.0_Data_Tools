@@ -1,12 +1,16 @@
 import unittest
 import requests
 import json
+from utils.env import read_env_files
+
 
 class TestAdmin(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestAdmin, self).__init__(*args, **kwargs)
+        env_dict = read_env_files()
+
         url="http://localhost:6011/api/admin/user/search"
-        headers = { "Authorization": "Bearer y51VxtFNvnfA0sTm2mMUsyZTFL4HwOFeM0f5rMW1Ka" }
+        headers = { "Authorization": "Bearer " + env_dict['BEAR_TOKEN'] }
         data = { 
             "email": "", 
             "extraData": {
