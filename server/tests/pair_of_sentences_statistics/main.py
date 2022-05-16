@@ -1,12 +1,15 @@
 import unittest
 import requests
 import json
+from utils.env import read_env_files
 
 class TestPairOfSentencesStatistics(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestPairOfSentencesStatistics, self).__init__(*args, **kwargs)
+        env_dict = read_env_files()
+
         url="http://localhost:6011/api/report/unrated-count"
-        headers = { "Authorization": "Bearer y51VxtFNvnfA0sTm2mMUsyZTFL4HwOFeM0f5rMW1Ka" }
+        headers = { "Authorization": "Bearer " + env_dict['BEAR_TOKEN'] }
         self.url = url
         self.headers = headers
 
