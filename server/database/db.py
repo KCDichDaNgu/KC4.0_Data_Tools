@@ -75,7 +75,7 @@ session_interface = MongoEngineSessionInterface(db)
 
 
 MONGODB_DEPRECATED_SETTINGS = 'MONGODB_PORT', 'MONGODB_DB'
-MONGODB_DEPRECATED_MSG = '{0} is deprecated, use the MONGODB_HOST url syntax'
+MONGODB_DEPRECATED_MSG = '{0} is deprecated, use the MONGODB_URI url syntax'
 
 
 def validate_config(config):
@@ -87,7 +87,7 @@ def validate_config(config):
 
             warnings.warn(msg, category=DeprecationWarning, stacklevel=2)
 
-    url = config['MONGODB_HOST']
+    url = config['MONGODB_URI']
 
     parsed_url = urlparse(url)
     
@@ -99,13 +99,13 @@ def validate_config(config):
 
 
 def build_test_config(config):
-    if 'MONGODB_HOST_TEST' in config:
-        config['MONGODB_HOST'] = config['MONGODB_HOST_TEST']
+    if 'MONGODB_URI_TEST' in config:
+        config['MONGODB_URI'] = config['MONGODB_URI_TEST']
     else:
         # use `{database_name}-test` database for testing
-        parsed_url = urlparse(config['MONGODB_HOST'])
+        parsed_url = urlparse(config['MONGODB_URI'])
         parsed_url = parsed_url._replace(path='%s-test' % parsed_url.path)
-        config['MONGODB_HOST'] = parsed_url.geturl()
+        config['MONGODB_URI'] = parsed_url.geturl()
 
     validate_config(config)
 

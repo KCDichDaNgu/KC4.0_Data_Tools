@@ -5,12 +5,15 @@ from seeds.para_sentence import ParaSentenceSeeder
 from seeds.data_field import DataFieldSeeder
 from seeds.para_document import ParaDocumentSeeder
 from seeds.setting import SettingSeeder
+from utils.env import read_env_files
 
 from database.db import init_for_migrate
 
 from pymongo import MongoClient
 
-client = MongoClient('localhost', 27017)
+env = read_env_files()
+
+client = MongoClient(env['MONGODB_HOST'])
 client.drop_database('data-tool')
 
 print('Drop database successfully!')
