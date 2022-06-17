@@ -2,10 +2,11 @@ import pkg_resources
 
 from kombu import Exchange, Queue
 from tlds import tld_set
-
+from utils.env import read_env_files
 
 HOUR = 60 * 60
 
+env = read_env_files()
 
 class Defaults(object):
     DEBUG = False
@@ -23,11 +24,12 @@ class Defaults(object):
     CONTACT_EMAIL = 'contact@example.org'
     TERRITORIES_EMAIL = 'territories@example.org'
 
-    MONGODB_HOST = 'mongodb://localhost:27017/data-tool'
+    MONGODB_URI = env['MONGODB_URI']
+    MONGODB_HOST = env['MONGODB_HOST']
     MONGODB_CONNECT = False  # Lazy connexion for Fork-safe usage
 
     MONGODB_DB = 'data-tool'
-    MONGODB_PORT = 27017
+    MONGODB_PORT = int(env['MONGODB_PORT'])
 
     # Elasticsearch configuration
     ELASTICSEARCH_URL = 'localhost:9200'
