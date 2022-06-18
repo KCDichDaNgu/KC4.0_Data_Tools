@@ -13,8 +13,8 @@ from pymongo import MongoClient
 
 env = read_env_files()
 
-client = MongoClient(env['MONGODB_HOST'])
-client.drop_database('data-tool')
+client = MongoClient(env['MONGODB_HOST'], int(env['MONGODB_PORT']))
+client.drop_database(env['MONGODB_DB'])
 
 print('Drop database successfully!')
 

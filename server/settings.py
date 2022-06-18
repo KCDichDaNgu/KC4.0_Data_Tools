@@ -28,7 +28,7 @@ class Defaults(object):
     MONGODB_HOST = env['MONGODB_HOST']
     MONGODB_CONNECT = False  # Lazy connexion for Fork-safe usage
 
-    MONGODB_DB = 'data-tool'
+    MONGODB_DB = env['MONGODB_DB']
     MONGODB_PORT = int(env['MONGODB_PORT'])
 
     # Elasticsearch configuration
