@@ -134,13 +134,36 @@ const LoginForm = (props) => {
 
                     <div className="modal-footer clearfix">
 
-                        <div className="float-right">
+                        <div style={{
+                            width: '100%',
+                            textAlign: 'center'
+                        }}>
                             <button 
                                 type="submit"
                                 className="btn btn-primary btn-lg" 
                                 style={{ fontWeight: 600 }}>
                                 { t('loginPage.title') }
                             </button>
+                        </div>
+
+                        <hr></hr>
+
+                        <div style={{
+                            marginTop: '1rem',
+                            lineHeight: '1.75rem'
+                        }}>
+                            Sản phẩm đề tài KC-4.0-12/19-25: “Phát triển hệ thống dịch đa ngữ giữa tiếng Việt và một số ngôn ngữ khác”
+                            Liên hệ để sử dụng sản phẩm: <br/>
+                            <ul>
+                                <li><span style={{fontWeight: 'bold'}}>Email:</span> KCdichdangu.uet@gmail.com</li>
+                                <li><span style={{fontWeight: 'bold'}}>Số điện thoại liên hệ:</span> 0975486888</li>
+                            </ul>
+
+                            <span style={{fontWeight: 'bold'}}>*</span> Tài nguyên khác:
+                            <ul>
+                                <li><a target='_blank' href='/docs/user_guide.pdf'>Tài liệu hướng dẫn sử dụng</a></li>
+                                <li><a target='_blank' href='https://drive.google.com/file/d/1taILPpQmfYKNc8oa-JReqGTnDkASBPdN/view'>Video hướng dẫn sử dụng</a></li>
+                            </ul>
                         </div>
                     </div>
                 </Form>

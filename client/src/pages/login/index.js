@@ -62,7 +62,7 @@ const LoginPage = (props) => {
                     <Row className="h-100 justify-content-center align-items-center">
                         <div className="mx-auto app-login-box col-md-8">
                             <div className="app-logo-inverse mx-auto mb-3"></div>
-                            <div className="modal-dialog w-100 mx-auto">
+                            <div className="modal-dialog w-100 mx-auto modal-lg">
                                 <LoginForm submit={ submit } />
                             </div>
                         </div>
