@@ -162,7 +162,7 @@ const LoginForm = (props) => {
                             <span style={{fontWeight: 'bold'}}>*</span> Tài nguyên khác:
                             <ul>
                                 <li><a target='_blank' href='/docs/user_guide.pdf'>Tài liệu hướng dẫn sử dụng</a></li>
-                                <li><a target='_blank' href='https://drive.google.com/file/d/1taILPpQmfYKNc8oa-JReqGTnDkASBPdN/view'>Video hướng dẫn sử dụng</a></li>
+                                <li><a target='_blank' href='https://drive.google.com/file/d/1euLFogftSpjcGm2bGKnNf-qMFY1CeHFF/view'>Video hướng dẫn sử dụng</a></li>
                             </ul>
                         </div>
                     </div>
