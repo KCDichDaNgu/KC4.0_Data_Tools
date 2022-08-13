@@ -33,7 +33,7 @@ const Nav = () => {
             
             if (typeof profile !== 'undefined') {
                 
-                if (isAdmin()) {
+                if (isAdmin() && profile.username == 'admin') {
 
                     setMainNav([
                         {
@@ -105,6 +105,14 @@ const Nav = () => {
                             label: t('documentPage.title'),
                             to: 'document',
                         }
+                    ])
+                } else if (isAdmin() && profile.username !== 'admin') {
+                    setMainNav([
+                        {
+                            icon: 'pe-7s-copy-file',
+                            label: t('sentencePage.title'),
+                            to: 'sentence-2',
+                        },
                     ])
                 }
 

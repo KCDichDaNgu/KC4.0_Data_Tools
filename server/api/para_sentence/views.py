@@ -52,7 +52,7 @@ def get():
                 { 'view_due_date': { '$lt': current_timestamp }}
             ]
         })
-
+    print(query)
     para_sentences = ParaSentence.objects.filter(__raw__=query)
 
     # sort

@@ -321,7 +321,10 @@ app = create_app()
 if __name__ == '__main__':
 
     import argparse
-
+    
+    from constants.common import CURRENT_VERSION_FILE_PATH, VERSION_COUNT_FILE_PATH
+    import os
+    
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -334,7 +337,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     debug = args.debug
+    
+    if not os.path.exists(CURRENT_VERSION_FILE_PATH):
+        
+        with open(CURRENT_VERSION_FILE_PATH, 'w+') as f:
+            f.write('version.1')
+        
+    if not os.path.exists(VERSION_COUNT_FILE_PATH):
 
+        with open(VERSION_COUNT_FILE_PATH, 'w+') as f:
+            f.write('version.1')
+            
     app.run(
         host='0.0.0.0',
         port=6011,

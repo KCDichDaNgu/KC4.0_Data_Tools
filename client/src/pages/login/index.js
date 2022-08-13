@@ -44,7 +44,7 @@ const LoginPage = (props) => {
             userProfileWatcher(async (newVal, oldVal, objectPath) => {
                 
                 if (isMounted()) {
-                    if (isAdmin()) history.push('/sentence')
+                    if (isAdmin() && clonedStore.getState().User.profile.username != 'admin') history.push('/sentence-2')
                     else history.push('/sentence')
                 }
             })

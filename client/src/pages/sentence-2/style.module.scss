@@ -1,0 +1,93 @@
+.RRT__panel {
+    padding: 1em 0 0 0;
+    border: 0;
+}
+
+.RRT__tab {
+    border: 0;
+}
+
+.RRT__tab--selected {
+    background: transparent !important;
+}
+
+.RRT__tab {
+    background: transparent !important;
+}
+
+.table-striped-rows tr:nth-child(2n-1) td {
+    background-color: #f2f2f2 !important;
+}
+.table-striped-rows thead {
+    background-color: #f2f2f2 !important;
+}
+
+.search-input-box {
+    width: 10% !important;
+    margin-bottom: 20px !important;
+}
+
+.para-sentence-table-card {
+    position: relative;
+}
+
+.card-body-padding-0 {
+    .ant-card-body {
+        padding: 0
+    }
+
+    .ant-table-pagination.ant-pagination {
+        margin: 20px;
+    }
+}
+
+.edited-by-someone > td:first-of-type {
+    border-left: 5px solid #e74c3c;
+}
+
+.has-not-been-edited {
+    background:#fff;
+    color: #000000;
+}
+
+.edited-by-my-self > td:first-of-type {
+    border-left: 5px solid #2ecc71;
+} 
+
+.border-none {
+    border: none;
+}
+
+.input-admin-disable > .ant-input {
+    color: black !important;
+}
+
+.custom-divider {
+    margin-left: -24px !important;
+    margin-right: -24px !important;
+}
+
+.Select-control {
+    height: 32px !important;
+    background-color: #fff !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 2px !important;
+}
+
+.Select-multi-value-wrapper {
+    height: 32px;
+}
+
+.import-export-buttons-wrapper {
+    position: absolute !important;
+    z-index: 1;
+    right: 0;
+    padding-top: 8px;
+}
+
+@media (max-width: 575px) {
+    .import-export-buttons-wrapper {
+        position: relative !important;
+        text-align: left;
+    }
+}

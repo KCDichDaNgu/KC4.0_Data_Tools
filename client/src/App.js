@@ -5,6 +5,7 @@ import HomePage from './pages/home';
 
 import DocumentPage from './pages/document';
 import SentencePage from './pages/sentence';
+import SentencePage2 from './pages/sentence-2';
 import singleLanguageDataPage from './pages/single-language-data';
 
 import SettingPage from './pages/admin/setting';
@@ -24,7 +25,6 @@ import AdminRoute from './routeGuards/AdminRoute';
 import AdminReviewerRoute from './routeGuards/AdminReviewerRoute'
 
 import { withTranslation, Trans } from 'react-i18next';
-
 import './App.css';
 import 'antd/dist/antd.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -71,6 +71,14 @@ const App = ({ location, initialReduxState }) => {
                     
                         <Suspense>
                             <Switch>
+
+                                <AuthRoute 
+                                    location={ location } 
+                                    exact 
+                                    path="/sentence-2" 
+                                    component={ SentencePage2 } 
+                                />
+                                
                                 <AdminRoute 
                                     location={ location } 
                                     exact 
